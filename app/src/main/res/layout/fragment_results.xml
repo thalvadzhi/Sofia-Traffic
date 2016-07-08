@@ -1,0 +1,29 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bearenterprises.sofiatraffic.ResultsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="New Text"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:id="@+id/station_name"
+        android:layout_alignParentTop="true"
+
+        />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/station_times"
+        android:layout_below="@+id/station_name"
+        android:divider="@null"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp" />
+</RelativeLayout>

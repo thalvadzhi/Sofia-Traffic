@@ -3,17 +3,20 @@ package com.bearenterprises.sofiatraffic.updater;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.design.widget.CoordinatorLayout;
 import android.util.Log;
-import android.widget.Toast;
+
 import static com.bearenterprises.sofiatraffic.utilities.Utility.toastOnUiThread;
 
-import com.bearenterprises.sofiatraffic.Constants.Constants;
 import com.bearenterprises.sofiatraffic.MainActivity;
-import com.bearenterprises.sofiatraffic.stations.DbHelper;
-import com.bearenterprises.sofiatraffic.stations.DbManipulator;
-import com.bearenterprises.sofiatraffic.stations.FileDownloader;
+import com.bearenterprises.sofiatraffic.cloudBackedSharedPreferences.CloudBackedSharedPreferences;
+import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.utilities.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.FileDownloader;
 import com.bearenterprises.sofiatraffic.stations.Station;
-import com.bearenterprises.sofiatraffic.stations.XMLCoordinateParser;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
+import com.bearenterprises.sofiatraffic.utilities.XMLCoordinateParser;
 
 import org.xml.sax.SAXException;
 
@@ -28,9 +31,11 @@ import javax.xml.parsers.ParserConfigurationException;
 public class DbUpdater extends Thread{
     private Context context;
     private boolean fileDownloaderExceptionHappened;
+    private CoordinatorLayout coordinatorLayout;
 
     public DbUpdater(Context context) {
         this.context = context;
+        this.coordinatorLayout = ((MainActivity)this.context).getCoordinatorLayout();
         this.fileDownloaderExceptionHappened = false;
     }
 
@@ -45,7 +50,7 @@ public class DbUpdater extends Thread{
     }
 
 
-    public void update(){
+    public void update() throws Exception{
         ExceptionNotifier notifier = new ExceptionNotifier();
         //unfortunately FileDownloader is a thread - so no exceptions can be carried to caller thread
         FileDownloader downloader = new FileDownloader(this.context, Constants.XML_DOWNLOAD_URL, Constants.XML_COORDINATE_FILE, notifier);
@@ -61,18 +66,14 @@ public class DbUpdater extends Thread{
             stations = XMLCoordinateParser.parse(this.context, Constants.XML_COORDINATE_FILE);
         } catch (ParserConfigurationException e) {
             Log.d("Parse error", "Couldn't parse coordinates file", e);
-            toastOnUiThread("Couldn't update coordinates file", this.context);
-            return;
+            throw new Exception(e);
         } catch (SAXException e) {
             Log.d("XML read error", "Couldn't read xml", e);
-            toastOnUiThread("Couldn't update coordinates file", this.context);
-            return;
+            throw new Exception(e);
         } catch (IOException e) {
             Log.d("File doesn't exist", "XML Coordinates file doesn't exist", e);
-            toastOnUiThread("Couldn't update coordinates file", this.context);
-            return;
+            throw new Exception(e);
         }
-
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         for (Station station : stations) {
             ContentValues v = new ContentValues();
@@ -83,8 +84,11 @@ public class DbUpdater extends Thread{
             stationInformation.add(v);
         }
 
+
         DbManipulator manipulator = new DbManipulator(this.context);
+        manipulator.deleteAll();
         manipulator.insert(stationInformation);
+        manipulator.closeDb();
 
     }
 
@@ -94,18 +98,23 @@ public class DbUpdater extends Thread{
     }
     @Override
     public void run() {
-        SharedPreferences preferences = this.context.getSharedPreferences(Constants.SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        SharedPreferences preferences = this.context.getSharedPreferences(Constants.SHARED_PREFERENCES_LAST_UPDATE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
-        long lastUpdate = preferences.getLong(Constants.SHARED_PREFERENCES_DATE_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+        long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
 
 
         if (shouldUpdate(lastUpdate)){
             //means it's time to update
-            update();
-            editor.putLong(Constants.SHARED_PREFERENCES_DATE_LAST_UPDATE, System.currentTimeMillis());
-            editor.commit();
-            toastOnUiThread("Station info updated successfully!", this.context);
+            try {
+                update();
+                editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
+                editor.commit();
+                Utility.makeSnackbar("Информацията за спирките беше обновена!", coordinatorLayout);
+            } catch (Exception e) {
+                Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
+            }
+
         }
 
     }

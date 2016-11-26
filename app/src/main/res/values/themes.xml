@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SpecialButton1" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#FF6600</item>
+        <item name="android:textColorPrimary">#FF0000</item>
+    </style>
+</resources>

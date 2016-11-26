@@ -9,9 +9,9 @@
         <item name="android:buttonStyle">@style/SpecialButton</item>
     </style>
 
-    <style name="SpecialButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">#FF00FF</item>
-        <item name="android:textColorPrimary">#fff</item>
+    <style name="SpecialButton" parent="android:Widget.Material.Button.Colored">
+        <item name="colorButtonNormal">#FF6600</item>
+        <item name="android:textColorPrimary">#FF0000</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -22,5 +22,16 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Widget.Button.Toggle" parent="android:Widget">
+        <item name="android:background">@drawable/toggle_bg</item>
+        <item name="android:disabledAlpha">?android:attr/disabledAlpha</item>
+    </style>
+
+    <style name="toggleButton"  parent="@android:style/Theme.Black">
+        <item name="android:buttonStyleToggle">@style/Widget.Button.Toggle</item>
+        <item name="android:textOn"></item>
+        <item name="android:textOff"></item>
+    </style>
 
 </resources>

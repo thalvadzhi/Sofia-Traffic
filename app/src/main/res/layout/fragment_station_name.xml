@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.StationNameFragment"
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/station_name_text_view"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:textAllCaps="true"
+
+       />
+
+    <ToggleButton
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:text="New ToggleButton"
+        android:id="@+id/toggleButton"
+        android:layout_gravity="left|top"
+
+        style="@style/toggleButton"
+        android:background="@drawable/toggle_bg"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/station_name_text_view" />
+
+
+</RelativeLayout>

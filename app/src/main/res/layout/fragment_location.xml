@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.LocationFragment">
+
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/buttonsLocateAndShowOnMap"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Локализирай"
+            android:textAllCaps="true"
+            android:id="@+id/buttonLocate"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="На картата"
+            android:id="@+id/buttonShowOnMap"
+            android:layout_toEndOf="@+id/buttonLocate" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/location_container"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/buttonsLocateAndShowOnMap">
+    </FrameLayout>
+
+</RelativeLayout>

@@ -45,21 +45,21 @@
         <!--android:layout_toEndOf="@+id/station_code"-->
         <!--android:layout_alignBottom="@+id/station_code" />-->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_favourite"
-        android:id="@+id/button_favourite"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/button_search"
-        android:textColor="#FFFFFF"
-        android:background="@color/colorOrange"
-        android:layout_alignBottom="@+id/button_search" />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/button_favourite"-->
+        <!--android:id="@+id/button_favourite"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_toEndOf="@+id/button_search"-->
+        <!--android:textColor="#FFFFFF"-->
+        <!--android:background="@color/colorOrange"-->
+        <!--android:layout_alignBottom="@+id/button_search" />-->
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp"
                 android:textColor="#FFFFFF"
 
                 android:text="@string/button_search"
@@ -67,15 +67,22 @@
                 android:layout_toEndOf="@+id/station_code"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentBottom="true" />
+
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
-    <!--android:layout_below="@+id/station_code"-->
-    <!--<android.support.v7.widget.CardView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:id="@+id/cv3"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:layout_below="@+id/cv2">-->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:id="@+id/station_name_fragment"
+        android:layout_below="@+id/cv2"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        ></FrameLayout>
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_gravity="center_horizontal"-->
+
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,7 +90,7 @@
         android:layout_gravity="center_horizontal"
         android:padding="5dp"
         android:id="@+id/result_container"
-        android:layout_below="@+id/cv2"></FrameLayout>
+        android:layout_below="@+id/station_name_fragment"></FrameLayout>
 
 
     <!--</android.support.v7.widget.CardView>-->

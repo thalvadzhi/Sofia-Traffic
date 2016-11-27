@@ -91,7 +91,9 @@ public class MapFragment extends Fragment {
         MapsInitializer.initialize(getActivity());
         map.setMyLocationEnabled(true);
         float zoomLevel = 16.0f; //This goes up to 21
-        LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
+//        LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
+        LatLng currentLocation = new LatLng(42.697722, 23.321700);
+
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel));
         for(Station station : mStations){
             String latitude = station.getLatitude();

@@ -98,12 +98,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         backupManager = new BackupManager(this);
         //Check if station info needs updating
         DbUpdater updater = new DbUpdater(this);
-        updater.start();
+        updater.execute();
 
         tracker = new GPSTracker(this);
         createLocationRequest();
         buildGoogleApiClient(tracker);
         tracker.setClient(mGoogleApiClient);
+//        tracker.startUpdatesButtonHandler();
 
 
 
@@ -239,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     public void onStart() {
         super.onStart();
-        Log.i("WHYYY", "WHYYYY");
         mGoogleApiClient.connect();
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.

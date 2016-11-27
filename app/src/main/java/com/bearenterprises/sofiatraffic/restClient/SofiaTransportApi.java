@@ -22,6 +22,9 @@ public interface SofiaTransportApi {
     @GET("lines/{lineType}")
     Call<List<Transport>> getLines(@Path("lineType") String lineType);
 
+    @GET("lines/{lineType}/{lineId")
+    Call<LineRoute> getRoutes(@Path("lineType") String lineType, @Path("lineId") String lineId);
+
     public static final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl("https://api.sofiatransport.com/v2/")
             .addConverterFactory(GsonConverterFactory.create())

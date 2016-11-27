@@ -21,6 +21,14 @@ public class Station {
         this.lines = lines;
     }
 
+    public Station(int id, int code, String name){
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = null;
+        this.lines = null;
+    }
+
     public int getId() {
         return id;
     }

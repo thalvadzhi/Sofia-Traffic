@@ -45,16 +45,20 @@ public class GPSTracker implements
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
-                        .build();
+                .build();
     }
 
-    public void setClient(GoogleApiClient client){
+    public void setClient(GoogleApiClient client) {
         this.mGoogleApiClient = client;
     }
 
     public GPSTracker(Context context) {
         this.context = context;
         mRequestingLocationUpdates = false;
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000)        // 10 seconds, in milliseconds
+                .setFastestInterval(1 * 1000); // 1 second, in milliseconds
 //        buildGoogleApiClient();
 //        mGoogleApiClient.connect();
     }
@@ -86,9 +90,9 @@ public class GPSTracker implements
     protected void startLocationUpdates() {
         // The final argument to {@code requestLocationUpdates()} is a LocationListener
         // (http://developer.android.com/reference/com/google/android/gms/location/LocationListener.html).
-        if(ContextCompat.checkSelfPermission((MainActivity) context,
+        if (ContextCompat.checkSelfPermission((MainActivity) context,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((MainActivity) context,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     Constants.REQUEST_CODE_FINE_LOCATION);
@@ -102,7 +106,19 @@ public class GPSTracker implements
     public void onConnected(Bundle bundle) {
         Log.i("S", "NO?");
         if (mCurrentLocation == null) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
             mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         }
 
@@ -121,6 +137,7 @@ public class GPSTracker implements
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.i("CHANGED", "HM?");
         mCurrentLocation = location;
         mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
         Toast.makeText(context, location.getAccuracy()+"",

@@ -3,6 +3,7 @@ package com.bearenterprises.sofiatraffic.updater;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.Log;
 
@@ -28,7 +29,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Created by thalv on 08-Jul-16.
  */
-public class DbUpdater extends Thread{
+public class DbUpdater extends AsyncTask{
     private Context context;
     private boolean fileDownloaderExceptionHappened;
     private CoordinatorLayout coordinatorLayout;
@@ -39,6 +40,29 @@ public class DbUpdater extends Thread{
         this.fileDownloaderExceptionHappened = false;
     }
 
+    @Override
+    protected Object doInBackground(Object[] objects) {
+        SharedPreferences preferences = this.context.getSharedPreferences(Constants.SHARED_PREFERENCES_LAST_UPDATE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+
+        long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+
+
+        if (shouldUpdate(lastUpdate)){
+            //means it's time to update
+            try {
+                update();
+                editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
+                editor.commit();
+                Utility.makeSnackbar("Информацията за спирките беше обновена!", coordinatorLayout);
+            } catch (Exception e) {
+                Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
+            }
+
+        }
+
+        return null;
+    }
 
 
     public class ExceptionNotifier extends FileDownloader.ExceptionInFileDownloaderNotifier{
@@ -96,26 +120,5 @@ public class DbUpdater extends Thread{
         long delta = System.currentTimeMillis() - lastUpdate;
         return (delta > Constants.WEEK_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
     }
-    @Override
-    public void run() {
-        SharedPreferences preferences = this.context.getSharedPreferences(Constants.SHARED_PREFERENCES_LAST_UPDATE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
 
-        long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
-
-
-        if (shouldUpdate(lastUpdate)){
-            //means it's time to update
-            try {
-                update();
-                editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
-                editor.commit();
-                Utility.makeSnackbar("Информацията за спирките беше обновена!", coordinatorLayout);
-            } catch (Exception e) {
-                Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
-            }
-
-        }
-
-    }
 }

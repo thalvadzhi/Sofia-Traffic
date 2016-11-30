@@ -1,9 +1,11 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
+import java.io.Serializable;
+
 /**
  * Created by thalv on 29-Aug-16.
  */
-public class Time {
+public class Time implements Serializable{
     private String time;
     private boolean hasAc;
     private boolean hasPlatform;

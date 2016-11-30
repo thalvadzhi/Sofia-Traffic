@@ -1,5 +1,6 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import android.database.Cursor;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,11 +16,18 @@ import android.widget.Spinner;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
+import com.bearenterprises.sofiatraffic.restClient.LineRoute;
+import com.bearenterprises.sofiatraffic.restClient.second.Route;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Transport;
+import com.bearenterprises.sofiatraffic.restClient.second.Routes;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.utilities.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.mohan.location.locationtrack.LocationProvider;
 import com.mohan.location.locationtrack.LocationSettings;
 import com.mohan.location.locationtrack.LocationTrack;
@@ -46,8 +54,10 @@ public class LocationFragment extends Fragment {
     private List<String> transportationTypes;
     private Spinner transportationType;
     private Spinner lineId;
-    private ArrayAdapter<String> lineNamesAdapter;
+    private LineNamesAdapter lineNamesAdapter;
     private ArrayList<String> lineNames;
+    private ArrayList<Transport> lines;
+//    private ArrayList<ArrayList<Station>> routes;
     public LocationFragment() {
         // Required empty public constructor
     }
@@ -73,15 +83,16 @@ public class LocationFragment extends Fragment {
         lineId = (Spinner) v.findViewById(R.id.lineNumber);
         lineId.setEnabled(false);
 //        transportationType.
-
+        lines = new ArrayList<>();
         transportationTypes = getTypesOfTransportation();
 
         ArrayAdapter<String> transportationTypeAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, transportationTypes);
         transportationTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         transportationType.setAdapter(transportationTypeAdapter);
         lineNames = new ArrayList<>();
-        lineNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, lineNames);
-        lineNamesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        lineNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, lineNames);
+//        lineNamesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        lineNamesAdapter = new LineNamesAdapter(getContext(), lines);
         lineId.setAdapter(lineNamesAdapter);
 
 
@@ -113,12 +124,16 @@ public class LocationFragment extends Fragment {
         locate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("Selection", (String)lineId.getSelectedItem());
-//
-//                activity.tracker.startUpdatesButtonHandler();
-//                activity.changeFragmentLoading(R.id.location_container);
-//                StationsGetter stationsGetter = new StationsGetter(activity);
-//                stationsGetter.start();
+//                Log.i("Selection", (String)lineId.getSelectedItem());
+                String lineType = (String)transportationType.getSelectedItem();
+                int idx = transportationTypes.indexOf(lineType);
+                idx -= 1;
+                String id = Integer.toString(((Transport)lineId.getSelectedItem()).getId());
+                Log.i("id", id);
+//                getRoutes(lineType, id);
+                RouteGetter getter = new RouteGetter();
+                getter.execute(Integer.toString(idx), id);
+
             }
         });
 
@@ -131,6 +146,68 @@ public class LocationFragment extends Fragment {
             }
         });
         return v;
+    }
+    private class RouteGetter extends AsyncTask<String, Void, Routes>{
+
+        protected void onPreExecute(){
+            LoadingFragment l = LoadingFragment.newInstance(null, null);
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.location_container, l).commit();
+        }
+        @Override
+        protected Routes doInBackground(String... strings) {
+            String lineType = strings[0];
+            String lineId = strings[1];
+            Log.i("GGGG", lineType + " " + lineId);
+            SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+            Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
+            try {
+                Routes route = routes.execute().body();
+                return route;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+
+        protected void onPostExecute(Routes result) {
+            RouteShower routeShower = new RouteShower();
+            routeShower.execute(result);
+        }
+    }
+
+    private class RouteShower extends AsyncTask<Routes, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Routes... routes) {
+
+            Routes result = routes[0];
+            DbManipulator manipulator = new DbManipulator(getContext());
+
+            ArrayList<ArrayList<Station>> stations = new ArrayList<>();
+            String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE code=?";
+            for(Route route : result.getRoutes()){
+                ArrayList<Station> routeStations = new ArrayList<>();
+                for (Stop stop : route.getStops()){
+                    Cursor c = manipulator.readRawQuery(query, new String[]{Integer.toString(stop.getCode())});
+
+                    c.moveToFirst();
+                    String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
+                    String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
+                    String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
+                    String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
+                    routeStations.add(new Station(stationName, stationCode, latitude, longtitude));
+                }
+                stations.add(routeStations);
+
+            }
+            manipulator.closeDb();
+            RoutesFragment f = RoutesFragment.newInstance(stations);
+            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.location_container, f).commit();
+
+            return null;
+        }
     }
 
     private class MapShower extends Thread{
@@ -153,19 +230,16 @@ public class LocationFragment extends Fragment {
         }
     }
 
-    private class LineGetter extends AsyncTask<Integer, Integer, List<String>>{
+    private class LineGetter extends AsyncTask<Integer, Integer, List<Transport>>{
 
         @Override
-        protected List<String> doInBackground(Integer... idxs) {
+        protected List<Transport> doInBackground(Integer... idxs) {
             SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
             Call<List<Transport>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             try {
                 List<Transport> transports = lines.execute().body();
-                List<String> lineNames = new ArrayList<>();
-                for (Transport tr : transports){
-                    lineNames.add(tr.getName());
-                }
-                return lineNames;
+
+                return transports;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -173,9 +247,9 @@ public class LocationFragment extends Fragment {
             return null;
         }
 
-        protected void onPostExecute(List<String> result) {
-            lineNames.clear();
-            lineNames.addAll(result);
+        protected void onPostExecute(List<Transport> result) {
+            lines.clear();
+            lines.addAll(result);
             lineNamesAdapter.notifyDataSetChanged();
             lineId.setEnabled(true);
         }

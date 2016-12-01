@@ -55,10 +55,6 @@ public class FavouritesFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static FavouritesFragment newInstance() {
         FavouritesFragment fragment = new FavouritesFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
         return fragment;
     }
 
@@ -113,7 +109,8 @@ public class FavouritesFragment extends Fragment {
                 main.setPage(0);
                 SearchFragment s = SearchFragment.newInstance(0);
                 Log.i("GGG", "TUK PONE?");
-                s.getData(st.getCode(), getFragmentManager(), (MainActivity)getActivity());
+                s.showStationTimes(st.getCode(), getFragmentManager(), (MainActivity)getActivity());
+//                s.getTimes(st.getCode(), getFragmentManager(), (MainActivity)getActivity());
             }
         });
         return view;

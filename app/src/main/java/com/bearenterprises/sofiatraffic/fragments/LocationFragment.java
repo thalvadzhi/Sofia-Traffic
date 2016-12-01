@@ -57,6 +57,7 @@ public class LocationFragment extends Fragment {
     private LineNamesAdapter lineNamesAdapter;
     private ArrayList<String> lineNames;
     private ArrayList<Transport> lines;
+    private int currentlySelectedType;
 //    private ArrayList<ArrayList<Station>> routes;
     public LocationFragment() {
         // Required empty public constructor
@@ -103,10 +104,10 @@ public class LocationFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getSelectedItem();
                 if (!selection.equals("Вид транспорт")){
-                    int idx = transportationTypes.indexOf(selection);
-                    idx -= 1;
+                    currentlySelectedType = transportationTypes.indexOf(selection);
+                    currentlySelectedType -= 1;
                     LineGetter lineGetter = new LineGetter();
-                    lineGetter.execute(idx);
+                    lineGetter.execute(currentlySelectedType);
                 }else{
                     lineId.setEnabled(false);
                 }
@@ -150,8 +151,11 @@ public class LocationFragment extends Fragment {
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
         protected void onPreExecute(){
-            LoadingFragment l = LoadingFragment.newInstance(null, null);
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.location_container, l).commit();
+            LoadingFragment fragment = LoadingFragment.newInstance();
+            getActivity().getSupportFragmentManager().
+                    beginTransaction().
+                    replace(R.id.location_container, fragment).
+                    commit();
         }
         @Override
         protected Routes doInBackground(String... strings) {
@@ -203,7 +207,20 @@ public class LocationFragment extends Fragment {
 
             }
             manipulator.closeDb();
-            RoutesFragment f = RoutesFragment.newInstance(stations);
+            String type = null;
+            switch (currentlySelectedType){
+                case 0:
+                    type = Constants.TRAM;
+                    break;
+                case 1:
+                    type = Constants.BUS;
+                    break;
+                case 2:
+                    type = Constants.TROLLEY;
+                    break;
+
+            }
+            RoutesFragment f = RoutesFragment.newInstance(stations, type);
             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.location_container, f).commit();
 
             return null;
@@ -248,10 +265,14 @@ public class LocationFragment extends Fragment {
         }
 
         protected void onPostExecute(List<Transport> result) {
-            lines.clear();
-            lines.addAll(result);
-            lineNamesAdapter.notifyDataSetChanged();
-            lineId.setEnabled(true);
+            if(result != null) {
+                lines.clear();
+                lines.addAll(result);
+                lineNamesAdapter.notifyDataSetChanged();
+                lineId.setEnabled(true);
+            }else{
+                ((MainActivity)getActivity()).makeSnackbar("Няма информация за този маршрут.");
+            }
         }
     }
     private class StationsGetter extends Thread{

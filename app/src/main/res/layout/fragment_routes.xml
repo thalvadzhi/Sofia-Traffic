@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="com.bearenterprises.sofiatraffic.fragments.RoutesFragment">
 
-   <ExpandableListView
+   <com.bearenterprises.sofiatraffic.AnimatedExpandableListView
        android:layout_width="match_parent"
        android:layout_height="match_parent"
        android:id="@+id/routesListView"

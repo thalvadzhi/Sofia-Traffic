@@ -1,8 +1,10 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,24 +13,19 @@ import android.widget.EditText;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
-import com.bearenterprises.sofiatraffic.utilities.RESTClient;
-import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.stations.VehicleTimes;
-import com.bearenterprises.sofiatraffic.utilities.JSONParser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.RunnableFuture;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 /**
@@ -74,9 +71,7 @@ import retrofit2.Response;
                 @Override
                 public void onClick(View v) {
                     String code = t.getText().toString();
-                    StationNameFragment stationNameFragment = StationNameFragment.newInstance(code);
-                    getFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).replace(R.id.station_name_fragment, stationNameFragment).commit();
-                    getData(code, getFragmentManager(), (MainActivity) getActivity());
+                    showStationTimes(code, getFragmentManager(), (MainActivity)getActivity());
                 }
             });
 
@@ -88,6 +83,15 @@ import retrofit2.Response;
             return call.execute().body();
         }
 
+        public void showStationTimes(String code, FragmentManager manager, MainActivity a){
+            if(code != null){
+                StationNameFragment stationNameFragment = StationNameFragment.newInstance(code);
+                manager.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).replace(R.id.station_name_fragment, stationNameFragment).commit();
+                getTimes(code, manager, a);
+            }else{
+                ((MainActivity)getActivity()).makeSnackbar("Няма въведен код на спирка!");
+            }
+        }
 
         class TimeGetter extends Thread{
             private Line line;
@@ -121,22 +125,28 @@ import retrofit2.Response;
             }
         }
 
-        class SearchQuery implements Runnable{
+        class SearchQuery extends AsyncTask<Void, Void, Void>{
             private String code;
+            private FragmentManager m;
             private LoadingFragment l;
-            private MainActivity m;
-            public SearchQuery(String code, LoadingFragment l, MainActivity m){
+            private MainActivity a;
+            public SearchQuery(String code, LoadingFragment l, FragmentManager m, MainActivity a){
                 this.code = code;
-                this.l = l;
                 this.m = m;
+                this.l = l;
+                this.a = a;
             }
 
             @Override
-            public void run(){
+            protected Void doInBackground(Void... params) {
                 SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
                 Station station= null;
                 try {
                     station = getStation(code, sofiaTransportApi);
+                    if(station == null){
+                        ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
+                        return null;
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -161,20 +171,21 @@ import retrofit2.Response;
                 }
 
                 if(vehicleTimes.size() == 0){
-                        m.detachFragment(l);
-                        Utility.makeSnackbar("Няма информация", coordinatorLayout);
-                    }else{
-                        m.changeFragmentTimes(vehicleTimes);
-                    }
+                    m.beginTransaction().detach(l).commit();
+                    a.makeSnackbar("Няма информация");
+                }else{
+                    ResultsFragment f = ResultsFragment.newInstance(vehicleTimes);
+                    m.beginTransaction().replace(R.id.result_container, f).commit();
+                }
+                return null;
             }
-
         }
 
-        public void getData(String code, android.support.v4.app.FragmentManager manager, MainActivity m){
-            LoadingFragment l = LoadingFragment.newInstance("", "");
+        public void getTimes(String code, FragmentManager manager, MainActivity a){
+            LoadingFragment l = LoadingFragment.newInstance();
             manager.beginTransaction().replace(R.id.result_container, l).commit();
-            Thread t = new Thread(new SearchQuery(code, l, m));
-            t.start();
+            SearchQuery query = new SearchQuery(code,l , manager, a);
+            query.execute();
         }
 
 

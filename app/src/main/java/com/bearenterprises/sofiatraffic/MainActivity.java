@@ -56,26 +56,11 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback,OnDismissCallback,LoadingFragment.OnFragmentInteractionListener, ResultsFragment.OnFragmentInteractionListener, FavouritesFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback, ResultsFragment.OnFragmentInteractionListener, FavouritesFragment.OnFragmentInteractionListener {
 
-    /**
-     * The {@link PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
     private GoogleApiClient mGoogleApiClient;
     public GPSTracker tracker;
@@ -86,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private FavouritesFragment favouritesFragment;
 
     private CoordinatorLayout coordinatorLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 //        tracker.startUpdatesButtonHandler();
 
 
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -120,26 +105,19 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case Constants.REQUEST_CODE_FINE_LOCATION:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        makeSnackbar("Няма сиренце :(");
+                        return;
+                    }
                     LocationServices.FusedLocationApi.requestLocationUpdates(
                             mGoogleApiClient, mLocationRequest, tracker);
                 }else{
@@ -218,10 +196,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         getSupportFragmentManager().beginTransaction().replace(R.id.location_container, f).commit();
     }
 
-    public void changeFragmentLoading(int id){
-        LoadingFragment f = new LoadingFragment();
-        getSupportFragmentManager().beginTransaction().replace(id, f).commit();
-    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -335,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 case 1:
                     return Constants.SECTION_FAVOURITES;
                 case 2:
-                    return "ЛОКАЛИЗИРАНЕ";
+                    return Constants.SECTION_MAP;
             }
             return null;
         }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.bearenterprises.sofiatraffic.AnimatedExpandableListView;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
 import com.bearenterprises.sofiatraffic.stations.Station;
@@ -17,9 +18,10 @@ public class RoutesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ROUTES = "routes";
+    private static final String TR_TYPE = "tr_type";
 
     // TODO: Rename and change types of parameters
-    private String routesParam;
+    private String transportationType;
     private ArrayList<ArrayList<Station>> routes;
 
 
@@ -27,19 +29,13 @@ public class RoutesFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RoutesFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static RoutesFragment newInstance(ArrayList<ArrayList<Station>> routes) {
+    public static RoutesFragment newInstance(ArrayList<ArrayList<Station>> routes, String type) {
         RoutesFragment fragment = new RoutesFragment();
         Bundle args = new Bundle();
         args.putSerializable(ROUTES, routes);
+        args.putString(TR_TYPE, type);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,6 +45,7 @@ public class RoutesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             routes = (ArrayList<ArrayList<Station>>) getArguments().getSerializable(ROUTES);
+            transportationType = getArguments().getString(TR_TYPE);
         }
     }
 
@@ -57,9 +54,26 @@ public class RoutesFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_routes, container, false);
-        ExpandableListView routesListView = (ExpandableListView) view.findViewById(R.id.routesListView);
-        RoutesAdapter adapter = new RoutesAdapter(this.routes, getContext());
+        final AnimatedExpandableListView routesListView = (AnimatedExpandableListView) view.findViewById(R.id.routesListView);
+        RoutesAdapter adapter = new RoutesAdapter(this.routes, transportationType, getContext());
         routesListView.setAdapter(adapter);
+
+        routesListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                // We call collapseGroupWithAnimation(int) and
+                // expandGroupWithAnimation(int) to animate group
+                // expansion/collapse.
+                if (routesListView.isGroupExpanded(groupPosition)) {
+                    routesListView.collapseGroupWithAnimation(groupPosition);
+                } else {
+                    routesListView.expandGroupWithAnimation(groupPosition);
+                }
+                return true;
+            }
+
+        });
 
         return view;
     }

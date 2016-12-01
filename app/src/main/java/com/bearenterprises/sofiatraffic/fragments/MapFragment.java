@@ -1,8 +1,11 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +14,7 @@ import android.view.ViewGroup;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.stations.Station;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -18,6 +22,8 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -86,15 +92,15 @@ public class MapFragment extends Fragment {
         return view;
     }
 
-    private void setUpMap(){
+    private void setUpMap() {
         //TODO implement marker info adapter
         MapsInitializer.initialize(getActivity());
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         map.setMyLocationEnabled(true);
-        float zoomLevel = 16.0f; //This goes up to 21
-//        LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
-        LatLng currentLocation = new LatLng(42.697722, 23.321700);
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel));
+        ArrayList<Marker> markers = new ArrayList<>();
         for(Station station : mStations){
             String latitude = station.getLatitude();
             String longtitude = station.getLongtitute();
@@ -106,10 +112,27 @@ public class MapFragment extends Fragment {
                 options.position(new LatLng(lat, lon));
                 options.title(station.getName());
                 options.snippet(station.getCode());
-                map.addMarker(options);
+                Marker marker = map.addMarker(options);
+                markers.add(marker);
             }
 
         }
+        CameraUpdate cu;
+        if(this.location == null){
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : markers){
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+            int padding = 0;
+            cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        }else{
+            float zoomLevel = 16.0f; //This goes up to 21
+            LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
+            cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
+        }
+        map.moveCamera(cu);
+
     }
 
     @Override

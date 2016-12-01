@@ -5,5 +5,15 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorOrange">#FF6600</color>
     <color name="colorOrangeDarker">#c75000</color>
-
+    <color name="colorBus">#5bc0de</color>
+    <color name="colorTrolley">#f0ad4e</color>
+    <color name="colorTram">#d9534f</color>
+    <color name="colorTrolleyGroup">#f2dede</color>
+    <color name="colorTrolleyGroupText">#a94442</color>
+    <color name="colorBusGroup">#d9edf7</color>
+    <color name="colorBusGroupTest">#31708f</color>
+    <color name="colorTramGroup">#fcf8e3</color>
+    <color name="colorTramGroupText">#8a6d3b</color>
+    <color name="grey">#C8C8C8</color>
+    <color name="white">#FFFFFF</color>
 </resources>

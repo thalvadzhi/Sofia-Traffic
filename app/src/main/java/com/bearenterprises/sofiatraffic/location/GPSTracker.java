@@ -97,6 +97,7 @@ public class GPSTracker implements
                     Constants.REQUEST_CODE_FINE_LOCATION);
 
         }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
     }
 
@@ -117,7 +118,7 @@ public class GPSTracker implements
         // mRequestingLocationUpdates to true (see startUpdatesButtonHandler()). Here, we check
         // the value of mRequestingLocationUpdates and if it is true, we start location updates.
         if (mRequestingLocationUpdates) {
-            startLocationUpdates();
+//            startLocationUpdates();
         }
     }
 

@@ -276,6 +276,7 @@ public class LocationFragment extends Fragment {
                     beginTransaction().
                     replace(R.id.location_container, l).
                     commit();
+            activity.tracker.startUpdatesButtonHandler();
         }
 
 
@@ -319,6 +320,7 @@ public class LocationFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Station> stations){
+            activity.tracker.stopUpdatesButtonHandler();
             if (stations != null && stations.size() != 0){
                 //this is so as to be compatible with route fragment
                 ArrayList<ArrayList<Station>> stationsGroup = new ArrayList<>();

@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import com.bearenterprises.sofiatraffic.fragments.LocationFragment;
 import com.bearenterprises.sofiatraffic.fragments.LocationResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.ResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.SearchFragment;
+import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.GPSTracker;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Time;
@@ -56,7 +58,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback, ResultsFragment.OnFragmentInteractionListener, FavouritesFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback, ResultsFragment.OnFragmentInteractionListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -69,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     private final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 500;
     private FavouritesFragment favouritesFragment;
+    private SearchFragment searchFragment;
+    private LocationFragment locationFragment;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -77,8 +81,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        favouritesFragment = FavouritesFragment.newInstance();
+        if(savedInstanceState == null){
+            favouritesFragment = FavouritesFragment.newInstance();
+            searchFragment = SearchFragment.newInstance();
+            locationFragment = LocationFragment.newInstance();
+        }
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
 
         backupManager = new BackupManager(this);
@@ -180,22 +187,28 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         mSectionsPagerAdapter.notifyDataSetChanged();
     }
 
-    public void detachFragment(Fragment f){
-        getSupportFragmentManager().beginTransaction().detach(f).commit();
-    }
-    public void changeFragmentTimes(ArrayList<VehicleTimes> vt){
-        ResultsFragment f = ResultsFragment.newInstance(vt);
-        getSupportFragmentManager().beginTransaction().replace(R.id.result_container, f).commit();
-    }
 
     public void updateFavourites(){
-        favouritesFragment.updateFavourites();
-    }
-    public void changeFragmentLocation(ArrayList<Station> stations){
-        LocationResultsFragment f = LocationResultsFragment.newInstance(stations);
-        getSupportFragmentManager().beginTransaction().replace(R.id.location_container, f).commit();
+        FragmentActivity activity = favouritesFragment.getActivity();
+        favouritesFragment.updateFavourites(this);
     }
 
+    public void changeFragment(int id, Fragment fragment){
+        getSupportFragmentManager().
+                beginTransaction().
+                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
+                replace(id, fragment).
+                commit();
+    }
+
+    public void changeFragmentAddBackStack(int id, Fragment fragment){
+        getSupportFragmentManager().
+                beginTransaction().
+                addToBackStack(String.valueOf(id)).
+                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right,R.anim.slide_in_right, R.anim.slide_out_left ).
+                replace(id, fragment).
+                commit();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -273,11 +286,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     }
 
+    @Override
+    public void showTimes(String code) {
+        setPage(Constants.SECTION_SEARCH_IDX);
+        searchFragment.showStationTimes(code);
+    }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -286,14 +301,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         @Override
         public Fragment getItem(int position) {
-            if(position == 0){
-                return SearchFragment.newInstance(position + 1);
-            }else if(position == 1){
+            if(position == Constants.SECTION_SEARCH_IDX){
+                return searchFragment;
+            }else if(position == Constants.SECTION_FAVOURITES_IDX){
                 return favouritesFragment;
-            }else if(position == 2){
-                return LocationFragment.newInstance();
+            }else if(position == Constants.SECTION_MAP_IDX){
+                return locationFragment;
             }
-            return SearchFragment.newInstance(position + 1);
+            return searchFragment;
         }
 
         @Override
@@ -317,6 +332,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         @Override
         public int getItemPosition(Object object){
             return POSITION_NONE;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            if(position == Constants.SECTION_SEARCH_IDX){
+                searchFragment = (SearchFragment) super.instantiateItem(container, position);
+                return searchFragment;
+            }else if(position == Constants.SECTION_FAVOURITES_IDX){
+                favouritesFragment = (FavouritesFragment) super.instantiateItem(container, position);
+                return favouritesFragment;
+            }else {
+                locationFragment = (LocationFragment) super.instantiateItem(container, position);
+                return locationFragment;
+            }
         }
     }
 }

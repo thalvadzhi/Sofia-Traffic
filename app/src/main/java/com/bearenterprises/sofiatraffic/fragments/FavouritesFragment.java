@@ -18,33 +18,17 @@ import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.FavouritesAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link FavouritesFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link FavouritesFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class FavouritesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private ListView v;
 
-    private OnFragmentInteractionListener mListener;
     private FavouritesAdapter adapter;
 
     public FavouritesFragment() {
@@ -58,18 +42,11 @@ public class FavouritesFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i("view created", "CREATED");
         View view = inflater.inflate(R.layout.fragment_favourites, container, false);
         SharedPreferences sp = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES_FAVOURITES, Context.MODE_PRIVATE);
         Map<String, ?> all = sp.getAll();
@@ -105,19 +82,17 @@ public class FavouritesFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Station st = (Station) parent.getItemAtPosition(position);
-                MainActivity main = (MainActivity) getActivity();
-                main.setPage(0);
-                SearchFragment s = SearchFragment.newInstance(0);
-                Log.i("GGG", "TUK PONE?");
-                s.showStationTimes(st.getCode(), getFragmentManager(), (MainActivity)getActivity());
-//                s.getTimes(st.getCode(), getFragmentManager(), (MainActivity)getActivity());
+                StationTimeShow timeShow = (StationTimeShow) getActivity();
+                timeShow.showTimes(st.getCode());
             }
         });
+        Log.i("V", (v==null)+"");
         return view;
     }
 
-    public void updateFavourites(){
-        SharedPreferences sp = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES_FAVOURITES, Context.MODE_PRIVATE);
+    public void updateFavourites(MainActivity activity){
+        Log.i("A", "B");
+        SharedPreferences sp = activity.getSharedPreferences(Constants.SHARED_PREFERENCES_FAVOURITES, Context.MODE_PRIVATE);
         Map<String, ?> all = sp.getAll();
         ArrayList<Station> stations = new ArrayList<>();
         for(String key : all.keySet()){
@@ -126,7 +101,7 @@ public class FavouritesFragment extends Fragment {
             }
         }
         adapter = new FavouritesAdapter(getActivity(), stations);
-        v.setAdapter(adapter);
+        this.v.setAdapter(adapter);
     }
 
     public class FavouriteDeleterListener implements DialogInterface.OnClickListener{
@@ -145,42 +120,13 @@ public class FavouritesFragment extends Fragment {
             ((MainActivity)getActivity()).notifyDatasetChanged();
         }
     }
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context){
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        Log.i("Attached", "maybe?");
+        Log.i("Fragment", (v==null)+"");
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

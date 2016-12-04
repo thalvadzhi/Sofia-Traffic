@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -99,6 +100,14 @@ public class MapFragment extends Fragment {
             return;
         }
         map.setMyLocationEnabled(true);
+        map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                String code = marker.getSnippet();
+                StationTimeShow show = (StationTimeShow) getActivity();
+                show.showTimes(code);
+            }
+        });
 
         ArrayList<Marker> markers = new ArrayList<>();
         for(Station station : mStations){

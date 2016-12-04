@@ -44,13 +44,6 @@ public class ResultsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment ResultsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static ResultsFragment newInstance(ArrayList<VehicleTimes> vt) {
         ResultsFragment fragment = new ResultsFragment();
         Bundle args = new Bundle();

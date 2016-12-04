@@ -1,6 +1,7 @@
 package com.bearenterprises.sofiatraffic.stations;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 /**
  * Created by thalv on 01-Jul-16.
@@ -30,4 +31,5 @@ public class Station implements Serializable{
     public String getLongtitute() {
         return longtitute;
     }
+
 }

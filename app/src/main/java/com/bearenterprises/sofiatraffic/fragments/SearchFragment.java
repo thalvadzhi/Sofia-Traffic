@@ -2,6 +2,7 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -33,27 +34,14 @@ import retrofit2.Call;
  */
 
     public class SearchFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
 
         public SearchFragment() {
-
-
         }
 
-
         private CoordinatorLayout coordinatorLayout;
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static SearchFragment newInstance(int sectionNumber) {
+        public static SearchFragment newInstance() {
             SearchFragment fragment = new SearchFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
             return fragment;
         }
@@ -71,7 +59,7 @@ import retrofit2.Call;
                 @Override
                 public void onClick(View v) {
                     String code = t.getText().toString();
-                    showStationTimes(code, getFragmentManager(), (MainActivity)getActivity());
+                    showStationTimes(code);
                 }
             });
 
@@ -83,11 +71,12 @@ import retrofit2.Call;
             return call.execute().body();
         }
 
-        public void showStationTimes(String code, FragmentManager manager, MainActivity a){
+        public void showStationTimes(String code){
             if(code != null){
+                FragmentManager manager = getFragmentManager();
                 StationNameFragment stationNameFragment = StationNameFragment.newInstance(code);
                 manager.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).replace(R.id.station_name_fragment, stationNameFragment).commit();
-                getTimes(code, manager, a);
+                getTimes(code, manager);
             }else{
                 ((MainActivity)getActivity()).makeSnackbar("Няма въведен код на спирка!");
             }
@@ -115,6 +104,7 @@ import retrofit2.Call;
 
             @Override
             public void run() {
+                android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
                 Call<List<Time>> call = sofiaTransportApi.getTimes(code, Integer.toString(line.getId()));
                 try {
                     this.times = (ArrayList<Time>)call.execute().body();
@@ -144,6 +134,7 @@ import retrofit2.Call;
                 try {
                     station = getStation(code, sofiaTransportApi);
                     if(station == null){
+                        m.beginTransaction().detach(l).commit();
                         ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
                         return null;
                     }
@@ -181,10 +172,10 @@ import retrofit2.Call;
             }
         }
 
-        public void getTimes(String code, FragmentManager manager, MainActivity a){
+        public void getTimes(String code, FragmentManager manager){
             LoadingFragment l = LoadingFragment.newInstance();
             manager.beginTransaction().replace(R.id.result_container, l).commit();
-            SearchQuery query = new SearchQuery(code,l , manager, a);
+            SearchQuery query = new SearchQuery(code,l , manager, (MainActivity) getActivity());
             query.execute();
         }
 

@@ -2,14 +2,18 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
 import com.bearenterprises.sofiatraffic.AnimatedExpandableListView;
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
+import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.stations.Station;
 
 import java.util.ArrayList;
@@ -55,16 +59,13 @@ public class RoutesFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_routes, container, false);
         final AnimatedExpandableListView routesListView = (AnimatedExpandableListView) view.findViewById(R.id.routesListView);
-        RoutesAdapter adapter = new RoutesAdapter(this.routes, transportationType, getContext());
+        final RoutesAdapter adapter = new RoutesAdapter(this.routes, transportationType, getContext());
         routesListView.setAdapter(adapter);
 
         routesListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                // We call collapseGroupWithAnimation(int) and
-                // expandGroupWithAnimation(int) to animate group
-                // expansion/collapse.
                 if (routesListView.isGroupExpanded(groupPosition)) {
                     routesListView.collapseGroupWithAnimation(groupPosition);
                 } else {
@@ -72,7 +73,17 @@ public class RoutesFragment extends Fragment {
                 }
                 return true;
             }
+        });
 
+
+        routesListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int group, int child, long l) {
+                Log.i("WHYYYY", "NOOOOO");
+                Station station = adapter.getChild(group, child);
+                ((StationTimeShow) getActivity()).showTimes(station.getCode());
+                return true;
+            }
         });
 
         return view;

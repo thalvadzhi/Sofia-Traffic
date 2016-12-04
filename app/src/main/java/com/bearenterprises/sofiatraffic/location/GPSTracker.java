@@ -36,7 +36,7 @@ public class GPSTracker implements
     private Context context;
     private boolean mRequestingLocationUpdates;
     private Location mCurrentLocation;
-    private String mLastUpdateTime;
+    private long mLastUpdateTime;
 
 
     protected synchronized void buildGoogleApiClient() {
@@ -59,8 +59,7 @@ public class GPSTracker implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(1000)        // 10 seconds, in milliseconds
                 .setFastestInterval(1 * 1000); // 1 second, in milliseconds
-//        buildGoogleApiClient();
-//        mGoogleApiClient.connect();
+
     }
 
     public void startUpdatesButtonHandler() {
@@ -104,22 +103,14 @@ public class GPSTracker implements
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i("S", "NO?");
         if (mCurrentLocation == null) {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
-            mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
+            mLastUpdateTime = System.currentTimeMillis();
         }
 
         // If the user presses the Start Updates button before GoogleApiClient connects, we set
@@ -137,11 +128,11 @@ public class GPSTracker implements
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.i("CHANGED", "HM?");
         mCurrentLocation = location;
-        mLastUpdateTime = DateFormat.getTimeInstance().format(new Date());
-        Toast.makeText(context, location.getAccuracy()+"",
-                Toast.LENGTH_SHORT).show();
+        mLastUpdateTime = System.currentTimeMillis();
+
+//        Toast.makeText(context, location.getAccuracy()+"",
+//                Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -151,6 +142,10 @@ public class GPSTracker implements
 
     public Location getLocation(){
         return mCurrentLocation;
+    }
+
+    public long getLastUpdateTime(){
+        return mLastUpdateTime;
     }
 
 

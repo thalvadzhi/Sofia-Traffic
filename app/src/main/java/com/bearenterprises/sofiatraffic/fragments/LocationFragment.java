@@ -10,16 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
+import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
-import com.bearenterprises.sofiatraffic.restClient.LineRoute;
 import com.bearenterprises.sofiatraffic.restClient.second.Route;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Transport;
@@ -28,20 +26,12 @@ import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
-import com.mohan.location.locationtrack.LocationProvider;
-import com.mohan.location.locationtrack.LocationSettings;
-import com.mohan.location.locationtrack.LocationTrack;
-import com.mohan.location.locationtrack.LocationUpdateListener;
-import com.mohan.location.locationtrack.Priority;
-import com.mohan.location.locationtrack.providers.FusedLocationProvider;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.SmartLocation;
 import retrofit2.Call;
 
 public class LocationFragment extends Fragment {
@@ -50,7 +40,6 @@ public class LocationFragment extends Fragment {
 
     private MainActivity activity;
     private ArrayList<Station> mStations;
-    private Location location;
     private List<String> transportationTypes;
     private Spinner transportationType;
     private Spinner lineId;
@@ -58,6 +47,7 @@ public class LocationFragment extends Fragment {
     private ArrayList<String> lineNames;
     private ArrayList<Transport> lines;
     private int currentlySelectedType;
+    private Location location;
 //    private ArrayList<ArrayList<Station>> routes;
     public LocationFragment() {
         // Required empty public constructor
@@ -70,7 +60,7 @@ public class LocationFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        return new ArrayList<>(Arrays.asList("Вид транспорт","Трамвай", "Автобус", "Тройлей"));
+        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тройлей", "Около мен"));
     }
 
     @Override
@@ -83,31 +73,33 @@ public class LocationFragment extends Fragment {
         transportationType = (Spinner) v.findViewById(R.id.transportationType);
         lineId = (Spinner) v.findViewById(R.id.lineNumber);
         lineId.setEnabled(false);
-//        transportationType.
+
         lines = new ArrayList<>();
         transportationTypes = getTypesOfTransportation();
-
-        ArrayAdapter<String> transportationTypeAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, transportationTypes);
-        transportationTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        TransportationTypeAdapter transportationTypeAdapter = new TransportationTypeAdapter(getContext(), transportationTypes);
         transportationType.setAdapter(transportationTypeAdapter);
         lineNames = new ArrayList<>();
-//        lineNamesAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, lineNames);
-//        lineNamesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         lineNamesAdapter = new LineNamesAdapter(getContext(), lines);
         lineId.setAdapter(lineNamesAdapter);
-
-
 
 
         transportationType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getSelectedItem();
-                if (!selection.equals("Вид транспорт")){
+                if (!selection.equals(transportationTypes.get(0)) && !selection.equals(transportationTypes.get(4))) {
                     currentlySelectedType = transportationTypes.indexOf(selection);
                     currentlySelectedType -= 1;
                     LineGetter lineGetter = new LineGetter();
                     lineGetter.execute(currentlySelectedType);
+//                    lineId.setEnabled(true);
+                }else if(selection.equals(transportationTypes.get(4))){
+                    transportationType.setSelection(0);
+                    lineId.setEnabled(false);
+                    StationGetter locationGetter = new StationGetter((MainActivity) getActivity());
+                    locationGetter.execute();
+
                 }else{
                     lineId.setEnabled(false);
                 }
@@ -120,32 +112,27 @@ public class LocationFragment extends Fragment {
             }
         });
         transportationType.setSelection(0);
-        final Button locate = (Button) v.findViewById(R.id.buttonLocate);
-        Button showOnMap = (Button) v.findViewById(R.id.buttonShowOnMap);
-        locate.setOnClickListener(new View.OnClickListener() {
+        lineId.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-//                Log.i("Selection", (String)lineId.getSelectedItem());
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String lineType = (String)transportationType.getSelectedItem();
                 int idx = transportationTypes.indexOf(lineType);
                 idx -= 1;
-                String id = Integer.toString(((Transport)lineId.getSelectedItem()).getId());
-                Log.i("id", id);
-//                getRoutes(lineType, id);
-                RouteGetter getter = new RouteGetter();
-                getter.execute(Integer.toString(idx), id);
-
+                Transport transport = (Transport) lineId.getSelectedItem();
+                if (!(transport.getName().equals(Constants.LINE_ID_DEFAULT))){
+                    String id = Integer.toString(transport.getId());
+                    RouteGetter getter = new RouteGetter();
+                    getter.execute(Integer.toString(idx), id);
+                }
             }
-        });
 
-        showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                activity.tracker.startUpdatesButtonHandler();
-                MapShower shower = new MapShower(mStations, (MainActivity) getActivity());
-                shower.start();
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
+
+
         return v;
     }
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
@@ -161,7 +148,6 @@ public class LocationFragment extends Fragment {
         protected Routes doInBackground(String... strings) {
             String lineType = strings[0];
             String lineId = strings[1];
-            Log.i("GGGG", lineType + " " + lineId);
             SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
             Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
             try {
@@ -221,7 +207,7 @@ public class LocationFragment extends Fragment {
 
             }
             RoutesFragment f = RoutesFragment.newInstance(stations, type);
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.location_container, f).commit();
+            ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
 
             return null;
         }
@@ -275,82 +261,79 @@ public class LocationFragment extends Fragment {
             }
         }
     }
-    private class StationsGetter extends Thread{
+
+    private class StationGetter extends AsyncTask<Void, Void, ArrayList<Station>>{
         private MainActivity activity;
 
-        public StationsGetter(MainActivity activity){
+        public StationGetter(MainActivity activity){
             this.activity = activity;
         }
 
+        @Override
+        protected void onPreExecute(){
+            LoadingFragment l = LoadingFragment.newInstance();
+            getActivity().getSupportFragmentManager().
+                    beginTransaction().
+                    replace(R.id.location_container, l).
+                    commit();
+        }
 
 
-        private ArrayList<Station> getStations(){
+        private Location getLocation(){
             Location loc;
+            long startTime = System.currentTimeMillis();
+            long endTime;
+            long lastUpdated;
             while(true){
                 loc = activity.tracker.getLocation();
+
+                lastUpdated = activity.tracker.getLastUpdateTime();
                 if(loc != null){
-                    if(loc.getAccuracy() <= 40){ //Constants.MINIMUM_ACCURACY){
+
+                    if((System.currentTimeMillis() - lastUpdated) < Constants.FIVE_SECONDS_MS && loc.getAccuracy() <= Constants.MINIMUM_ACCURACY){
                         location = loc;
                         break;
                     }
                 }
-                try {
-                    Thread.sleep(300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                endTime = System.currentTimeMillis();
+                if(endTime - startTime > Constants.MAXIMUM_TIME_GPS_LOCK){
+                    ((MainActivity)getActivity()).makeSnackbar("Определянето на местоположението отнема твърде много време.");
+                    return null;
                 }
             }
-        Log.i("Location!", loc.getLatitude()+" "+ loc.getLongitude());
-//            StationsLocator locator = new StationsLocator(loc, 5, 300000, getContext());
-//            ArrayList<Station> stations =  locator.getClosestStations();
-//            mStations = stations;
-            return new ArrayList<>();//stations;
+            return loc;
+        }
+
+
+        @Override
+        protected ArrayList<Station> doInBackground(Void... voids) {
+            Location loc = getLocation();
+            if (loc != null){
+                StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
+                ArrayList<Station> closestStations = locator.getClosestStations();
+                return closestStations;
+            }
+            return null;
+//            return getLocation();
         }
 
         @Override
-        public void run(){
-            ArrayList<Station> stations = getStations();
-//            this.activity.changeFragmentLocation(stations);
-//            ArrayList<Station> stations = new ArrayList<>();
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-//            stations.add(new Station("NAME", "asd", "42", "23"));
-            final LocationResultsFragment f = LocationResultsFragment.newInstance(stations);
-//            try {
-//                Thread.sleep(100);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.location_container, f).commit();
-//                    activity.tracker.stopUpdatesButtonHandler();
-                }
-            };
-            Thread t = new Thread(r);
-            t.start();
+        protected void onPostExecute(ArrayList<Station> stations){
+            if (stations != null && stations.size() != 0){
+                //this is so as to be compatible with route fragment
+                ArrayList<ArrayList<Station>> stationsGroup = new ArrayList<>();
+                stationsGroup.add(stations);
 
+                RoutesFragment locationResults = RoutesFragment.newInstance(stationsGroup, null);
+                ((MainActivity)getActivity()).changeFragment(R.id.location_container, locationResults);
+            }else{
+                ((MainActivity) getActivity()).makeSnackbar("Няма спирки в радиус от 200 метра");
+            }
         }
 
 
 
     }
-
-
-
-
-
-
-
-
 
 
 }

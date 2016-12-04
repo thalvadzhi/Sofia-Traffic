@@ -26,8 +26,6 @@ public class LocationResultsFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private ArrayList<Station> stations;
-    private MainActivity activity;
-
 
     public LocationResultsFragment() {
         // Required empty public constructor

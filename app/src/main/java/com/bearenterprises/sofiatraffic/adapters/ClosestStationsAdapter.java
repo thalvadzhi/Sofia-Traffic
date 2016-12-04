@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,13 +32,11 @@ public class ClosestStationsAdapter extends RecyclerView.Adapter<ClosestStations
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView mTextView;
-        public ImageView mImageview;
-        public CardView cv;
+        public ImageButton mImageButton;
         public ViewHolder(View view) {
             super(view);
-            mTextView = (TextView) view.findViewById(R.id.text_view_favourite2);
-            mImageview = (ImageView) view.findViewById(R.id.image_location2);
-            cv = (CardView) view.findViewById(R.id.cv);
+            mTextView = (TextView) view.findViewById(R.id.stopName);
+            mImageButton = (ImageButton) view.findViewById(R.id.locationItem);
         }
     }
 
@@ -49,18 +48,16 @@ public class ClosestStationsAdapter extends RecyclerView.Adapter<ClosestStations
     @Override
     public ClosestStationsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.favourites_card, parent, false);
+                .inflate(R.layout.route_item, parent, false);
 
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(closestStations.get(position).getName());
-        Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.map);
-        holder.mImageview.setImageBitmap(image);
-
-        setAnimation(holder.cv, position);
+        Station station = closestStations.get(position);
+        holder.mTextView.setText(station.getName());
+        holder.itemView.setTag(station);
     }
 
     @Override
@@ -68,15 +65,4 @@ public class ClosestStationsAdapter extends RecyclerView.Adapter<ClosestStations
         return closestStations.size();
     }
 
-    private void setAnimation(View viewToAnimate, int position)
-    {
-        // If the bound view wasn't previously displayed on screen, it's animated
-        if (position > lastPosition)
-        {
-            Animation animation = AnimationUtils.loadAnimation(context, android.R.anim.slide_in_left);
-            animation.setStartOffset(position * 150);
-            viewToAnimate.startAnimation(animation);
-            lastPosition = position;
-        }
-    }
 }

@@ -38,8 +38,6 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         this.routes = routes;
         this.context = context;
         this.transportationType = trType;
-        this.animationStateFirst = new boolean[routes.get(0).size()];
-        this.animationStateSecond = new boolean[routes.get(1).size()];
     }
 
     @Override
@@ -89,11 +87,41 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         TextView firstStop = (TextView) convertView.findViewById(R.id.firstStop);
         TextView lastStop = (TextView) convertView.findViewById(R.id.lastStop);
         button.setFocusable(false);
-        ArrayList<Station> route = getGroup(i);
-        String firstStopName = route.get(0).getName();
-        String lastStopName = route.get(route.size() - 1).getName();
-        firstStop.setText("от " + firstStopName);
-        lastStop.setText("до " + lastStopName);
+        if(getGroupCount() == 1){
+            //case you want nearest stops
+            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimary));
+            firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
+            firstStop.setText("Спирките около мен");
+            lastStop.setVisibility(View.GONE);
+        }else{
+            //case you want a route
+            ArrayList<Station> route = getGroup(i);
+            String firstStopName = route.get(0).getName();
+            String lastStopName = route.get(route.size() - 1).getName();
+            firstStop.setText("от " + firstStopName);
+            lastStop.setText("до " + lastStopName);
+
+
+            switch (transportationType){
+                case Constants.BUS:
+                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBusGroup));
+                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorBusGroupTest));
+                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorBusGroupTest));
+                    break;
+                case Constants.TRAM:
+                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTramGroup));
+                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTramGroupText));
+                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTramGroupText));
+                    break;
+                case Constants.TROLLEY:
+                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroup));
+                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroupText));
+                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroupText));
+                    break;
+            }
+
+        }
+
         final int position = i;
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,24 +129,6 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
                 showOnMap(getGroup(position));
             }
         });
-
-        switch (transportationType){
-            case Constants.BUS:
-                rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBusGroup));
-                firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorBusGroupTest));
-                lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorBusGroupTest));
-                break;
-            case Constants.TRAM:
-                rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTramGroup));
-                firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTramGroupText));
-                lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTramGroupText));
-                break;
-            case Constants.TROLLEY:
-                rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroup));
-                firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroupText));
-                lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroupText));
-                break;
-        }
 
         return convertView;
     }
@@ -152,29 +162,6 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
                 showOnMap(station);
             }
         });
-//        if(groupPosition == 0){
-//            if(animationStateFirst[childPosition] == false){
-//                animationStateFirst[childPosition] = true;
-//                Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-////                animation.
-////                animation.setStartOffset(childPosition*100);
-//                convertView.startAnimation(animation);
-//            }
-//        }else{
-//            if(animationStateSecond[childPosition]==false){
-//                animationStateSecond[childPosition] = true;
-//                Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-////                animation.
-//                animation.setStartOffset(childPosition*100);
-//                convertView.startAnimation(animation);
-//
-//            }
-//
-//        }
-//        Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-////                animation.
-//        animation.setStartOffset(childPosition*100);
-//        convertView.startAnimation(animation);
         return convertView;
     }
 
@@ -183,70 +170,13 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         return this.routes.get(groupPosition).size();
     }
 
-//    @Override
-//    public View getChildView(final int groupPosition, final int childPosition, boolean b, View convertView, ViewGroup viewGroup) {
-//        if (convertView == null) {
-//            LayoutInflater in = (LayoutInflater) this.context
-//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            convertView = in.inflate(R.layout.route_item, null);
-//        }
-//        RelativeLayout rl = (RelativeLayout) convertView.findViewById(R.id.childLayout);
-//        ImageButton button = (ImageButton) convertView.findViewById(R.id.locationItem);
-//        button.setFocusable(false);
-//        TextView stopName = (TextView) convertView.findViewById(R.id.stopName);
-//        Station station = getChild(groupPosition, childPosition);
-//        String nameCode = station.getName() + " " + station.getCode();
-//        stopName.setText(nameCode);
-//        if(childPosition % 2 == 0){
-//            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.white));
-//        }else{
-//            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.grey));
-//        }
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                ArrayList<Station> station = new ArrayList<Station>();
-//                station.add(getChild(groupPosition, childPosition));
-//                showOnMap(station);
-//            }
-//        });
-//        if(groupPosition == 0){
-//            if(animationStateFirst[childPosition] == false){
-//                animationStateFirst[childPosition] = true;
-//                Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-////                animation.
-////                animation.setStartOffset(childPosition*100);
-//                convertView.startAnimation(animation);
-//            }
-//        }else{
-//            if(animationStateSecond[childPosition]==false){
-//                animationStateSecond[childPosition] = true;
-//                Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-////                animation.
-//                animation.setStartOffset(childPosition*100);
-//                convertView.startAnimation(animation);
-//
-//            }
-//
-//        }
-////        Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-//////                animation.
-////        animation.setStartOffset(childPosition*100);
-////        convertView.startAnimation(animation);
-//        return convertView;
-//    }
-
     private void showOnMap(ArrayList<Station> stations){
         MapFragment f = MapFragment.newInstance(stations, null);
-        ((MainActivity)this.context).getSupportFragmentManager()
-                .beginTransaction()
-                .addToBackStack("Stations MAP")
-                .replace(R.id.location_container, f)
-                .commit();
+        ((MainActivity)this.context).changeFragmentAddBackStack(R.id.location_container, f);
     }
 
     @Override
     public boolean isChildSelectable(int i, int i1) {
-        return false;
+        return true;
     }
 }

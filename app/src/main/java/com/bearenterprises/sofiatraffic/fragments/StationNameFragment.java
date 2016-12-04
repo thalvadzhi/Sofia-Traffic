@@ -60,31 +60,37 @@ public class StationNameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_station_name, container, false);
         toggleButton = (ToggleButton) view.findViewById(R.id.toggleButton);
         textView = (TextView) view.findViewById(R.id.station_name_text_view);
 
         String stationName = getStationName(mStationCode);
-        textView.setText(stationName);
-        if (checkIfAlreadyInFavourites(mStationCode)){
-            toggleButton.setChecked(true);
+        if(stationName == null){
+            toggleButton.setVisibility(View.GONE);
+        }else{
+            textView.setText(stationName);
+            if (checkIfAlreadyInFavourites(mStationCode)){
+                toggleButton.setChecked(true);
+            }
+            toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        //means previously was not checked
+                        FavouritesModifier.save(mStationCode, getContext());
+                        ((MainActivity) getActivity()).updateFavourites();
+                    }else{
+                        //means previously was
+                        FavouritesModifier.remove(mStationCode, getContext());
+                        ((MainActivity) getActivity()).updateFavourites();
+                    }
+                }
+            });
         }
 
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    //means previously was not checked
-                    FavouritesModifier.save(mStationCode, getContext());
-                    ((MainActivity) getActivity()).updateFavourites();
-                }else{
-                    //means previously was
-                    FavouritesModifier.remove(mStationCode, getContext());
-                    ((MainActivity) getActivity()).updateFavourites();
-                }
-            }
-        });
+
+
+
 
 
         return view;
@@ -101,6 +107,10 @@ public class StationNameFragment extends Fragment {
         try {
             Cursor cursor = manipulator.readRawQuery("SELECT " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME + " FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?", new String[]{code});
             if (cursor == null) {
+                return null;
+            }
+            if(cursor.getCount() == 0){
+                ((MainActivity)getActivity()).makeSnackbar("Не съществува такава спирка.");
                 return null;
             }
             cursor.moveToFirst();

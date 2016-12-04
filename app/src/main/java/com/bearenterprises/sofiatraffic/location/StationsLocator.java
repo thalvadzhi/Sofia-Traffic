@@ -10,6 +10,8 @@ import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.stations.Station;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 /**
  * Created by thalv on 08-Jul-16.
@@ -25,7 +27,25 @@ public class StationsLocator {
         this.numberOfStations = numberOfStations;
         this.maxDistance = radius;
         this.context = context;
+
     }
+
+    public Comparator<Station> comparator = new Comparator<Station>(){
+
+        @Override
+        public int compare(Station c1, Station c2) {
+            Location l1 = new Location("");
+            l1.setLatitude(Float.parseFloat(c1.getLatitude()));
+            l1.setLongitude(Float.parseFloat(c1.getLongtitute()));
+            Location l2 = new Location("");
+            l2.setLatitude(Float.parseFloat(c2.getLatitude()));
+            l2.setLongitude(Float.parseFloat(c2.getLongtitute()));
+
+            float distance1 = location.distanceTo(l1);
+            float distance2 = location.distanceTo(l2);
+            return (int)(distance1 - distance2);
+        }
+    };
 
     private boolean determineViabilityOfStation(Station station){
 
@@ -66,16 +86,26 @@ public class StationsLocator {
     public ArrayList<Station> getClosestStations(){
         ArrayList<Station> closestStations = new ArrayList<>();
         ArrayList<Station> allStations = getAllStations();
-        int i = 1;
-        for(Station station : allStations){
-            if(determineViabilityOfStation(station)){
-                closestStations.add(station);
+        PriorityQueue<Station> priorityQueue = new PriorityQueue<>(allStations.size(), comparator);
+
+        for(Station st : allStations){
+            if(st.getLatitude().equals("") || st.getLongtitute().equals("")){
+                continue;
             }
-            if (i == this.numberOfStations){
+            priorityQueue.add(st);
+        }
+        int count = 0;
+        for(int k = 0; k < priorityQueue.size(); k ++){
+            Station st = priorityQueue.poll();
+            if(st != null && determineViabilityOfStation(st)){
+                closestStations.add(st);
+                count++;
+            }else if(st == null){
                 break;
             }
-            i++;
-
+            if(count == this.numberOfStations){
+                break;
+            }
         }
 
         return closestStations;

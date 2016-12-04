@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,6 @@ public class ResultsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         LayoutInflater inflater = LayoutInflater.from(this.context);
-
         if(convertView == null){
             convertView = inflater.inflate(R.layout.results_card_view, parent, false);
             holder = new ViewHolder();
@@ -64,6 +64,7 @@ public class ResultsAdapter extends BaseAdapter {
             holder.imageView = (ImageView) convertView.findViewById(R.id.imageView_transportation_type);
             holder.bg = (TextView)convertView.findViewById(R.id.background);
             if(!animationState[position]){
+                animationState[position] = true;
                 Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
 //                animation.
                 animation.setStartOffset(position*250);
@@ -79,19 +80,19 @@ public class ResultsAdapter extends BaseAdapter {
         holder.times.setText(vt.getTimes());
 
         switch(vt.getType()){
-            case "1": holder.imageView.setBackgroundColor(Color.parseColor("#0000FF"));
-                holder.bg.setBackgroundColor(Color.parseColor("#0000FF"));
-                holder.stationName.setBackgroundColor(Color.parseColor("#0000FF"));
+            case "1": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
+                holder.bg.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
+                holder.stationName.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
                 Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
                 holder.imageView.setImageBitmap(image);break;
-            case "0": holder.imageView.setBackgroundColor(Color.parseColor("#EE7600"));
-                holder.bg.setBackgroundColor(Color.parseColor("#EE7600"));
-                holder.stationName.setBackgroundColor(Color.parseColor("#EE7600"));
+            case "0": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTram));
+                holder.bg.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTram));
+                holder.stationName.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTram));
                 Bitmap image2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram);
                 holder.imageView.setImageBitmap(image2);break;
-            case "2": holder.imageView.setBackgroundColor(Color.parseColor("#FF0000"));
-                holder.bg.setBackgroundColor(Color.parseColor("#FF0000"));
-                holder.stationName.setBackgroundColor(Color.parseColor("#FF0000"));
+            case "2": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolley));
+                holder.bg.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolley));
+                holder.stationName.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolley));
                 Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley);
                 holder.imageView.setImageBitmap(image3);break;
         }

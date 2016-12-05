@@ -146,6 +146,10 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         TextView stopName = (TextView) convertView.findViewById(R.id.stopName);
         Station station = getChild(groupPosition, childPosition);
         String nameCode = station.getName() + " " + station.getCode();
+        String direction = station.getDirection();
+        if (direction != null && getGroupCount() == 1){
+            nameCode += "\n" + direction;
+        }
         stopName.setText(nameCode);
         if(childPosition % 2 == 0){
             rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.white));

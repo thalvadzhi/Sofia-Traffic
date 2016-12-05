@@ -187,7 +187,8 @@ public class LocationFragment extends Fragment {
                     String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
                     String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
                     String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
-                    routeStations.add(new Station(stationName, stationCode, latitude, longtitude));
+                    String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
+                    routeStations.add(new Station(stationName, stationCode, latitude, longtitude, description));
                 }
                 stations.add(routeStations);
 

@@ -40,7 +40,6 @@ public class GPSTracker implements
 
 
     protected synchronized void buildGoogleApiClient() {
-        Log.i("BALI", "Building GoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -95,7 +94,7 @@ public class GPSTracker implements
             ActivityCompat.requestPermissions((MainActivity) context,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     Constants.REQUEST_CODE_FINE_LOCATION);
-
+            return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
 
@@ -138,6 +137,7 @@ public class GPSTracker implements
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+        //TODO fix program crash when outdated Google PLay services
         Log.i("LOSHO", "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 

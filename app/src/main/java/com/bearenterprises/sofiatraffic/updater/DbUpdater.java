@@ -10,10 +10,10 @@ import android.util.Log;
 import static com.bearenterprises.sofiatraffic.utilities.Utility.toastOnUiThread;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
-import com.bearenterprises.sofiatraffic.cloudBackedSharedPreferences.CloudBackedSharedPreferences;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.DescriptionsParser;
 import com.bearenterprises.sofiatraffic.utilities.FileDownloader;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
@@ -21,8 +21,11 @@ import com.bearenterprises.sofiatraffic.utilities.XMLCoordinateParser;
 
 import org.xml.sax.SAXException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -77,13 +80,17 @@ public class DbUpdater extends AsyncTask{
     public void update() throws Exception{
         ExceptionNotifier notifier = new ExceptionNotifier();
         //unfortunately FileDownloader is a thread - so no exceptions can be carried to caller thread
-        FileDownloader downloader = new FileDownloader(this.context, Constants.XML_DOWNLOAD_URL, Constants.XML_COORDINATE_FILE, notifier);
+        FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL, Constants.XML_COORDINATE_FILE, notifier);
         downloader.run();
+
+        FileDownloader downloaderDescriptions = new FileDownloader(this.context, Constants.DESCRIPTIONS_DOWNLOAD_URL, Constants.DESCRIPTIONS_FILE_NAME, notifier);
+        downloaderDescriptions.run();
 
         if (fileDownloaderExceptionHappened == true){
             toastOnUiThread("Couldn't download station info. There's no internet connection :(", this.context);
         }
 
+        Map<String, String> descriptions = DescriptionsParser.parse(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
         ArrayList<Station> stations = null;
         try {
@@ -101,10 +108,12 @@ public class DbUpdater extends AsyncTask{
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         for (Station station : stations) {
             ContentValues v = new ContentValues();
+            String description = descriptions.get(station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE, station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME, station.getName());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongtitute());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION, description);
             stationInformation.add(v);
         }
 

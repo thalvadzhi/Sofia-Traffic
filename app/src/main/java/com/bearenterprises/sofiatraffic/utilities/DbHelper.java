@@ -16,6 +16,7 @@ public class DbHelper extends SQLiteOpenHelper {
         public static final String COLUMN_NAME_CODE = "code";
         public static final String COLUMN_NAME_LAT = "latitude";
         public static final String COLUMN_NAME_LON = "longtitude";
+        public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_UNIQUE = " UNIQUE";
         public static final String SQL_DROP_DB =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -30,13 +31,14 @@ public class DbHelper extends SQLiteOpenHelper {
                     FeedEntry.COLUMN_NAME_STATION_NAME + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_NAME_CODE + TEXT_TYPE + FeedEntry.COLUMN_UNIQUE + COMMA_SEP +
                     FeedEntry.COLUMN_NAME_LAT + TEXT_TYPE + COMMA_SEP +
-                    FeedEntry.COLUMN_NAME_LON + TEXT_TYPE +
+                    FeedEntry.COLUMN_NAME_LON + TEXT_TYPE + COMMA_SEP +
+                    FeedEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE +
                     " )";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME;
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "stationsInfo.db";
 
     public DbHelper(Context context) {

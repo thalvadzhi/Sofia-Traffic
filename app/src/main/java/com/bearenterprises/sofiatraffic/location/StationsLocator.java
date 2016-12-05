@@ -73,7 +73,8 @@ public class StationsLocator {
                 String stationCode = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
                 String latitude = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
                 String longtitude = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
-                stations.add(new Station(stationName, stationCode, latitude, longtitude));
+                String description = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
+                stations.add(new Station(stationName, stationCode, latitude, longtitude, description));
                 cursor.moveToNext();
             }
         }finally {

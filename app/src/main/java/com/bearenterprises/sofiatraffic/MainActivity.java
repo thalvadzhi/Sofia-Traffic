@@ -209,6 +209,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 replace(id, fragment).
                 commit();
     }
+
+    public void detachFragment(Fragment fragment){
+        getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will

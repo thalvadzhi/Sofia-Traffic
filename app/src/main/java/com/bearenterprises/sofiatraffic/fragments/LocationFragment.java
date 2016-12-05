@@ -48,6 +48,7 @@ public class LocationFragment extends Fragment {
     private ArrayList<Transport> lines;
     private int currentlySelectedType;
     private Location location;
+    private LoadingFragment loadingFragment;
 //    private ArrayList<ArrayList<Station>> routes;
     public LocationFragment() {
         // Required empty public constructor
@@ -66,7 +67,9 @@ public class LocationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+//        if (savedInstanceState == null) {
+            loadingFragment = LoadingFragment.newInstance();
+//        }
         activity = (MainActivity) getActivity();
         mStations = new ArrayList<>();
         View v = inflater.inflate(R.layout.fragment_location, container, false);
@@ -138,11 +141,7 @@ public class LocationFragment extends Fragment {
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
         protected void onPreExecute(){
-            LoadingFragment fragment = LoadingFragment.newInstance();
-            getActivity().getSupportFragmentManager().
-                    beginTransaction().
-                    replace(R.id.location_container, fragment).
-                    commit();
+            ((MainActivity)getActivity()).changeFragment(R.id.location_container, loadingFragment);
         }
         @Override
         protected Routes doInBackground(String... strings) {
@@ -181,16 +180,19 @@ public class LocationFragment extends Fragment {
                 ArrayList<Station> routeStations = new ArrayList<>();
                 for (Stop stop : route.getStops()){
                     Cursor c = manipulator.readRawQuery(query, new String[]{Integer.toString(stop.getCode())});
-
-                    c.moveToFirst();
-                    String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
-                    String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
-                    String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
-                    String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
-                    String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
-                    routeStations.add(new Station(stationName, stationCode, latitude, longtitude, description));
+                    if(c.getCount() != 0) {
+                        c.moveToFirst();
+                        String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
+                        String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
+                        String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
+                        String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
+                        String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
+                        routeStations.add(new Station(stationName, stationCode, latitude, longtitude, description));
+                    }
                 }
-                stations.add(routeStations);
+                if(routeStations.size() != 0){
+                    stations.add(routeStations);
+                }
 
             }
             manipulator.closeDb();
@@ -207,11 +209,17 @@ public class LocationFragment extends Fragment {
                     break;
 
             }
-            RoutesFragment f = RoutesFragment.newInstance(stations, type);
-            ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
+            if (stations.size() != 0){
+                RoutesFragment f = RoutesFragment.newInstance(stations, type);
+                ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
+            }else{
+                ((MainActivity)getActivity()).detachFragment(loadingFragment);
+            }
 
             return null;
         }
+
+
     }
 
     private class MapShower extends Thread{

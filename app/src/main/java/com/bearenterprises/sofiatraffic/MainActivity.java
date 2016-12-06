@@ -34,6 +34,7 @@ import com.bearenterprises.sofiatraffic.fragments.ResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.SearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.GPSTracker;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.Station;
@@ -58,7 +59,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback, ResultsFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -280,10 +281,6 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         mGoogleApiClient.disconnect();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     @Override
     public void onDismiss(ViewGroup listView, int[] reverseSortedPositions) {
@@ -294,6 +291,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     public void showTimes(String code) {
         setPage(Constants.SECTION_SEARCH_IDX);
         searchFragment.showStationTimes(code);
+    }
+
+    public void addTimes(ResultsFragment fragment, Line line, List<Time> times){
+        fragment.addTimeSchedule(line, (ArrayList<Time>) times);
     }
 
 
@@ -314,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             }
             return searchFragment;
         }
-
         @Override
         public int getCount() {
             return 3;

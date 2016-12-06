@@ -21,6 +21,11 @@ public class VehicleTimes implements Serializable{
         this.vehicleTimes = vehicleTimes;
     }
 
+    public VehicleTimes(String line, String type) {
+        this.line = line;
+        this.type = type;
+    }
+
     public String getLine() {
         return line;
     }
@@ -30,10 +35,21 @@ public class VehicleTimes implements Serializable{
     }
 
     public String getTimes() {
+        if (vehicleTimes == null){
+            return null;
+        }
         if(times == null){
             times = generateTimes();
         }
         return times;
+    }
+
+    public void setLine(String line) {
+        this.line = line;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public ArrayList<Time> getVehicleTimes() {
@@ -52,4 +68,7 @@ public class VehicleTimes implements Serializable{
         return builder.toString();
     }
 
+    public void setVehicleTimes(ArrayList<Time> vehicleTimes) {
+        this.vehicleTimes = vehicleTimes;
+    }
 }

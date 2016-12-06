@@ -280,11 +280,7 @@ public class LocationFragment extends Fragment {
 
         @Override
         protected void onPreExecute(){
-            LoadingFragment l = LoadingFragment.newInstance();
-            getActivity().getSupportFragmentManager().
-                    beginTransaction().
-                    replace(R.id.location_container, l).
-                    commit();
+            ((MainActivity)getActivity()).changeFragment(R.id.location_container, loadingFragment);
             activity.tracker.startUpdatesButtonHandler();
         }
 
@@ -338,6 +334,7 @@ public class LocationFragment extends Fragment {
                 RoutesFragment locationResults = RoutesFragment.newInstance(stationsGroup, null);
                 ((MainActivity)getActivity()).changeFragment(R.id.location_container, locationResults);
             }else{
+                ((MainActivity)getActivity()).detachFragment(loadingFragment);
                 ((MainActivity) getActivity()).makeSnackbar("Няма спирки в радиус от 200 метра");
             }
         }

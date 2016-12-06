@@ -6,6 +6,7 @@ import android.os.Process;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,11 @@ import com.bearenterprises.sofiatraffic.utilities.Utility;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 /**
@@ -115,21 +119,27 @@ import retrofit2.Call;
             }
         }
 
-        class SearchQuery extends AsyncTask<Void, Void, Void>{
+        class SearchQuery extends AsyncTask<Void, Void, ArrayList<Line>>{
             private String code;
             private FragmentManager m;
             private LoadingFragment l;
             private MainActivity a;
+            private ResultsFragment resultsFragment;
+            private SofiaTransportApi sofiaTransportApi;
+            private AtomicInteger integer;
+            private long start;
             public SearchQuery(String code, LoadingFragment l, FragmentManager m, MainActivity a){
                 this.code = code;
                 this.m = m;
                 this.l = l;
                 this.a = a;
+                integer = new AtomicInteger(0);
+
             }
 
             @Override
-            protected Void doInBackground(Void... params) {
-                SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+            protected ArrayList<Line> doInBackground(Void... params) {
+                sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
                 Station station= null;
                 try {
                     station = getStation(code, sofiaTransportApi);
@@ -142,33 +152,105 @@ import retrofit2.Call;
                     e.printStackTrace();
                 }
 
+
                 final ArrayList<VehicleTimes> vehicleTimes = new ArrayList<>();
                 ArrayList<TimeGetter> timeGetterThreads = new ArrayList<>();
                 for(Line line : station.getLines()){
-                    TimeGetter getter = new TimeGetter(line, sofiaTransportApi, code);
-                    getter.start();
-                    timeGetterThreads.add(getter);
+                    vehicleTimes.add(new VehicleTimes(line.getName(), Integer.toString(line.getType())));
+//                    TimeGetter getter = new TimeGetter(line, sofiaTransportApi, code);
+//                    getter.start();
+//                    TimeGetter1 geter = new TimeGetter1(line, code, sofiaTransportApi, i);
+//                    timeGetterThreads.add(getter);
                 }
+                resultsFragment = ResultsFragment.newInstance(vehicleTimes);
+                ((MainActivity)getActivity()).changeFragment(R.id.result_container, resultsFragment);
+                start = System.currentTimeMillis();
+                return station.getLines();
 
-                for(TimeGetter t : timeGetterThreads){
-                    try {
-                        t.join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if(t.getTimes() != null){
-                        vehicleTimes.add(new VehicleTimes(t.getLine().getName(), Integer.toString(t.getLine().getType()), null, t.getTimes()));
-                    }
+
+//                for(TimeGetter t : timeGetterThreads){
+//                    try {
+//                        t.join();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    if(t.getTimes() != null){
+//                        vehicleTimes.add(new VehicleTimes(t.getLine().getName(), Integer.toString(t.getLine().getType()), null, t.getTimes()));
+//                    }
+//                }
+//
+//                if(vehicleTimes.size() == 0){
+//                    m.beginTransaction().detach(l).commit();
+//                    a.makeSnackbar("Няма информация");
+//                }else{
+//                    ResultsFragment f = ResultsFragment.newInstance(vehicleTimes);
+//                    m.beginTransaction().replace(R.id.result_container, f).commit();
+//                }
+//                return null;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Line> lines){
+                for(int i = 0; i < lines.size(); i++){
+//                    new TimeGetter1(lines.get(i), code, sofiaTransportApi, i, resultsFragment).execute();
+                    final Line l = lines.get(i);
+                    Call<List<Time>> call = this.sofiaTransportApi.getTimes(code, Integer.toString(l.getId()));
+                    call.enqueue(new Callback<List<Time>>() {
+                        @Override
+                        public void onResponse(Call<List<Time>> call, Response<List<Time>> response) {
+                            List<Time> times = response.body();
+                            ((MainActivity) getActivity()).addTimes(resultsFragment, l, times);
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Time>> call, Throwable t) {
+
+                        }
+                    });
+
                 }
+            }
+        }
 
-                if(vehicleTimes.size() == 0){
-                    m.beginTransaction().detach(l).commit();
-                    a.makeSnackbar("Няма информация");
-                }else{
-                    ResultsFragment f = ResultsFragment.newInstance(vehicleTimes);
-                    m.beginTransaction().replace(R.id.result_container, f).commit();
+        class TimeGetter1 extends AsyncTask<Void, Void, List<Time>>{
+
+            private Line line;
+            private String code;
+            private SofiaTransportApi api;
+            private int index;
+            private ResultsFragment fragment;
+
+            public TimeGetter1(Line line, String code, SofiaTransportApi api, int index, ResultsFragment fragment) {
+                this.line = line;
+                this.code = code;
+//                this.api = api;
+                this.index = index;
+                this.fragment = fragment;
+                this.api = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+            }
+
+            @Override
+            protected List<Time> doInBackground(Void... voids) {
+                Process.setThreadPriority(Process.THREAD_PRIORITY_FOREGROUND);
+                Call<List<Time>> call = this.api.getTimes(code, Integer.toString(line.getId()));
+                try {
+                    return call.execute().body();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(List<Time> times){
+                List<Time> timesToSend;
+//                if (times == null) {
+//                    timesToSend = new ArrayList<>();
+//                }else{
+//                    timesToSend = times;
+//                }
+                ((MainActivity) getActivity()).addTimes(fragment, line, times);
             }
         }
 

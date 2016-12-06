@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
@@ -63,21 +64,28 @@ public class ResultsAdapter extends BaseAdapter {
             holder.times = (TextView) convertView.findViewById(R.id.textView_card_times);
             holder.imageView = (ImageView) convertView.findViewById(R.id.imageView_transportation_type);
             holder.bg = (TextView)convertView.findViewById(R.id.background);
-            if(!animationState[position]){
-                animationState[position] = true;
-                Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
-//                animation.
-                animation.setStartOffset(position*250);
-                convertView.startAnimation(animation);
-            }
+            holder.progressBar = (ProgressBar)convertView.findViewById(R.id.progressBarSingleLine);
+
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
+        if(!animationState[position]){
+            animationState[position] = true;
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.push_in);
+//                animation.
+            animation.setStartOffset(100);
+            convertView.startAnimation(animation);
+        }
+
 
         VehicleTimes vt = getItem(position);
         holder.stationName.setText(vt.getLine());
-        holder.times.setText(vt.getTimes());
+        if(vt.getTimes() != null){
+
+            holder.progressBar.setVisibility(View.GONE);
+            holder.times.setText(vt.getTimes());
+        }
 
         switch(vt.getType()){
             case "1": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
@@ -105,5 +113,6 @@ public class ResultsAdapter extends BaseAdapter {
         TextView times;
         ImageView imageView;
         TextView bg;
+        ProgressBar progressBar;
     }
 }

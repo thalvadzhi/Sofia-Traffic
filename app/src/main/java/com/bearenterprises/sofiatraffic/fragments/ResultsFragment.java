@@ -12,33 +12,24 @@ import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.ResultsAdapter;
+import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.VehicleTimes;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ResultsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ResultsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ResultsFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String STATION_NAME = "param1";
     private static final String TIMES = "param2";
 
-    // TODO: Rename and change types of parameters
-//    private TextView stationNameView;
     private ListView resultsView;
     private String stationName;
     private ArrayList<VehicleTimes> vehicleTimes;
+    private ResultsAdapter adapter;
 
-    private OnFragmentInteractionListener mListener;
 
     public ResultsFragment() {
         // Required empty public constructor
@@ -51,6 +42,35 @@ public class ResultsFragment extends Fragment {
 //        args.putString(STATION_NAME, stationName);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void addTimeSchedule(Line line, ArrayList<Time> times){
+        synchronized (vehicleTimes){
+
+            if(times != null){
+                for(VehicleTimes vt : vehicleTimes){
+                    if(vt.getLine().equals(line.getName())){
+                        vt.setVehicleTimes(times);
+                    }
+                }
+            }else {
+                Iterator<VehicleTimes> i = vehicleTimes.iterator();
+                while (i.hasNext()) {
+                    VehicleTimes vt = i.next();
+                    if (vt.getLine().equals(line.getName())) {
+                        i.remove();
+                    }
+                }
+            }
+
+//            if(times == null){
+//                vehicleTimes.remove(index);
+//            }else{
+//                vehicleTimes.get(index).setVehicleTimes(times);
+//            }
+            this.adapter.notifyDataSetChanged();
+        }
+
     }
 
     @Override
@@ -66,11 +86,8 @@ public class ResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_results, container, false);
-//        stationNameView = (TextView) view.findViewById(R.id.station_name);
-//        stationNameView.setTextSize(25);
         resultsView = (ListView) view.findViewById(R.id.station_times);
-//        stationNameView.setText(stationName);
-        ResultsAdapter adapter = new ResultsAdapter(getActivity(), vehicleTimes);
+        adapter = new ResultsAdapter(getActivity(), vehicleTimes);
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(adapter);
         swingBottomInAnimationAdapter.setAbsListView(resultsView);
         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(300);
@@ -79,42 +96,4 @@ public class ResultsFragment extends Fragment {
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 }

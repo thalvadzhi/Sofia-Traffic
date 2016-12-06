@@ -68,13 +68,22 @@
             android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Medium Text"
             android:textAlignment="center"
             android:id="@+id/textView_card_times"
             android:layout_gravity="center_horizontal"
             android:layout_below="@+id/textView_card_station_name"
             android:layout_alignParentEnd="true"
             android:layout_toEndOf="@+id/imageView_transportation_type" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+           android:paddingLeft="165dp"
+            android:paddingTop="5dp"
+            android:layout_below="@+id/textView_card_station_name"
+            android:id="@+id/progressBarSingleLine" />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

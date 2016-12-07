@@ -82,6 +82,9 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = in.inflate(R.layout.group_direction, null);
         }
+
+
+
         RelativeLayout rl = (RelativeLayout)convertView.findViewById(R.id.group);
         ImageButton button = (ImageButton) convertView.findViewById(R.id.locationGroup);
         TextView firstStop = (TextView) convertView.findViewById(R.id.firstStop);
@@ -89,7 +92,8 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         button.setFocusable(false);
         if(getGroupCount() == 1){
             //case you want nearest stops
-            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimary));
+            rl.setBackgroundResource(R.drawable.rounded_edges_primary_color);
+//            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorPrimary));
             firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
             firstStop.setText("Спирките около мен");
             lastStop.setVisibility(View.GONE);
@@ -104,19 +108,22 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
 
             switch (transportationType){
                 case Constants.BUS:
-                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBusGroup));
-                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorBusGroupTest));
-                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorBusGroupTest));
+                    rl.setBackgroundResource(R.drawable.rounded_edges_bus);
+//                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBusGroup));
+                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
+                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     break;
                 case Constants.TRAM:
-                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTramGroup));
-                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTramGroupText));
-                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTramGroupText));
+                    rl.setBackgroundResource(R.drawable.rounded_edges_tram);
+//                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTramGroup));
+                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
+                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     break;
                 case Constants.TROLLEY:
-                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroup));
-                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroupText));
-                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroupText));
+                    rl.setBackgroundResource(R.drawable.rounded_edges_trolley);
+//                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroup));
+                    firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
+                    lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     break;
             }
 
@@ -140,22 +147,34 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = in.inflate(R.layout.route_item, null);
         }
+
+
+
         RelativeLayout rl = (RelativeLayout) convertView.findViewById(R.id.childLayout);
         ImageButton button = (ImageButton) convertView.findViewById(R.id.locationItem);
         button.setFocusable(false);
         TextView stopName = (TextView) convertView.findViewById(R.id.stopName);
+        TextView stopDirection = (TextView) convertView.findViewById(R.id.textViewRouteDirection);
+        TextView stopCode = (TextView)convertView.findViewById(R.id.textViewRouteCode);
         Station station = getChild(groupPosition, childPosition);
-        String nameCode = station.getName() + " " + station.getCode();
+        String stationName = station.getName();
         String direction = station.getDirection();
-        if (direction != null && getGroupCount() == 1){
-            nameCode += "\n" + direction;
-        }
-        stopName.setText(nameCode);
-        if(childPosition % 2 == 0){
-            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.white));
+
+        stopName.setText(stationName);
+        if(getGroupCount() == 1 && direction != null){
+            stopDirection.setText(direction);
         }else{
-            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.grey));
+
+            stopDirection.setVisibility(View.GONE);
         }
+
+        stopCode.setText(station.getCode());
+
+        rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.white));
+//        if(childPosition % 2 == 0){
+//        }else{
+//            rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.grey));
+//        }
         final int grPos = groupPosition;
         final int chPos = childPosition;
         button.setOnClickListener(new View.OnClickListener() {

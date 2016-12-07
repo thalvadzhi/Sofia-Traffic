@@ -2,6 +2,7 @@ package com.bearenterprises.sofiatraffic;
 
 import android.app.backup.BackupManager;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -30,6 +31,7 @@ import com.bearenterprises.sofiatraffic.fragments.FavouritesFragment;
 import com.bearenterprises.sofiatraffic.fragments.LoadingFragment;
 import com.bearenterprises.sofiatraffic.fragments.LocationFragment;
 import com.bearenterprises.sofiatraffic.fragments.LocationResultsFragment;
+import com.bearenterprises.sofiatraffic.fragments.MapFragment;
 import com.bearenterprises.sofiatraffic.fragments.ResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.SearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
@@ -40,6 +42,8 @@ import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.stations.VehicleTimes;
 import com.bearenterprises.sofiatraffic.updater.DbUpdater;
+import com.bearenterprises.sofiatraffic.utilities.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -50,6 +54,7 @@ import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCa
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -189,10 +194,15 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
 
-    public void updateFavourites(){
-        FragmentActivity activity = favouritesFragment.getActivity();
-        favouritesFragment.updateFavourites(this);
+
+    public void addFavourite(Station st){
+        favouritesFragment.addFavourite(st);
     }
+
+    public void removeFavourite(String code){
+        favouritesFragment.removeFavourite(code);
+    }
+
 
     public void changeFragment(int id, Fragment fragment){
         getSupportFragmentManager().
@@ -279,6 +289,48 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         client.disconnect();
         tracker.stopUpdatesButtonHandler();
         mGoogleApiClient.disconnect();
+    }
+
+    public ArrayList<Station> getStationByCode(String code){
+        String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
+        String[] args = new String[]{code};
+        return getStationsFromDatabase(query, args);
+
+    }
+
+    public ArrayList<Station> getStationsFromDatabase(String query, String[] codes){
+        DbManipulator manipulator = new DbManipulator(this);
+        ArrayList<Station> stations = new ArrayList<>();
+        try(Cursor c = manipulator.readRawQuery(query, codes)){
+            if (c != null && c.getCount() > 0) {
+                c.moveToFirst();
+            } else {
+                Utility.makeSnackbar("Няма такава спирка", coordinatorLayout);
+                return null;
+            }
+            String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
+            String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
+            String lat = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
+            String lon = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
+            String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
+
+            stations.add(new Station(stationName, stationCode, lat, lon, description));
+        }finally {
+            manipulator.closeDb();
+        }
+        return stations;
+    }
+
+    public void showOnMap(ArrayList<Station> stations){
+        setPage(Constants.SECTION_MAP_IDX);
+        MapFragment f = MapFragment.newInstance(stations, null);
+        changeFragmentAddBackStack(R.id.location_container, f);
+    }
+
+    public void showOnMap(Station st){
+        ArrayList<Station> stations = new ArrayList<>();
+        stations.add(st);
+        showOnMap(stations);
     }
 
 

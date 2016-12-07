@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,19 +19,24 @@ import android.widget.ListView;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.FavouritesAdapter;
+import com.bearenterprises.sofiatraffic.adapters.FavouritesRecyclerAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.stations.VehicleTimes;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 public class FavouritesFragment extends Fragment {
 
-    private ListView v;
+    private RecyclerView v;
 
-    private FavouritesAdapter adapter;
+    private FavouritesRecyclerAdapter adapter;
+    private ArrayList<Station> favouriteStations;
 
     public FavouritesFragment() {
         // Required empty public constructor
@@ -46,86 +53,46 @@ public class FavouritesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("view created", "CREATED");
         View view = inflater.inflate(R.layout.fragment_favourites, container, false);
         SharedPreferences sp = getActivity().getSharedPreferences(Constants.SHARED_PREFERENCES_FAVOURITES, Context.MODE_PRIVATE);
         Map<String, ?> all = sp.getAll();
-        ArrayList<Station> stations = new ArrayList<>();
+        favouriteStations = new ArrayList<>();
+        Gson gson = new Gson();
         for(String key : all.keySet()){
             if (!key.equals(Constants.KEY_LAST_UPDATE)) {
-                stations.add(new Station((String) all.get(key), key, null, null));
+                Station st = gson.fromJson(all.get(key).toString(), Station.class);
+                favouriteStations.add(st);
             }
         }
-        adapter = new FavouritesAdapter(getActivity(), stations);
+        adapter = new FavouritesRecyclerAdapter(getContext(), favouriteStations);
 
-        v = (ListView) view.findViewById(R.id.list_view_favourites);
+        v = (RecyclerView) view.findViewById(R.id.list_view_favourites);
         v.setAdapter(adapter);
-        v.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder
-                        .setMessage("Наистина ли искате да изтриете тази любима спирка?")
-                        .setPositiveButton("Да", new FavouriteDeleterListener(parent, position))
-                        .setNegativeButton("Не", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .show();
-
-                return true;
-            }
-        });
-        v.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Station st = (Station) parent.getItemAtPosition(position);
-                StationTimeShow timeShow = (StationTimeShow) getActivity();
-                timeShow.showTimes(st.getCode());
-            }
-        });
-        Log.i("V", (v==null)+"");
+        v.setLayoutManager(new LinearLayoutManager(getContext()));
         return view;
     }
 
-    public void updateFavourites(MainActivity activity){
-        Log.i("A", "B");
-        SharedPreferences sp = activity.getSharedPreferences(Constants.SHARED_PREFERENCES_FAVOURITES, Context.MODE_PRIVATE);
-        Map<String, ?> all = sp.getAll();
-        ArrayList<Station> stations = new ArrayList<>();
-        for(String key : all.keySet()){
-            if (!key.equals(Constants.KEY_LAST_UPDATE)) {
-                stations.add(new Station((String) all.get(key), key, null, null));
+
+    public void addFavourite(Station station){
+        FavouritesModifier.save(station, getContext());
+        favouriteStations.add(station);
+        this.adapter.notifyItemInserted(favouriteStations.size() - 1);
+    }
+
+    public void removeFavourite(String code){
+        FavouritesModifier.remove(code, getContext());
+        Iterator<Station> i = favouriteStations.iterator();
+        int idx = 0;
+        while (i.hasNext()) {
+            Station st = i.next();
+            if (st.getCode().equals(code)) {
+                i.remove();
+                this.adapter.notifyItemRemoved(idx);
+                break;
             }
-        }
-        adapter = new FavouritesAdapter(getActivity(), stations);
-        this.v.setAdapter(adapter);
-    }
-
-    public class FavouriteDeleterListener implements DialogInterface.OnClickListener{
-
-        private AdapterView<?> parent;
-        private int position;
-        public FavouriteDeleterListener(AdapterView<?> parent, int position){
-            this.parent = parent;
-            this.position = position;
+            idx++;
         }
 
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            Station station = (Station)this.parent.getItemAtPosition(this.position);
-            FavouritesModifier.remove(station.getCode(), getContext());
-            ((MainActivity)getActivity()).notifyDatasetChanged();
-        }
-    }
-
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        Log.i("Attached", "maybe?");
-        Log.i("Fragment", (v==null)+"");
     }
 
 

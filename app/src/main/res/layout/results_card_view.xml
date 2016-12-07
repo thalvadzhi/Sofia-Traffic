@@ -1,18 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android.support.v7.cardview="http://schemas.android.com/tools"
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:android.support.v7.cardview="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--android:gravity="center_horizontal"-->
+    <!--android:padding="10dp"-->
+    <!--&gt;-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center_horizontal"
-    android:gravity="center_horizontal"
-    android:padding="10dp"
-    >
-
-
-<android.support.v7.widget.CardView
-    android:layout_width="360dp"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+
+<android.support.v7.widget.CardView android:layout_width="330dp"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardView_results"
     android:elevation="8dp"
     app:cardUseCompatPadding="true"
@@ -80,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-           android:paddingLeft="165dp"
+           android:paddingLeft="175dp"
             android:paddingTop="5dp"
             android:layout_below="@+id/textView_card_station_name"
             android:id="@+id/progressBarSingleLine" />
@@ -89,5 +96,5 @@
 </android.support.v7.widget.CardView>
 
 
-
-</RelativeLayout>
+</LinearLayout>
+<!--</RelativeLayout>-->

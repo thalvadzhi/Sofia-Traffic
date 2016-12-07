@@ -54,7 +54,28 @@ public class Station implements Serializable{
         if(this.description == null){
             return null;
         }
-        String pattern = "ПОСОКА(.*)";
+        String patternDirection = "ПОСОКА(.*)";
+        String dir = match(patternDirection);
+        if(dir != null){
+            return dir;
+        }
+        String patternFirstStop = "НАЧАЛНА СПИРКА(.*)";
+        String firstStop = match(patternFirstStop);
+        if(firstStop != null){
+            return firstStop;
+        }
+
+        String patternLastStop = "КРАЙНА СПИРКА(.*)";
+        String lastStop = match(patternLastStop);
+        if(lastStop != null){
+            return lastStop;
+        }
+
+        return null;
+
+    }
+
+    private String match(String pattern){
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(this.description);
         if(m.find()){

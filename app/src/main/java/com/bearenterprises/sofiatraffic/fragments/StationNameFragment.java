@@ -16,6 +16,7 @@ import android.widget.ToggleButton;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
@@ -64,11 +65,11 @@ public class StationNameFragment extends Fragment {
         toggleButton = (ToggleButton) view.findViewById(R.id.toggleButton);
         textView = (TextView) view.findViewById(R.id.station_name_text_view);
 
-        String stationName = getStationName(mStationCode);
-        if(stationName == null){
+        final Station station = getStationName(mStationCode);
+        if(station == null){
             toggleButton.setVisibility(View.GONE);
         }else{
-            textView.setText(stationName);
+            textView.setText(station.getName());
             if (checkIfAlreadyInFavourites(mStationCode)){
                 toggleButton.setChecked(true);
             }
@@ -77,12 +78,12 @@ public class StationNameFragment extends Fragment {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if(isChecked){
                         //means previously was not checked
-                        FavouritesModifier.save(mStationCode, getContext());
-                        ((MainActivity) getActivity()).updateFavourites();
+                        FavouritesModifier.save(station, getContext());
+                        ((MainActivity) getActivity()).addFavourite(station);
                     }else{
                         //means previously was
-                        FavouritesModifier.remove(mStationCode, getContext());
-                        ((MainActivity) getActivity()).updateFavourites();
+                        FavouritesModifier.remove(station.getCode(), getContext());
+                        ((MainActivity) getActivity()).removeFavourite(station.getCode());
                     }
                 }
             });
@@ -102,22 +103,8 @@ public class StationNameFragment extends Fragment {
         return name != null;
     }
 
-    private String getStationName(String code){
-        DbManipulator manipulator = new DbManipulator(this.getContext());
-        try {
-            Cursor cursor = manipulator.readRawQuery("SELECT " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME + " FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?", new String[]{code});
-            if (cursor == null) {
-                return null;
-            }
-            if(cursor.getCount() == 0){
-                ((MainActivity)getActivity()).makeSnackbar("Не съществува такава спирка.");
-                return null;
-            }
-            cursor.moveToFirst();
-            return cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
-        }finally {
-            manipulator.closeDb();
-        }
+    private Station getStationName(String code){
+        return ((MainActivity)getContext()).getStationByCode(code).get(0);
     }
 
 

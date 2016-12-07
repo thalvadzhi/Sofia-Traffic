@@ -51,22 +51,25 @@ public class FavouritesAdapter extends BaseAdapter {
         if(convertView == null){
             convertView = inflater.inflate(R.layout.favourites_card, parent, false);
             holder = new ViewHolder();
-            holder.textView = (TextView) convertView.findViewById(R.id.text_view_favourite2);
+            holder.textViewFavourite = (TextView) convertView.findViewById(R.id.text_view_favourite2);
             holder.imageView = (ImageView) convertView.findViewById(R.id.image_location2);
+            holder.textViewCode = (TextView) convertView.findViewById(R.id.textViewFavoureCode);
 
             convertView.setTag(holder);
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
         Station l = getItem(position);
-        holder.textView.setText((l.getName()+ " " + l.getCode()).toUpperCase());
+        holder.textViewFavourite.setText((l.getName()).toUpperCase());
+        holder.textViewCode.setText(l.getCode());
         Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.map);
         holder.imageView.setImageBitmap(image);
         return convertView;
     }
 
     private class ViewHolder{
-        TextView textView;
+        TextView textViewFavourite;
         ImageView imageView;
+        TextView textViewCode;
     }
 }

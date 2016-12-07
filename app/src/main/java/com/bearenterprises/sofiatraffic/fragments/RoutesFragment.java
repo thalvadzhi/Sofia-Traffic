@@ -79,7 +79,6 @@ public class RoutesFragment extends Fragment {
         routesListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int group, int child, long l) {
-                Log.i("WHYYYY", "NOOOOO");
                 Station station = adapter.getChild(group, child);
                 ((StationTimeShow) getActivity()).showTimes(station.getCode());
                 return true;

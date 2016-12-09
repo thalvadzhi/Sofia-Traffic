@@ -1,5 +1,6 @@
 package com.bearenterprises.sofiatraffic;
 
+import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private FavouritesFragment favouritesFragment;
     private SearchFragment searchFragment;
     private LocationFragment locationFragment;
-
+    private ProgressDialog dialog;
     private CoordinatorLayout coordinatorLayout;
 
     @Override
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             locationFragment = LocationFragment.newInstance();
         }
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
-
+        dialog = new ProgressDialog(this);
         backupManager = new BackupManager(this);
         //Check if station info needs updating
         DbUpdater updater = new DbUpdater(this);
@@ -178,6 +179,18 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         Snackbar
                 .make(coordinatorLayout, message, Snackbar.LENGTH_LONG)
                 .show();
+    }
+
+    public void showLoadingStopsInfoDialog(){
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("Информацията за спирките се обновява. Моля изчакайте.");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
+    public void dismissLoadingStopsInfoDialog(){
+        dialog.dismiss();
     }
 
     public CoordinatorLayout getCoordinatorLayout(){

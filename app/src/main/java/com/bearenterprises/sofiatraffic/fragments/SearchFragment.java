@@ -113,6 +113,11 @@ import retrofit2.Response;
                         return null;
                     }
                 } catch (IOException e) {
+                    if (station == null){
+                        m.beginTransaction().detach(l).commit();
+                        ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
+                        return null;
+                    }
                     e.printStackTrace();
                 }
 

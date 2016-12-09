@@ -33,7 +33,7 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * Created by thalv on 08-Jul-16.
  */
-public class DbUpdater extends AsyncTask{
+public class DbUpdater extends AsyncTask<Void, String, Void>{
     private Context context;
     private boolean fileDownloaderExceptionHappened;
     private CoordinatorLayout coordinatorLayout;
@@ -44,8 +44,9 @@ public class DbUpdater extends AsyncTask{
         this.fileDownloaderExceptionHappened = false;
     }
 
+
     @Override
-    protected Object doInBackground(Object[] objects) {
+    protected Void doInBackground(Void... voids) {
         SharedPreferences preferences = this.context.getSharedPreferences(Constants.SHARED_PREFERENCES_LAST_UPDATE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
@@ -54,7 +55,9 @@ public class DbUpdater extends AsyncTask{
 
         if (shouldUpdate(lastUpdate)){
             //means it's time to update
+
             try {
+                publishProgress(Constants.SHOW_DIALOG);
                 update();
                 editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
                 editor.commit();
@@ -62,10 +65,22 @@ public class DbUpdater extends AsyncTask{
             } catch (Exception e) {
                 Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
             }
+            publishProgress(Constants.DISMISS_DIALOG);
+
 
         }
 
         return null;
+    }
+
+    @Override
+    protected void onProgressUpdate(String... strings){
+        String whatToDo = strings[0];
+        if(whatToDo.equals(Constants.SHOW_DIALOG)){
+            ((MainActivity)context).showLoadingStopsInfoDialog();
+        }else if(whatToDo.equals(Constants.DISMISS_DIALOG)){
+            ((MainActivity)context).dismissLoadingStopsInfoDialog();
+        }
     }
 
 
@@ -88,7 +103,8 @@ public class DbUpdater extends AsyncTask{
         downloaderDescriptions.run();
 
         if (fileDownloaderExceptionHappened == true){
-            toastOnUiThread("Couldn't download station info. There's no internet connection :(", this.context);
+            ((MainActivity)context).makeSnackbar("Няма връзка с интернет :(");
+            throw new Exception("No internet connection");
         }
 
         Map<String, String> descriptions = DescriptionsParser.parse(this.context, Constants.DESCRIPTIONS_FILE_NAME);
@@ -116,8 +132,9 @@ public class DbUpdater extends AsyncTask{
     }
 
     private boolean shouldUpdate(long lastUpdate){
-        long delta = System.currentTimeMillis() - lastUpdate;
-        return (delta > Constants.WEEK_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+        return true;
+//        long delta = System.currentTimeMillis() - lastUpdate;
+//        return (delta > Constants.WEEK_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
     }
 
 }

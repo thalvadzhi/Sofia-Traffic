@@ -128,6 +128,7 @@ public class LocationFragment extends Fragment {
                     RouteGetter getter = new RouteGetter();
                     getter.execute(Integer.toString(idx), id);
                 }
+                lineId.setSelection(0);
             }
 
             @Override

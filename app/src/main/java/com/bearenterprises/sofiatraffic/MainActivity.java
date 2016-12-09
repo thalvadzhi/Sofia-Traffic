@@ -223,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         getSupportFragmentManager().
                 beginTransaction().
                 setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
+
                 replace(id, fragment).
                 commit();
     }
@@ -237,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
     public void detachFragment(Fragment fragment){
-        getSupportFragmentManager().beginTransaction().detach(fragment).commit();
+        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

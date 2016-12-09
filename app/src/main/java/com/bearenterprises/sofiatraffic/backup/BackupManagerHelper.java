@@ -18,4 +18,6 @@ public class BackupManagerHelper extends BackupAgentHelper {
         SharedPreferencesBackupHelper helper = new SharedPreferencesBackupHelper(this, Constants.SHARED_PREFERENCES_FAVOURITES);
         addHelper(Constants.SHARED_PREFERENCES_HELPER, helper);
     }
+
+
 }

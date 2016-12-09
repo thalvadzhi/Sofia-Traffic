@@ -7,6 +7,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,19 @@ import retrofit2.Response;
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             Button searchButton = (Button) rootView.findViewById(R.id.button_search);
             final EditText t = (EditText) rootView.findViewById(R.id.station_code);
+            t.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN)
+                    {
+                        if(keyCode == KeyEvent.KEYCODE_ENTER){
+                            String code = t.getText().toString();
+                            showStationTimes(code);
+                        }
+                    }
+                    return false;
+                }
+            });
             searchButton.setOnClickListener(new View.OnClickListener() {
 
                 @Override

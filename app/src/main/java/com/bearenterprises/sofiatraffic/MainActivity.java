@@ -228,6 +228,14 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 commit();
     }
 
+    public void changeFragmentNotSupport(int id, android.app.Fragment fragment){
+        getFragmentManager().
+                beginTransaction().
+
+                replace(id, fragment).
+                commit();
+    }
+
     public void changeFragmentAddBackStack(int id, Fragment fragment){
         getSupportFragmentManager().
                 beginTransaction().

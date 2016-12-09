@@ -4,6 +4,7 @@ package com.bearenterprises.sofiatraffic.fragments;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
+import com.bearenterprises.sofiatraffic.location.StationsLocator;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -108,39 +110,99 @@ public class MapFragment extends Fragment {
                 show.showTimes(code);
             }
         });
+        map.clear();
+        if(mStations == null && location == null){
+            //move camera to serdika
+            //42.697842, 23.321145
+            float zoomLevel = 13.0f; //This goes up to 21
+            //coordinates of Serdika which seems like a Sofia-enough place
+            LatLng currentLocation = new LatLng(42.697842, 23.321145);
+            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
+            map.moveCamera(cu);
+            map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 
-        ArrayList<Marker> markers = new ArrayList<>();
-        for(Station station : mStations){
-            String latitude = station.getLatitude();
-            String longtitude = station.getLongtitute();
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    map.clear();
+                    Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
+                    loc.setLatitude(latLng.latitude);
+                    loc.setLongitude(latLng.longitude);
+                    StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
+                    ArrayList<Station> closestStations = locator.getClosestStations();
+                    ArrayList<Marker> markers = new ArrayList<>();
+                    MarkerOptions opt = new MarkerOptions();
+                    opt.title("ОКОЛО МЕН");
+                    opt.position(latLng);
+                    Marker m = map.addMarker(opt);
+                    markers.add(m);
+                    if(closestStations != null){
 
-            if(!latitude.equals("") && !longtitude.equals("")){
-                double lat = Float.parseFloat(latitude);
-                double lon = Float.parseFloat(longtitude);
-                MarkerOptions options = new MarkerOptions();
-                options.position(new LatLng(lat, lon));
-                options.title(station.getName());
-                options.snippet(station.getCode());
-                Marker marker = map.addMarker(options);
-                markers.add(marker);
-            }
+                        for(Station station : closestStations){
+                            String latitude = station.getLatitude();
+                            String longtitude = station.getLongtitute();
 
-        }
-        CameraUpdate cu;
-        if(this.location == null){
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (Marker marker : markers){
-                builder.include(marker.getPosition());
-            }
-            LatLngBounds bounds = builder.build();
-            int padding = 0;
-            cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                            if(!latitude.equals("") && !longtitude.equals("")){
+                                double lat = Float.parseFloat(latitude);
+                                double lon = Float.parseFloat(longtitude);
+                                MarkerOptions options = new MarkerOptions();
+                                options.position(new LatLng(lat, lon));
+                                options.title(station.getName());
+                                options.snippet(station.getCode());
+                                Marker marker = map.addMarker(options);
+                                markers.add(marker);
+                            }
+
+                        }
+                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                        for (Marker marker : markers){
+                            builder.include(marker.getPosition());
+                        }
+                        LatLngBounds bounds = builder.build();
+                        int padding = 0;
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                        map.moveCamera(cu);
+                    }else{
+                        ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това мяст");
+                    }
+                }
+            });
+
         }else{
-            float zoomLevel = 16.0f; //This goes up to 21
-            LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
-            cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
+
+            ArrayList<Marker> markers = new ArrayList<>();
+            for(Station station : mStations){
+                String latitude = station.getLatitude();
+                String longtitude = station.getLongtitute();
+
+                if(!latitude.equals("") && !longtitude.equals("")){
+                    double lat = Float.parseFloat(latitude);
+                    double lon = Float.parseFloat(longtitude);
+                    MarkerOptions options = new MarkerOptions();
+                    options.position(new LatLng(lat, lon));
+                    options.title(station.getName());
+                    options.snippet(station.getCode());
+                    Marker marker = map.addMarker(options);
+                    markers.add(marker);
+                }
+
+            }
+            CameraUpdate cu;
+            if(this.location == null){
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                for (Marker marker : markers){
+                    builder.include(marker.getPosition());
+                }
+                LatLngBounds bounds = builder.build();
+                int padding = 0;
+                cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            }else{
+                float zoomLevel = 16.0f; //This goes up to 21
+                LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
+                cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
+            }
+            map.moveCamera(cu);
         }
-        map.moveCamera(cu);
+
 
     }
 

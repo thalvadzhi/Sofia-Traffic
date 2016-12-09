@@ -62,7 +62,7 @@ public class LocationFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тролей", "Около мен"));
+        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тролей", "Около мен", "Адрес"));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class LocationFragment extends Fragment {
 
         lines = new ArrayList<>();
         transportationTypes = getTypesOfTransportation();
-        TransportationTypeAdapter transportationTypeAdapter = new TransportationTypeAdapter(getContext(), transportationTypes);
+        final TransportationTypeAdapter transportationTypeAdapter = new TransportationTypeAdapter(getContext(), transportationTypes);
         transportationType.setAdapter(transportationTypeAdapter);
         lineNames = new ArrayList<>();
 
@@ -92,18 +92,21 @@ public class LocationFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getSelectedItem();
-                if (!selection.equals(transportationTypes.get(0)) && !selection.equals(transportationTypes.get(4))) {
+                int selectionIdx = transportationTypes.indexOf(selection);
+                if (selectionIdx >= 1 && selectionIdx <= 3) {
                     currentlySelectedType = transportationTypes.indexOf(selection);
                     currentlySelectedType -= 1;
                     LineGetter lineGetter = new LineGetter();
                     lineGetter.execute(currentlySelectedType);
 //                    lineId.setEnabled(true);
-                }else if(selection.equals(transportationTypes.get(4))){
+                }else if(selectionIdx == 4) {
                     transportationType.setSelection(0);
                     lineId.setEnabled(false);
                     StationGetter locationGetter = new StationGetter((MainActivity) getActivity());
                     locationGetter.execute();
-
+                }else if(selectionIdx == 5){
+                    PlacesFragment pl = new PlacesFragment();
+                    ((MainActivity)getActivity()).changeFragmentNotSupport(R.id.location_container, pl);
                 }else{
                     lineId.setEnabled(false);
                 }

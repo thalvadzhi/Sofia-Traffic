@@ -1,6 +1,7 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -61,7 +62,7 @@ public class LocationFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тройлей", "Около мен"));
+        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тролей", "Около мен"));
     }
 
     @Override
@@ -172,7 +173,13 @@ public class LocationFragment extends Fragment {
         protected Void doInBackground(Routes... routes) {
 
             Routes result = routes[0];
-            DbManipulator manipulator = new DbManipulator(getContext());
+            DbManipulator manipulator=null;
+            try {
+               manipulator = new DbManipulator(getContext());
+            }catch (SQLiteDatabaseLockedException e){
+                ((MainActivity)getContext()).makeSnackbar("Информацията за спирките все още се обновява");
+                return null;
+            }
 
             ArrayList<ArrayList<Station>> stations = new ArrayList<>();
             String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE code=?";
@@ -296,7 +303,7 @@ public class LocationFragment extends Fragment {
                 lastUpdated = activity.tracker.getLastUpdateTime();
                 if(loc != null){
 
-                    if((System.currentTimeMillis() - lastUpdated) < Constants.FIVE_SECONDS_MS && loc.getAccuracy() <= Constants.MINIMUM_ACCURACY){
+                    if((System.currentTimeMillis() - lastUpdated) <= Constants.FIVE_SECONDS_MS &&loc.getAccuracy() <= Constants.MINIMUM_ACCURACY){
                         location = loc;
                         break;
                     }
@@ -335,7 +342,7 @@ public class LocationFragment extends Fragment {
                 ((MainActivity)getActivity()).changeFragment(R.id.location_container, locationResults);
             }else{
                 ((MainActivity)getActivity()).detachFragment(loadingFragment);
-                ((MainActivity) getActivity()).makeSnackbar("Няма спирки в радиус от 200 метра");
+//                ((MainActivity) getActivity()).makeSnackbar("Няма спирки в радиус от 200 метра");
             }
         }
 

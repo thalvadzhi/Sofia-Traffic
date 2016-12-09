@@ -9,7 +9,11 @@ import java.util.regex.Pattern;
  * Created by thalv on 01-Jul-16.
  */
 public class Station implements Serializable{
-    private String name, code, latitude, longtitute, description;
+    private String name;
+    private String code;
+    private String latitude;
+    private String longtitute;
+    private String description;
 
     public Station(String name, String code, String latitude, String longtitute) {
         this.name = name;

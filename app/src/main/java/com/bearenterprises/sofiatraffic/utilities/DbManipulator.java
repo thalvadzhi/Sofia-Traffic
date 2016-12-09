@@ -5,7 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseLockedException;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
+
+import com.bearenterprises.sofiatraffic.MainActivity;
 
 import java.util.ArrayList;
 
@@ -19,7 +23,11 @@ public class DbManipulator {
 
     public DbManipulator(Context context){
         dbHelper = new DbHelper(context);
-        db = dbHelper.getWritableDatabase();
+        try {
+            db = dbHelper.getWritableDatabase();
+        }catch (SQLiteException e){
+            ((MainActivity)context).makeSnackbar("Информацията за спирките все още се обновява");
+        }
     }
 
 
@@ -49,8 +57,14 @@ public class DbManipulator {
       * @param values ArrayList of values to be inserted
      */
     public void insert(ArrayList<ContentValues> values){
-        for (ContentValues value : values){
-            insert(value);
+        try {
+            db.beginTransaction();
+            for (ContentValues value : values) {
+                insert(value);
+            }
+            db.setTransactionSuccessful();
+        }finally {
+            db.endTransaction();
         }
     }
 

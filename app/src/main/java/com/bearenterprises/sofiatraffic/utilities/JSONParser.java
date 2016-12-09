@@ -1,18 +1,54 @@
 package com.bearenterprises.sofiatraffic.utilities;
 
+import android.content.Context;
+
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.stations.Line;
+import com.bearenterprises.sofiatraffic.stations.Station;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
  * Created by thalv on 02-Jul-16.
  */
 public class JSONParser {
+
+    public static ArrayList<Station> getStationsFromFile(String fileName, Context context){
+        String source= null;
+        try {
+            source = Files.asCharSource(new File(context.getFilesDir(), fileName), Charsets.UTF_8).read();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return getStations(source);
+    }
+
+    public static ArrayList<Station> getStations(String json){
+        if(json == null){
+            return null;
+        }
+        ArrayList<Station> stations = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length();i++){
+                JSONObject stop = jsonArray.getJSONObject(i);
+                JSONArray coord = stop.getJSONArray("coordinates");
+                stations.add(new Station(stop.getString("stopName"),stop.getString("stopCode"), coord.getString(0), coord.getString(1)));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return stations;
+    }
 
     public static ArrayList<Line> getLines(String json){
         try {

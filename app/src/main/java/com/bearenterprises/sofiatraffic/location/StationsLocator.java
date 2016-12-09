@@ -2,9 +2,11 @@ package com.bearenterprises.sofiatraffic.location;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.location.Location;
 import android.util.Log;
 
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.stations.Station;
@@ -80,7 +82,13 @@ public class StationsLocator {
         }finally {
             dbManipulator.closeDb();
         }
-
+//        ArrayList<Station> everyStation;
+//        try {
+//            everyStation = ((MainActivity) this.context).getEveryStation();
+//        }catch(SQLiteDatabaseLockedException e){
+//            ((MainActivity) this.context).makeSnackbar("Информацията за спирките все още се обновява");
+//            return null;
+//        }
         return stations;
     }
 
@@ -88,7 +96,9 @@ public class StationsLocator {
         ArrayList<Station> closestStations = new ArrayList<>();
         ArrayList<Station> allStations = getAllStations();
         PriorityQueue<Station> priorityQueue = new PriorityQueue<>(allStations.size(), comparator);
-
+        if(allStations == null){
+            return null;
+        }
         for(Station st : allStations){
             if(st.getLatitude().equals("") || st.getLongtitute().equals("")){
                 continue;

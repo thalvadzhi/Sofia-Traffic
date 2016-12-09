@@ -86,39 +86,6 @@ import retrofit2.Response;
             }
         }
 
-        class TimeGetter extends Thread{
-            private Line line;
-            private ArrayList<Time> times;
-            private SofiaTransportApi sofiaTransportApi;
-            private String code;
-
-            public TimeGetter(Line line, SofiaTransportApi sofiaTransportApi, String code) {
-                this.line = line;
-                this.sofiaTransportApi = sofiaTransportApi;
-                this.code = code;
-            }
-
-            public ArrayList<Time> getTimes() {
-                return times;
-            }
-
-            public Line getLine(){
-                return line;
-            }
-
-            @Override
-            public void run() {
-                android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                Call<List<Time>> call = sofiaTransportApi.getTimes(code, Integer.toString(line.getId()));
-                try {
-                    this.times = (ArrayList<Time>)call.execute().body();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
         class SearchQuery extends AsyncTask<Void, Void, ArrayList<Line>>{
             private String code;
             private FragmentManager m;

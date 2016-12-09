@@ -3,6 +3,8 @@ package com.bearenterprises.sofiatraffic;
 import android.app.backup.BackupManager;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -291,15 +293,30 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         mGoogleApiClient.disconnect();
     }
 
-    public ArrayList<Station> getStationByCode(String code){
+    public ArrayList<Station> getStationByCode(String code) throws SQLiteDatabaseLockedException{
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
         String[] args = new String[]{code};
         return getStationsFromDatabase(query, args);
 
     }
 
-    public ArrayList<Station> getStationsFromDatabase(String query, String[] codes){
-        DbManipulator manipulator = new DbManipulator(this);
+    public ArrayList<Station> getEveryStation()throws SQLiteDatabaseLockedException{
+        String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME;
+        return getStationsFromDatabase(query, new String[]{});
+    }
+
+    public ArrayList<Station> getStationsFromDatabase(String query, String[] codes) throws SQLiteDatabaseLockedException{
+        DbManipulator manipulator=null;
+        try {
+            manipulator = new DbManipulator(this);
+        }catch (SQLiteDatabaseLockedException e){
+            if(manipulator != null){
+                manipulator.closeDb();
+            }
+            throw e;
+
+        }
+
         ArrayList<Station> stations = new ArrayList<>();
         try(Cursor c = manipulator.readRawQuery(query, codes)){
             if (c != null && c.getCount() > 0) {
@@ -316,7 +333,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
 
             stations.add(new Station(stationName, stationCode, lat, lon, description));
         }finally {
-            manipulator.closeDb();
+            if(manipulator != null){
+                manipulator.closeDb();
+
+            }
         }
         return stations;
     }

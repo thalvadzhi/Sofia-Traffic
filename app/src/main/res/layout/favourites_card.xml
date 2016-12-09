@@ -23,7 +23,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
 
-            android:padding="10dp"
+
             >
 
             <!--android:layout_marginLeft="10dp"-->
@@ -46,11 +46,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="60dp"
+                android:minHeight="30dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textAlignment="center"
             android:gravity="center"
             android:textAllCaps="true"
+                android:layout_centerVertical="true"
             android:id="@+id/text_view_favourite2"
                 android:layout_toRightOf="@+id/image_location2"
                 android:layout_toLeftOf="@+id/textViewFavoureCode"
@@ -67,7 +68,8 @@
                 android:textColor="@color/white"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:padding="5dp"/>
+                android:padding="5dp"
+                android:layout_marginRight="5dp"/>
                 <!--android:paddingLeft="10dp"/>-->
             <!--android:layout_centerVertical="true"-->
             <!--android:layout_alignParentRight="true"-->

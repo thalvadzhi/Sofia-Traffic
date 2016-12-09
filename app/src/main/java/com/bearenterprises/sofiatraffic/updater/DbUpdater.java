@@ -16,6 +16,7 @@ import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.DescriptionsParser;
 import com.bearenterprises.sofiatraffic.utilities.FileDownloader;
 import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.utilities.JSONParser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.XMLCoordinateParser;
 
@@ -80,7 +81,7 @@ public class DbUpdater extends AsyncTask{
     public void update() throws Exception{
         ExceptionNotifier notifier = new ExceptionNotifier();
         //unfortunately FileDownloader is a thread - so no exceptions can be carried to caller thread
-        FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL, Constants.XML_COORDINATE_FILE, notifier);
+        FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, Constants.JSON_COORDINATE_FILE, notifier);
         downloader.run();
 
         FileDownloader downloaderDescriptions = new FileDownloader(this.context, Constants.DESCRIPTIONS_DOWNLOAD_URL, Constants.DESCRIPTIONS_FILE_NAME, notifier);
@@ -93,18 +94,7 @@ public class DbUpdater extends AsyncTask{
         Map<String, String> descriptions = DescriptionsParser.parse(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
         ArrayList<Station> stations = null;
-        try {
-            stations = XMLCoordinateParser.parse(this.context, Constants.XML_COORDINATE_FILE);
-        } catch (ParserConfigurationException e) {
-            Log.d("Parse error", "Couldn't parse coordinates file", e);
-            throw new Exception(e);
-        } catch (SAXException e) {
-            Log.d("XML read error", "Couldn't read xml", e);
-            throw new Exception(e);
-        } catch (IOException e) {
-            Log.d("File doesn't exist", "XML Coordinates file doesn't exist", e);
-            throw new Exception(e);
-        }
+        stations = JSONParser.getStationsFromFile(Constants.JSON_COORDINATE_FILE, this.context);
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         for (Station station : stations) {
             ContentValues v = new ContentValues();

@@ -4,6 +4,7 @@ package com.bearenterprises.sofiatraffic.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -20,6 +21,8 @@ import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -104,7 +107,17 @@ public class StationNameFragment extends Fragment {
     }
 
     private Station getStationName(String code){
-        return ((MainActivity)getContext()).getStationByCode(code).get(0);
+        ArrayList<Station> stationByCode = null;
+        try {
+            stationByCode = ((MainActivity) getContext()).getStationByCode(code);
+        }catch (SQLiteDatabaseLockedException e){
+            ((MainActivity) getContext()).makeSnackbar("Информацията за спирките все още се обновява, моля изчакайте.");
+        }
+        if(stationByCode != null && stationByCode.size() >= 1){
+            return stationByCode.get(0);
+        }else{
+            return null;
+        }
     }
 
 

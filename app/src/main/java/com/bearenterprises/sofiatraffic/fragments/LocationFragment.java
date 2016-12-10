@@ -27,6 +27,7 @@ import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.google.android.gms.location.places.Place;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +51,7 @@ public class LocationFragment extends Fragment {
     private int currentlySelectedType;
     private Location location;
     private LoadingFragment loadingFragment;
+    private PlacesFragment placesFragment;
 //    private ArrayList<ArrayList<Station>> routes;
     public LocationFragment() {
         // Required empty public constructor
@@ -87,6 +89,8 @@ public class LocationFragment extends Fragment {
         lineNamesAdapter = new LineNamesAdapter(getContext(), lines);
         lineId.setAdapter(lineNamesAdapter);
 
+        placesFragment = new PlacesFragment();
+
 
         transportationType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -105,8 +109,8 @@ public class LocationFragment extends Fragment {
                     StationGetter locationGetter = new StationGetter((MainActivity) getActivity());
                     locationGetter.execute();
                 }else if(selectionIdx == 5){
-                    PlacesFragment pl = new PlacesFragment();
-                    ((MainActivity)getActivity()).changeFragmentNotSupport(R.id.location_container, pl);
+
+                    ((MainActivity)getActivity()).changeFragment(R.id.location_container, placesFragment);
                 }else{
                     lineId.setEnabled(false);
                 }
@@ -187,6 +191,12 @@ public class LocationFragment extends Fragment {
 
             ArrayList<ArrayList<Station>> stations = new ArrayList<>();
             String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE code=?";
+            //TODO fix when result is null
+            if (result == null){
+                manipulator.closeDb();
+                ((MainActivity)getActivity()).detachFragment(loadingFragment);
+                return null;
+            }
             for(Route route : result.getRoutes()){
                 ArrayList<Station> routeStations = new ArrayList<>();
                 for (Stop stop : route.getStops()){

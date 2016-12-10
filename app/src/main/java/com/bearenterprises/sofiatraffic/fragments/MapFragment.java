@@ -106,11 +106,14 @@ public class MapFragment extends Fragment {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String code = marker.getSnippet();
+                if(code.equals("")){
+                    return;
+                }
                 StationTimeShow show = (StationTimeShow) getActivity();
                 show.showTimes(code);
             }
         });
-        map.clear();
+
         if(mStations == null && location == null){
             //move camera to serdika
             //42.697842, 23.321145

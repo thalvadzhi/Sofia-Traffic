@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.CoordinatorLayout;
-import android.util.Log;
-
-import static com.bearenterprises.sofiatraffic.utilities.Utility.toastOnUiThread;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
@@ -18,17 +15,12 @@ import com.bearenterprises.sofiatraffic.utilities.FileDownloader;
 import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.JSONParser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
-import com.bearenterprises.sofiatraffic.utilities.XMLCoordinateParser;
 
-import org.xml.sax.SAXException;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created by thalv on 08-Jul-16.
@@ -58,10 +50,12 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
             try {
                 publishProgress(Constants.SHOW_DIALOG);
-                update();
-                editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
-                editor.commit();
-                Utility.makeSnackbar("Информацията за спирките беше обновена!", coordinatorLayout);
+                boolean wasUpdated = update();
+                if(wasUpdated) {
+                    editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
+                    editor.commit();
+                    Utility.makeSnackbar("Информацията за спирките беше обновена!", coordinatorLayout);
+                }
             } catch (Exception e) {
                 Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
             }
@@ -93,14 +87,27 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
     }
 
 
-    public void update() throws Exception{
+    public boolean update() throws Exception{
         ExceptionNotifier notifier = new ExceptionNotifier();
         //unfortunately FileDownloader is a thread - so no exceptions can be carried to caller thread
-        FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, Constants.JSON_COORDINATE_FILE, notifier);
-        downloader.run();
+        File coordinates = new File(context.getFilesDir() + File.pathSeparator + Constants.JSON_COORDINATE_FILE);
+        if(coordinates.exists()){
+            File new_coordinates = new File(context.getFilesDir() + File.pathSeparator + Constants.JSON_COORDINATE_FILE_NEW);
+            FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, new_coordinates, notifier);
+            downloader.download();
+            if(FileUtils.contentEquals(coordinates, new_coordinates)){
+                return false;
+            }else{
+                coordinates.delete();
+                new_coordinates.renameTo(new File(context.getFilesDir() + File.pathSeparator + Constants.JSON_COORDINATE_FILE));
+            }
+        }else{
+            FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, coordinates, notifier);
+            downloader.download();
+        }
 
         FileDownloader downloaderDescriptions = new FileDownloader(this.context, Constants.DESCRIPTIONS_DOWNLOAD_URL, Constants.DESCRIPTIONS_FILE_NAME, notifier);
-        downloaderDescriptions.run();
+        downloaderDescriptions.download();
 
         if (fileDownloaderExceptionHappened == true){
             ((MainActivity)context).makeSnackbar("Няма връзка с интернет :(");
@@ -128,13 +135,14 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         manipulator.deleteAll();
         manipulator.insert(stationInformation);
         manipulator.closeDb();
+        return true;
 
     }
 
     private boolean shouldUpdate(long lastUpdate){
 //        return true;
         long delta = System.currentTimeMillis() - lastUpdate;
-        return (delta > Constants.WEEK_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+        return (delta > Constants.DAY_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
     }
 
 }

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -139,31 +140,9 @@ public class MapFragment extends Fragment {
                     Marker m = map.addMarker(opt);
                     markers.add(m);
                     if(closestStations != null){
-
-                        for(Station station : closestStations){
-                            String latitude = station.getLatitude();
-                            String longtitude = station.getLongtitute();
-
-                            if(!latitude.equals("") && !longtitude.equals("")){
-                                double lat = Float.parseFloat(latitude);
-                                double lon = Float.parseFloat(longtitude);
-                                MarkerOptions options = new MarkerOptions();
-                                options.position(new LatLng(lat, lon));
-                                options.title(station.getName());
-                                options.snippet(station.getCode());
-                                Marker marker = map.addMarker(options);
-                                markers.add(marker);
-                            }
-
-                        }
-                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                        for (Marker marker : markers){
-                            builder.include(marker.getPosition());
-                        }
-                        LatLngBounds bounds = builder.build();
-                        int padding = 0;
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                        map.moveCamera(cu);
+                        setMarkers(closestStations, markers);
+                        CameraUpdate cu = getCameraUpdate(markers);
+                        map.animateCamera(cu);
                     }else{
                         ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това мяст");
                     }
@@ -173,31 +152,10 @@ public class MapFragment extends Fragment {
         }else{
 
             ArrayList<Marker> markers = new ArrayList<>();
-            for(Station station : mStations){
-                String latitude = station.getLatitude();
-                String longtitude = station.getLongtitute();
-
-                if(!latitude.equals("") && !longtitude.equals("")){
-                    double lat = Float.parseFloat(latitude);
-                    double lon = Float.parseFloat(longtitude);
-                    MarkerOptions options = new MarkerOptions();
-                    options.position(new LatLng(lat, lon));
-                    options.title(station.getName());
-                    options.snippet(station.getCode());
-                    Marker marker = map.addMarker(options);
-                    markers.add(marker);
-                }
-
-            }
+            setMarkers(mStations, markers);
             CameraUpdate cu;
             if(this.location == null){
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Marker marker : markers){
-                    builder.include(marker.getPosition());
-                }
-                LatLngBounds bounds = builder.build();
-                int padding = 0;
-                cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                cu = getCameraUpdate(markers);
             }else{
                 float zoomLevel = 16.0f; //This goes up to 21
                 LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
@@ -207,6 +165,36 @@ public class MapFragment extends Fragment {
         }
 
 
+    }
+
+    @NonNull
+    private CameraUpdate getCameraUpdate(ArrayList<Marker> markers) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers){
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+        int padding = 0;
+        return CameraUpdateFactory.newLatLngBounds(bounds, padding);
+    }
+
+    private void setMarkers(ArrayList<Station> closestStations, ArrayList<Marker> markers) {
+        for(Station station : closestStations){
+            String latitude = station.getLatitude();
+            String longtitude = station.getLongtitute();
+
+            if(!latitude.equals("") && !longtitude.equals("")){
+                double lat = Float.parseFloat(latitude);
+                double lon = Float.parseFloat(longtitude);
+                MarkerOptions options = new MarkerOptions();
+                options.position(new LatLng(lat, lon));
+                options.title(station.getName());
+                options.snippet(station.getCode());
+                Marker marker = map.addMarker(options);
+                markers.add(marker);
+            }
+
+        }
     }
 
     @Override

@@ -25,6 +25,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -135,6 +136,7 @@ public class MapFragment extends Fragment {
                     ArrayList<Station> closestStations = locator.getClosestStations();
                     ArrayList<Marker> markers = new ArrayList<>();
                     MarkerOptions opt = new MarkerOptions();
+                    opt.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
                     opt.title("ОКОЛО МЕН");
                     opt.position(latLng);
                     Marker m = map.addMarker(opt);
@@ -190,6 +192,9 @@ public class MapFragment extends Fragment {
                 options.position(new LatLng(lat, lon));
                 options.title(station.getName());
                 options.snippet(station.getCode());
+                if(station.getCode().equals("")){
+                    options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                }
                 Marker marker = map.addMarker(options);
                 markers.add(marker);
             }

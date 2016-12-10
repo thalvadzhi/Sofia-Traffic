@@ -90,16 +90,17 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
     public boolean update() throws Exception{
         ExceptionNotifier notifier = new ExceptionNotifier();
         //unfortunately FileDownloader is a thread - so no exceptions can be carried to caller thread
-        File coordinates = new File(context.getFilesDir() + File.pathSeparator + Constants.JSON_COORDINATE_FILE);
+        File coordinates = new File(context.getFilesDir() + File.separator + Constants.JSON_COORDINATE_FILE);
         if(coordinates.exists()){
-            File new_coordinates = new File(context.getFilesDir() + File.pathSeparator + Constants.JSON_COORDINATE_FILE_NEW);
+            File new_coordinates = new File(context.getFilesDir() + File.separator + Constants.JSON_COORDINATE_FILE_NEW);
             FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, new_coordinates, notifier);
             downloader.download();
             if(FileUtils.contentEquals(coordinates, new_coordinates)){
+                new_coordinates.delete();
                 return false;
             }else{
                 coordinates.delete();
-                new_coordinates.renameTo(new File(context.getFilesDir() + File.pathSeparator + Constants.JSON_COORDINATE_FILE));
+                new_coordinates.renameTo(new File(context.getFilesDir() + File.separator + Constants.JSON_COORDINATE_FILE));
             }
         }else{
             FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, coordinates, notifier);
@@ -119,6 +120,9 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         ArrayList<Station> stations = null;
         stations = JSONParser.getStationsFromFile(Constants.JSON_COORDINATE_FILE, this.context);
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
+        if(stations == null){
+            throw new Exception("stations array is null");
+        }
         for (Station station : stations) {
             ContentValues v = new ContentValues();
             String description = descriptions.get(station.getCode());

@@ -114,12 +114,14 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             public void onPageSelected(int position) {
                 final InputMethodManager imm = (InputMethodManager)getSystemService(
                         Context.INPUT_METHOD_SERVICE);
-                if(position != Constants.SECTION_SEARCH_IDX){
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                }else{
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                if(position != Constants.SECTION_SEARCH_IDX) {
+                    if (getCurrentFocus() != null) {
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    }
                 }
+//                }else{
+//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+//                }
 
             }
 

@@ -102,7 +102,8 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
             @Override
             public void onClick(View view) {
                 VehicleTimes vehicleTimes = times.get(position);
-                ((MainActivity)context).showRoute(vehicleTimes.getType(), Integer.toString(vehicleTimes.getLine().getId()));
+
+                ((MainActivity)context).showRoute(Integer.toString(vehicleTimes.getLine().getType()), Integer.toString(vehicleTimes.getLine().getId()));
             }
         }
 

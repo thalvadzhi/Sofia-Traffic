@@ -165,6 +165,7 @@ public class LocationFragment extends Fragment {
             Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
             try {
                 Routes route = routes.execute().body();
+
                 return route;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -222,21 +223,33 @@ public class LocationFragment extends Fragment {
 
             }
             manipulator.closeDb();
-            String type = null;
-            switch (currentlySelectedType){
+            int type = result.getLine().getType();
+            String typeString = null;
+            switch (type){
                 case 0:
-                    type = Constants.TRAM;
+                    typeString = Constants.TRAM;
                     break;
                 case 1:
-                    type = Constants.BUS;
+                    typeString = Constants.BUS;
                     break;
                 case 2:
-                    type = Constants.TROLLEY;
+                    typeString = Constants.TROLLEY;
                     break;
-
             }
+//            switch (currentlySelectedType){
+//                case 0:
+//                    type = Constants.TRAM;
+//                    break;
+//                case 1:
+//                    type = Constants.BUS;
+//                    break;
+//                case 2:
+//                    type = Constants.TROLLEY;
+//                    break;
+//
+//            }
             if (stations.size() != 0){
-                RoutesFragment f = RoutesFragment.newInstance(stations, type);
+                RoutesFragment f = RoutesFragment.newInstance(stations, typeString);
                 ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
             }else{
                 ((MainActivity)getActivity()).detachFragment(loadingFragment);

@@ -1,9 +1,11 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
+import java.io.Serializable;
+
 /**
  * Created by thalv on 29-Aug-16.
  */
-public class Line {
+public class Line implements Serializable{
     private int id;
     private int type;
     private String name;

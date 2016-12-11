@@ -1,10 +1,11 @@
 
 package com.bearenterprises.sofiatraffic.restClient.second;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Line {
+public class Line implements Serializable {
 
     private Integer type;
     private Integer id;

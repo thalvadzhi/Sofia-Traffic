@@ -113,7 +113,13 @@ public class MapFragment extends Fragment {
                     @Override
                     public void onLocationUpdated(Location location) {
                         ArrayList<Station> stations = getmStationsAround(location);
-                        showOnMap(stations);
+                        if (stations != null){
+                            if(stations.size() != 0){
+                                showOnMap(stations);
+
+                            }
+
+                        }
 
                     }
                 });

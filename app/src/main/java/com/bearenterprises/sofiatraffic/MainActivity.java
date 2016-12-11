@@ -2,20 +2,16 @@ package com.bearenterprises.sofiatraffic;
 
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 
 import android.support.v4.app.Fragment;
@@ -26,24 +22,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.fragments.FavouritesFragment;
-import com.bearenterprises.sofiatraffic.fragments.LoadingFragment;
 import com.bearenterprises.sofiatraffic.fragments.LocationFragment;
-import com.bearenterprises.sofiatraffic.fragments.LocationResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.MapFragment;
+import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.ResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.SearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.GPSTracker;
 import com.bearenterprises.sofiatraffic.restClient.Line;
-import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.Station;
-import com.bearenterprises.sofiatraffic.stations.VehicleTimes;
 import com.bearenterprises.sofiatraffic.updater.DbUpdater;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
@@ -55,16 +48,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback {
@@ -80,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     private final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 500;
     private FavouritesFragment favouritesFragment;
+    private MapSearchFragment mapSearchFragment;
     private SearchFragment searchFragment;
     private LocationFragment locationFragment;
     private ProgressDialog dialog;
@@ -94,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             favouritesFragment = FavouritesFragment.newInstance();
             searchFragment = SearchFragment.newInstance();
             locationFragment = LocationFragment.newInstance();
+            mapSearchFragment = new MapSearchFragment();
         }
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         dialog = new ProgressDialog(this);
@@ -116,7 +103,31 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(4);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                final InputMethodManager imm = (InputMethodManager)getSystemService(
+                        Context.INPUT_METHOD_SERVICE);
+                if(position != Constants.SECTION_SEARCH_IDX){
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                }else{
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -218,6 +229,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         favouritesFragment.removeFavourite(code);
     }
 
+    public void showRoute(String trId, String lineId){
+        mViewPager.setCurrentItem(Constants.SECTION_LINES_IDX);
+        locationFragment.showRoute(trId, lineId);
+    }
 
     public void changeFragment(int id, Fragment fragment){
         getSupportFragmentManager().
@@ -364,9 +379,8 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
     public void showOnMap(ArrayList<Station> stations){
-        setPage(Constants.SECTION_MAP_IDX);
-        MapFragment f = MapFragment.newInstance(stations, null);
-        changeFragmentAddBackStack(R.id.location_container, f);
+        setPage(Constants.SECTION_MAP_SEARCH_IDX);
+        mapSearchFragment.getMapFragment().showOnMap(stations);
     }
 
     public void showOnMap(Station st){
@@ -404,14 +418,16 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 return searchFragment;
             }else if(position == Constants.SECTION_FAVOURITES_IDX){
                 return favouritesFragment;
-            }else if(position == Constants.SECTION_MAP_IDX){
+            }else if(position == Constants.SECTION_LINES_IDX){
                 return locationFragment;
+            }else if(position == Constants.SECTION_MAP_SEARCH_IDX){
+                return mapSearchFragment;
             }
             return searchFragment;
         }
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -422,7 +438,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 case 1:
                     return Constants.SECTION_FAVOURITES;
                 case 2:
-                    return Constants.SECTION_MAP;
+                    return Constants.SECTION_LINES;
+                case 3:
+                    return Constants.SECTION_MAP_SEARCH;
             }
             return null;
         }
@@ -440,9 +458,12 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             }else if(position == Constants.SECTION_FAVOURITES_IDX){
                 favouritesFragment = (FavouritesFragment) super.instantiateItem(container, position);
                 return favouritesFragment;
-            }else {
+            }else if (position == Constants.SECTION_LINES_IDX) {
                 locationFragment = (LocationFragment) super.instantiateItem(container, position);
                 return locationFragment;
+            }else {
+                mapSearchFragment = (MapSearchFragment) super.instantiateItem(container, position);
+                return mapSearchFragment;
             }
         }
     }

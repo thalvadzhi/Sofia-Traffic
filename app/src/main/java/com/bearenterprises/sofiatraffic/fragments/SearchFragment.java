@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -39,7 +40,7 @@ import retrofit2.Response;
  */
 
     public class SearchFragment extends Fragment {
-
+        private  EditText t;
         public SearchFragment() {
         }
 
@@ -51,6 +52,11 @@ import retrofit2.Response;
             return fragment;
         }
 
+        public void requestFocusOnEditText(){
+            if(t.requestFocus()) {
+                getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+        }
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -58,7 +64,15 @@ import retrofit2.Response;
             coordinatorLayout = ((MainActivity)getActivity()).getCoordinatorLayout();
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             Button searchButton = (Button) rootView.findViewById(R.id.button_search);
-            final EditText t = (EditText) rootView.findViewById(R.id.station_code);
+            t = (EditText) rootView.findViewById(R.id.station_code);
+            t.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    }
+                }
+            });
             t.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
@@ -138,7 +152,7 @@ import retrofit2.Response;
 
                 final ArrayList<VehicleTimes> vehicleTimes = new ArrayList<>();
                 for(Line line : station.getLines()){
-                    vehicleTimes.add(new VehicleTimes(line.getName(), Integer.toString(line.getType())));
+                    vehicleTimes.add(new VehicleTimes(line, Integer.toString(line.getType())));
                 }
                 resultsFragment = ResultsFragment.newInstance(vehicleTimes);
                 ((MainActivity)getActivity()).changeFragment(R.id.result_container, resultsFragment);

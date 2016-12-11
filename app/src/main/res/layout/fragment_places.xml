@@ -10,23 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/places_search_container"
-                android:layout_toLeftOf="@+id/set_place_button"/>
-            <ImageButton
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/location"
-                android:id="@+id/set_place_button"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"
                 />
-        </RelativeLayout>
     </android.support.v7.widget.CardView>
 
 

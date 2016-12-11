@@ -33,6 +33,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
@@ -103,12 +106,26 @@ public class MapFragment extends Fragment {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                SmartLocation.with(getContext()).location().oneFix().start(new OnLocationUpdatedListener() {
+                    @Override
+                    public void onLocationUpdated(Location location) {
+                        ArrayList<Station> stations = getmStationsAround(location);
+                        showOnMap(stations);
+
+                    }
+                });
+                return false;
+            }
+        });
         map.setMyLocationEnabled(true);
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
                 String code = marker.getSnippet();
-                if(code.equals("")){
+                if(code == null){
                     return;
                 }
                 StationTimeShow show = (StationTimeShow) getActivity();
@@ -116,57 +133,76 @@ public class MapFragment extends Fragment {
             }
         });
 
-        if(mStations == null && location == null){
-            //move camera to serdika
-            //42.697842, 23.321145
-            float zoomLevel = 13.0f; //This goes up to 21
-            //coordinates of Serdika which seems like a Sofia-enough place
-            LatLng currentLocation = new LatLng(42.697842, 23.321145);
-            CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
-            map.moveCamera(cu);
-            map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        float zoomLevel = 13.0f; //This goes up to 21
+        //coordinates of Serdika which seems like a Sofia-enough place
+        LatLng currentLocation = new LatLng(42.697842, 23.321145);
+        CameraUpdate cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
+        map.moveCamera(cu);
 
-                @Override
-                public void onMapClick(LatLng latLng) {
-                    map.clear();
-                    Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
-                    loc.setLatitude(latLng.latitude);
-                    loc.setLongitude(latLng.longitude);
-                    StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
-                    ArrayList<Station> closestStations = locator.getClosestStations();
-                    ArrayList<Marker> markers = new ArrayList<>();
-                    MarkerOptions opt = new MarkerOptions();
-                    opt.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
-                    opt.title("ОКОЛО МЕН");
-                    opt.position(latLng);
-                    Marker m = map.addMarker(opt);
-                    markers.add(m);
-                    if(closestStations != null){
-                        setMarkers(closestStations, markers);
-                        CameraUpdate cu = getCameraUpdate(markers);
-                        map.animateCamera(cu);
-                    }else{
-                        ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това мяст");
-                    }
+        map.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+            @Override
+            public void onMapClick(LatLng latLng) {
+                map.clear();
+                Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
+                loc.setLatitude(latLng.latitude);
+                loc.setLongitude(latLng.longitude);
+                StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
+                ArrayList<Station> closestStations = locator.getClosestStations();
+                ArrayList<Marker> markers = new ArrayList<>();
+                MarkerOptions opt = new MarkerOptions();
+                opt.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                opt.title("ОКОЛО МЕН");
+                opt.position(latLng);
+                Marker m = map.addMarker(opt);
+                markers.add(m);
+                if(closestStations != null){
+                    setMarkers(closestStations, markers);
+                    CameraUpdate cu = getCameraUpdate(markers);
+                    map.animateCamera(cu);
+                }else{
+                    ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това мяст");
                 }
-            });
-
-        }else{
-
-            ArrayList<Marker> markers = new ArrayList<>();
-            setMarkers(mStations, markers);
-            CameraUpdate cu;
-            if(this.location == null){
-                cu = getCameraUpdate(markers);
-            }else{
-                float zoomLevel = 16.0f; //This goes up to 21
-                LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
-                cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
             }
-            map.moveCamera(cu);
+        });
+//
+//        if(mStations == null && location == null){
+//            //move camera to serdika
+//            //42.697842, 23.321145
+//
+//
+//
+//        }else{
+//
+//            ArrayList<Marker> markers = new ArrayList<>();
+//            setMarkers(mStations, markers);
+//            CameraUpdate cu;
+//            if(this.location == null){
+//                cu = getCameraUpdate(markers);
+//            }else{
+//                float zoomLevel = 16.0f; //This goes up to 21
+//                LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
+//                cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
+//            }
+//            map.moveCamera(cu);
+//        }
+//
+
+    }
+
+    private ArrayList<Station> getmStationsAround(Location location){
+        StationsLocator locator = new StationsLocator(location, 10, 1000, getContext());
+        ArrayList<Station> closestStations = locator.getClosestStations();
+        return closestStations;
+    }
+
+    public void showOnMap(ArrayList<Station> stations){
+        if(map != null){
+            map.clear();
+            ArrayList<Marker> markers = new ArrayList<>();
+            setMarkers(stations, markers);
+            map.animateCamera(getCameraUpdate(markers));
         }
-
-
     }
 
     @NonNull

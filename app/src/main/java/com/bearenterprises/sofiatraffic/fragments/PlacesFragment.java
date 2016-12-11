@@ -39,7 +39,6 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
         View v = inflater.inflate(R.layout.fragment_places, container, false);
         placeAutocompleteFragment = new SupportPlaceAutocompleteFragment();
         ((MainActivity)getActivity()).changeFragment(R.id.places_search_container, placeAutocompleteFragment);
-        button = (ImageButton) v.findViewById(R.id.set_place_button);
         placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -51,9 +50,7 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
                 ArrayList<Station> closestStations = locator.getClosestStations();
                 closestStations.add(new Station((String)place.getName(), "", Double.toString(latLng.latitude), Double.toString(latLng.longitude)));
                 if(closestStations.size() != 0){
-                    MapFragment f = MapFragment.newInstance(closestStations, null);
-//                    MapFragment f = MapFragment.newInstance(null, null);
-                    ((MainActivity)getActivity()).changeFragmentAddBackStack(R.id.location_container, f);
+                    ((MainActivity)getActivity()).showOnMap(closestStations);
                 }else{
                     ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това място");
                 }
@@ -62,13 +59,6 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
             @Override
             public void onError(Status status) {
 
-            }
-        });
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MapFragment f = MapFragment.newInstance(null, null);
-                ((MainActivity)getActivity()).changeFragmentAddBackStack(R.id.location_container, f);
             }
         });
         return v;

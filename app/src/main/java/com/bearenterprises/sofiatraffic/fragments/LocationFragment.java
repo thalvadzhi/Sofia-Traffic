@@ -64,7 +64,7 @@ public class LocationFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тролей", "Около мен", "Адрес"));
+        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тролей"));
     }
 
     @Override
@@ -146,6 +146,11 @@ public class LocationFragment extends Fragment {
 
 
         return v;
+    }
+
+    public void showRoute(String transportationTypeId, String lineId){
+        RouteGetter getter = new RouteGetter();
+        getter.execute(transportationTypeId, lineId);
     }
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
@@ -243,25 +248,7 @@ public class LocationFragment extends Fragment {
 
     }
 
-    private class MapShower extends Thread{
-        private ArrayList<Station> stations;
-        private MainActivity activity;
-        public MapShower(ArrayList<Station> stations, MainActivity activity){
-            this.stations = stations;
-            this.activity = activity;
-        }
 
-        @Override
-        public void run(){
-            MapFragment f = MapFragment.newInstance(this.stations, location);
-            this.activity.getSupportFragmentManager().
-                    beginTransaction().
-                    addToBackStack("MapFragment").
-                    setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out).
-                    replace(R.id.location_container, f).
-                    commit();
-        }
-    }
 
     private class LineGetter extends AsyncTask<Integer, Integer, List<Transport>>{
 

@@ -194,8 +194,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
     }
 
     private void showOnMap(ArrayList<Station> stations){
-        MapFragment f = MapFragment.newInstance(stations, null);
-        ((MainActivity)this.context).changeFragmentAddBackStack(R.id.location_container, f);
+        ((MainActivity)context).showOnMap(stations);
     }
 
     @Override

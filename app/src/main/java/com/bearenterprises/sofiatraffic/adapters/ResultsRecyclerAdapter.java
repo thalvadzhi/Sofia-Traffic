@@ -15,12 +15,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.stations.VehicleTimes;
 
 import java.util.ArrayList;
-
-import static com.bearenterprises.sofiatraffic.R.id.times;
 
 /**
  * Created by thalv on 06-Dec-16.
@@ -41,19 +40,18 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
     public ResultsRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.results_card_view, parent, false);
-        Log.i("on create view holder", "No construct");
         return new ResultsRecyclerAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.i("on Bind", "No bind");
+        holder.setOnClickListeners(position);
         VehicleTimes vt = times.get(position);
-        holder.stationName.setText(vt.getLine());
+        holder.stationName.setText(vt.getLine().getName());
         if(vt.getTimes() != null){
 
             holder.progressBar.setVisibility(View.GONE);
-            holder.times.setText(vt.getTimes());
+            holder.vTimes.setText(vt.getTimes());
         }
 
         switch(vt.getType()){
@@ -83,17 +81,36 @@ public class ResultsRecyclerAdapter extends RecyclerView.Adapter<ResultsRecycler
     public class ViewHolder extends RecyclerView.ViewHolder {
         private Button button;
         private TextView stationName;
-        private TextView times;
+        private TextView vTimes;
         private ImageView imageView;
         private TextView bg;
         private ProgressBar progressBar;
         public ViewHolder(View itemView) {
             super(itemView);
             this.stationName = (TextView) itemView.findViewById(R.id.textView_card_station_name);
-            this.times = (TextView) itemView.findViewById(R.id.textView_card_times);
+            this.vTimes = (TextView) itemView.findViewById(R.id.textView_card_times);
             this.imageView = (ImageView) itemView.findViewById(R.id.imageView_transportation_type);
             this.bg = (TextView)itemView.findViewById(R.id.background);
             this.progressBar = (ProgressBar)itemView.findViewById(R.id.progressBarSingleLine);
+        }
+
+        private class RouteListener implements View.OnClickListener{
+            private int position;
+            public RouteListener(int position){
+                this.position = position;
+            }
+            @Override
+            public void onClick(View view) {
+                VehicleTimes vehicleTimes = times.get(position);
+                ((MainActivity)context).showRoute(vehicleTimes.getType(), Integer.toString(vehicleTimes.getLine().getId()));
+            }
+        }
+
+        public void setOnClickListeners(int position){
+            RouteListener listener = new RouteListener(position);
+            stationName.setOnClickListener(listener);
+            imageView.setOnClickListener(listener);
+            bg.setOnClickListener(listener);
         }
     }
 }

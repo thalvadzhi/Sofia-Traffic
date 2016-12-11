@@ -80,7 +80,7 @@ public class ResultsAdapter extends BaseAdapter {
 
 
         VehicleTimes vt = getItem(position);
-        holder.stationName.setText(vt.getLine());
+        holder.stationName.setText(vt.getLine().getName());
         if(vt.getTimes() != null){
 
             holder.progressBar.setVisibility(View.GONE);

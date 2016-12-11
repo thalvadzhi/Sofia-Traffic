@@ -53,7 +53,7 @@ public class ResultsFragment extends Fragment {
             int idx = 0;
             if(times != null){
                 for(VehicleTimes vt : vehicleTimes){
-                    if(vt.getLine().equals(line.getName())){
+                    if(vt.getLine().getName().equals(line.getName())){
                         vt.setVehicleTimes(times);
                         this.resultsRecyclerAdapter.notifyItemChanged(idx);
                     }
@@ -63,7 +63,7 @@ public class ResultsFragment extends Fragment {
                 Iterator<VehicleTimes> i = vehicleTimes.iterator();
                 while (i.hasNext()) {
                     VehicleTimes vt = i.next();
-                    if (vt.getLine().equals(line.getName())) {
+                    if (vt.getLine().getName().equals(line.getName())) {
                         i.remove();
                         this.resultsRecyclerAdapter.notifyItemRemoved(idx);
                     }

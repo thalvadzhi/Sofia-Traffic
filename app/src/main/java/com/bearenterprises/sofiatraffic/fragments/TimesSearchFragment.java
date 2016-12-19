@@ -6,6 +6,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,10 +17,13 @@ import android.widget.EditText;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
+import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,7 +114,18 @@ public class TimesSearchFragment extends Fragment {
 
     private Station getStation(String code, SofiaTransportApi sofiaTransportApi) throws IOException {
         Call<Station> call = sofiaTransportApi.getStation(code);
-        return call.execute().body();
+        Response<Station> response = call.execute();
+        if(!response.isSuccessful()){
+            ApiError error = ParseApiError.parseError(response);
+            Log.i("Error", error.getCode());
+            if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
+                ((MainActivity)getActivity()).removeRegistration();
+                call = sofiaTransportApi.getStation(code);
+                response = call.execute();
+            }
+
+        }
+        return response.body();
     }
 
     public void showStationTimes(String code){

@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
+import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Route;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
@@ -25,6 +27,7 @@ import com.bearenterprises.sofiatraffic.restClient.second.Routes;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Response;
 
 public class LinesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -271,9 +275,18 @@ public class LinesFragment extends Fragment {
             SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
             Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             try {
-                List<Line> transports = lines.execute().body();
+                Response<List<Line>> response = lines.execute();
+                if(!response.isSuccessful()){
+                    ApiError error = ParseApiError.parseError(response);
+                    if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
+                        ((MainActivity)getActivity()).removeRegistration();
+                        lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
+                        response = lines.execute();
+                    }
 
-                return transports;
+                }
+
+                return response.body();
 
             } catch (IOException e) {
                 e.printStackTrace();

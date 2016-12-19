@@ -125,6 +125,17 @@ public class MapFragment extends Fragment {
                 return false;
             }
         });
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Stop stop = (Stop) marker.getTag();
+                if(stop != null){
+                    ((MainActivity)getActivity()).showSlideUpPanelWithInfo(stop);
+                }
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                return true;
+            }
+        });
         map.setMyLocationEnabled(true);
         map.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
@@ -149,6 +160,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapClick(LatLng latLng) {
                 map.clear();
+                ((MainActivity)getActivity()).hideSlideUpPanel();
                 Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
@@ -208,6 +220,7 @@ public class MapFragment extends Fragment {
                 double lat = Float.parseFloat(latitude);
                 double lon = Float.parseFloat(longtitude);
                 MarkerOptions options = new MarkerOptions();
+
                 options.position(new LatLng(lat, lon));
                 options.title(station.getName());
                 if(station.getCode().equals(-1)){
@@ -216,6 +229,7 @@ public class MapFragment extends Fragment {
                     options.snippet(Integer.toString(station.getCode()));
                 }
                 Marker marker = map.addMarker(options);
+                marker.setTag(station);
                 markers.add(marker);
             }
 

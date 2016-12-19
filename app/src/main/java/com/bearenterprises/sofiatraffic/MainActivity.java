@@ -209,6 +209,15 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         dialog.show();
     }
 
+    public void removeRegistration(){
+        SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREFERENCES_REGISTRATION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.remove(Constants.REGISTRATION);
+        editor.commit();
+        checkRegistration();
+        GenerateClient.setRegistration(registration);
+    }
+
     private void checkRegistration(){
         SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREFERENCES_REGISTRATION, Context.MODE_PRIVATE);
         String registrationString = sp.getString(Constants.REGISTRATION, Constants.SHARED_PREFERENCES_DEFAULT_REGISTRATION);
@@ -254,7 +263,17 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         mSectionsPagerAdapter.notifyDataSetChanged();
     }
 
+    public void showSlideUpPanelWithInfo(Stop stop){
+        mapSearchFragment.showMoreInfoInSlideUp(stop);
+    }
 
+    public void hideSlideUpPanel(){
+        mapSearchFragment.hideSlideUpPanel();
+    }
+
+    public void collapseSlideUpPanel(){
+        mapSearchFragment.collapseSlideUpPanel();
+    }
 
     public void addFavourite(Stop st){
         favouritesFragment.addFavourite(st);
@@ -415,6 +434,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
     public void showOnMap(ArrayList<Stop> stations){
+        hideSlideUpPanel();
         setPage(Constants.SECTION_MAP_SEARCH_IDX);
         mapSearchFragment.getMapFragment().showOnMap(stations);
     }

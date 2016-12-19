@@ -38,7 +38,7 @@ public class GenerateClient {
                     requestBuilder
                             .removeHeader("@")
                             .header("X-User-Id", registration.getId());
-                    Log.i("X-Used-Id", registration.getId());
+
                 }
 
                 Request request = requestBuilder

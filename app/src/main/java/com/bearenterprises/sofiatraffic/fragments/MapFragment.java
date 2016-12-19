@@ -17,14 +17,13 @@ import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -49,7 +48,7 @@ public class MapFragment extends Fragment {
 
 
     // TODO: Rename and change types of parameters
-    private ArrayList<Station> mStations;
+    private ArrayList<Stop> mStations;
     private Location location;
     private GoogleMap map;
     private MapView mapView;
@@ -60,7 +59,7 @@ public class MapFragment extends Fragment {
 
 
     // TODO: Rename and change types and number of parameters
-    public static MapFragment newInstance(ArrayList<Station> mStations, Location location) {
+    public static MapFragment newInstance(ArrayList<Stop> mStations, Location location) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
         args.putSerializable(STATIONS, mStations);
@@ -73,7 +72,7 @@ public class MapFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mStations = (ArrayList<Station>) getArguments().getSerializable(STATIONS);
+            mStations = (ArrayList<Stop>) getArguments().getSerializable(STATIONS);
             location = getArguments().getParcelable(LOCATION);
         }
     }
@@ -112,7 +111,7 @@ public class MapFragment extends Fragment {
                 SmartLocation.with(getContext()).location().oneFix().start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
-                        ArrayList<Station> stations = getmStationsAround(location);
+                        ArrayList<Stop> stations = getmStationsAround(location);
                         if (stations != null){
                             if(stations.size() != 0){
                                 showOnMap(stations);
@@ -154,7 +153,7 @@ public class MapFragment extends Fragment {
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
                 StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
-                ArrayList<Station> closestStations = locator.getClosestStations();
+                ArrayList<Stop> closestStations = locator.getClosestStations();
                 ArrayList<Marker> markers = new ArrayList<>();
                 MarkerOptions opt = new MarkerOptions();
                 opt.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
@@ -167,7 +166,7 @@ public class MapFragment extends Fragment {
                     CameraUpdate cu = getCameraUpdate(markers);
                     map.animateCamera(cu);
                 }else{
-                    ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това мяст");
+                    ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това място");
                 }
             }
         });
@@ -196,13 +195,13 @@ public class MapFragment extends Fragment {
 
     }
 
-    private ArrayList<Station> getmStationsAround(Location location){
+    private ArrayList<Stop> getmStationsAround(Location location){
         StationsLocator locator = new StationsLocator(location, 10, 1000, getContext());
-        ArrayList<Station> closestStations = locator.getClosestStations();
+        ArrayList<Stop> closestStations = locator.getClosestStations();
         return closestStations;
     }
 
-    public void showOnMap(ArrayList<Station> stations){
+    public void showOnMap(ArrayList<Stop> stations){
         if(map != null){
             map.clear();
             ArrayList<Marker> markers = new ArrayList<>();
@@ -222,10 +221,10 @@ public class MapFragment extends Fragment {
         return CameraUpdateFactory.newLatLngBounds(bounds, padding);
     }
 
-    private void setMarkers(ArrayList<Station> closestStations, ArrayList<Marker> markers) {
-        for(Station station : closestStations){
+    private void setMarkers(ArrayList<Stop> closestStations, ArrayList<Marker> markers) {
+        for(Stop station : closestStations){
             String latitude = station.getLatitude();
-            String longtitude = station.getLongtitute();
+            String longtitude = station.getLongtitude();
 
             if(!latitude.equals("") && !longtitude.equals("")){
                 double lat = Float.parseFloat(latitude);
@@ -233,9 +232,10 @@ public class MapFragment extends Fragment {
                 MarkerOptions options = new MarkerOptions();
                 options.position(new LatLng(lat, lon));
                 options.title(station.getName());
-                options.snippet(station.getCode());
-                if(station.getCode().equals("")){
+                if(station.getCode().equals(-1)){
                     options.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+                }else{
+                    options.snippet(Integer.toString(station.getCode()));
                 }
                 Marker marker = map.addMarker(options);
                 markers.add(marker);

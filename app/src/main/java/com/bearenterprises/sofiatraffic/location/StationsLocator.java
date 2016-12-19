@@ -2,14 +2,11 @@ package com.bearenterprises.sofiatraffic.location;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.location.Location;
-import android.util.Log;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
-import com.bearenterprises.sofiatraffic.stations.Station;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -32,16 +29,17 @@ public class StationsLocator {
 
     }
 
-    public Comparator<Station> comparator = new Comparator<Station>(){
+    public Comparator<Stop> comparator = new Comparator<Stop>(){
 
         @Override
-        public int compare(Station c1, Station c2) {
+        public int compare(Stop c1, Stop c2) {
+
             Location l1 = new Location("");
             l1.setLatitude(Float.parseFloat(c1.getLatitude()));
-            l1.setLongitude(Float.parseFloat(c1.getLongtitute()));
+            l1.setLongitude(Float.parseFloat(c1.getLongtitude()));
             Location l2 = new Location("");
             l2.setLatitude(Float.parseFloat(c2.getLatitude()));
-            l2.setLongitude(Float.parseFloat(c2.getLongtitute()));
+            l2.setLongitude(Float.parseFloat(c2.getLongtitude()));
 
             float distance1 = location.distanceTo(l1);
             float distance2 = location.distanceTo(l2);
@@ -49,24 +47,24 @@ public class StationsLocator {
         }
     };
 
-    private boolean determineViabilityOfStation(Station station){
+    private boolean determineViabilityOfStation(Stop station){
 
-        if(station.getLatitude().equals("") || station.getLongtitute().equals("")){
+        if(station.getLatitude().equals("") || station.getLongtitude().equals("")){
             return false;
         }
         Location stationLocation = new Location("");
 
         stationLocation.setLatitude(Float.parseFloat(station.getLatitude()));
-        stationLocation.setLongitude(Float.parseFloat(station.getLongtitute()));
+        stationLocation.setLongitude(Float.parseFloat(station.getLongtitude()));
 
         float distance = this.location.distanceTo(stationLocation);
 
         return distance <= this.maxDistance;
     }
 
-    private ArrayList<Station> getAllStations(){
+    private ArrayList<Stop> getAllStations(){
         DbManipulator dbManipulator = new DbManipulator(this.context);
-        ArrayList<Station> stations = new ArrayList<>();
+        ArrayList<Stop> stations = new ArrayList<>();
         try(Cursor cursor = dbManipulator.read()) {
 
             cursor.moveToFirst();
@@ -76,7 +74,7 @@ public class StationsLocator {
                 String latitude = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
                 String longtitude = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
                 String description = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
-                stations.add(new Station(stationName, stationCode, latitude, longtitude, description));
+                stations.add(new Stop(Integer.parseInt(stationCode), stationName, latitude, longtitude, description));
                 cursor.moveToNext();
             }
         }finally {
@@ -92,22 +90,22 @@ public class StationsLocator {
         return stations;
     }
 
-    public ArrayList<Station> getClosestStations(){
-        ArrayList<Station> closestStations = new ArrayList<>();
-        ArrayList<Station> allStations = getAllStations();
-        PriorityQueue<Station> priorityQueue = new PriorityQueue<>(allStations.size(), comparator);
+    public ArrayList<Stop> getClosestStations(){
+        ArrayList<Stop> closestStations = new ArrayList<>();
+        ArrayList<Stop> allStations = getAllStations();
+        PriorityQueue<Stop> priorityQueue = new PriorityQueue<>(allStations.size(), comparator);
         if(allStations == null){
             return null;
         }
-        for(Station st : allStations){
-            if(st.getLatitude().equals("") || st.getLongtitute().equals("")){
+        for(Stop st : allStations){
+            if(st.getLatitude().equals("") || st.getLongtitude().equals("")){
                 continue;
             }
             priorityQueue.add(st);
         }
         int count = 0;
         for(int k = 0; k < priorityQueue.size(); k ++){
-            Station st = priorityQueue.poll();
+            Stop st = priorityQueue.poll();
             if(st != null && determineViabilityOfStation(st)){
                 closestStations.add(st);
                 count++;

@@ -28,15 +28,14 @@ import android.view.inputmethod.InputMethodManager;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.fragments.FavouritesFragment;
 import com.bearenterprises.sofiatraffic.fragments.LocationFragment;
-import com.bearenterprises.sofiatraffic.fragments.MapFragment;
 import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
-import com.bearenterprises.sofiatraffic.fragments.ResultsFragment;
-import com.bearenterprises.sofiatraffic.fragments.SearchFragment;
+import com.bearenterprises.sofiatraffic.fragments.TimeResultsFragment;
+import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.GPSTracker;
-import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.Time;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.updater.DbUpdater;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
@@ -46,13 +45,12 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.OnDismissCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback, OnDismissCallback {
+public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -66,9 +64,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 500;
     private FavouritesFragment favouritesFragment;
     private MapSearchFragment mapSearchFragment;
-    private SearchFragment searchFragment;
+    private TimesSearchFragment timesSearchFragment;
     private LocationFragment locationFragment;
     private ProgressDialog dialog;
+
     private CoordinatorLayout coordinatorLayout;
 
     @Override
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
 
         if(savedInstanceState == null){
             favouritesFragment = FavouritesFragment.newInstance();
-            searchFragment = SearchFragment.newInstance();
+            timesSearchFragment = TimesSearchFragment.newInstance();
             locationFragment = LocationFragment.newInstance();
             mapSearchFragment = new MapSearchFragment();
         }
@@ -223,11 +222,11 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
 
 
 
-    public void addFavourite(Station st){
+    public void addFavourite(Stop st){
         favouritesFragment.addFavourite(st);
     }
 
-    public void removeFavourite(String code){
+    public void removeFavourite(int code){
         favouritesFragment.removeFavourite(code);
     }
 
@@ -242,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
 
                 replace(id, fragment).
-                commit();
+                commitAllowingStateLoss();
     }
 
     public void changeFragmentNotSupport(int id, android.app.Fragment fragment){
@@ -263,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
     public void detachFragment(Fragment fragment){
-        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -332,19 +331,19 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         mGoogleApiClient.disconnect();
     }
 
-    public ArrayList<Station> getStationByCode(String code) throws SQLiteDatabaseLockedException{
+    public ArrayList<Stop> getStationByCode(String code) throws SQLiteDatabaseLockedException{
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
         String[] args = new String[]{code};
         return getStationsFromDatabase(query, args);
 
     }
 
-    public ArrayList<Station> getEveryStation()throws SQLiteDatabaseLockedException{
+    public ArrayList<Stop> getEveryStation()throws SQLiteDatabaseLockedException{
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME;
         return getStationsFromDatabase(query, new String[]{});
     }
 
-    public ArrayList<Station> getStationsFromDatabase(String query, String[] codes) throws SQLiteDatabaseLockedException{
+    public ArrayList<Stop> getStationsFromDatabase(String query, String[] codes) throws SQLiteDatabaseLockedException{
         DbManipulator manipulator=null;
         try {
             manipulator = new DbManipulator(this);
@@ -356,7 +355,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
 
         }
 
-        ArrayList<Station> stations = new ArrayList<>();
+        ArrayList<Stop> stations = new ArrayList<>();
         try(Cursor c = manipulator.readRawQuery(query, codes)){
             if (c != null && c.getCount() > 0) {
                 c.moveToFirst();
@@ -370,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             String lon = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
             String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
 
-            stations.add(new Station(stationName, stationCode, lat, lon, description));
+            stations.add(new Stop(Integer.parseInt(stationCode), stationName, lat, lon, description));
         }finally {
             if(manipulator != null){
                 manipulator.closeDb();
@@ -380,33 +379,31 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         return stations;
     }
 
-    public void showOnMap(ArrayList<Station> stations){
+    public void showOnMap(ArrayList<Stop> stations){
         setPage(Constants.SECTION_MAP_SEARCH_IDX);
         mapSearchFragment.getMapFragment().showOnMap(stations);
     }
 
-    public void showOnMap(Station st){
-        ArrayList<Station> stations = new ArrayList<>();
+    public void showOnMap(Stop st){
+        ArrayList<Stop> stations = new ArrayList<>();
         stations.add(st);
         showOnMap(stations);
     }
 
 
     @Override
-    public void onDismiss(ViewGroup listView, int[] reverseSortedPositions) {
-
-    }
-
-    @Override
     public void showTimes(String code) {
         setPage(Constants.SECTION_SEARCH_IDX);
-        searchFragment.showStationTimes(code);
+        timesSearchFragment.showStationTimes(code);
     }
 
-    public void addTimes(ResultsFragment fragment, Line line, List<Time> times){
+    public void addTimes(TimeResultsFragment fragment, Line line, List<Time> times){
         fragment.addTimeSchedule(line, (ArrayList<Time>) times);
     }
 
+    public void setEnablednessRefreshLayout(boolean enable){
+        timesSearchFragment.setEnablednessRefreshLayout(enable);
+    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -417,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         @Override
         public Fragment getItem(int position) {
             if(position == Constants.SECTION_SEARCH_IDX){
-                return searchFragment;
+                return timesSearchFragment;
             }else if(position == Constants.SECTION_FAVOURITES_IDX){
                 return favouritesFragment;
             }else if(position == Constants.SECTION_LINES_IDX){
@@ -425,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             }else if(position == Constants.SECTION_MAP_SEARCH_IDX){
                 return mapSearchFragment;
             }
-            return searchFragment;
+            return timesSearchFragment;
         }
         @Override
         public int getCount() {
@@ -455,8 +452,8 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             if(position == Constants.SECTION_SEARCH_IDX){
-                searchFragment = (SearchFragment) super.instantiateItem(container, position);
-                return searchFragment;
+                timesSearchFragment = (TimesSearchFragment) super.instantiateItem(container, position);
+                return timesSearchFragment;
             }else if(position == Constants.SECTION_FAVOURITES_IDX){
                 favouritesFragment = (FavouritesFragment) super.instantiateItem(container, position);
                 return favouritesFragment;

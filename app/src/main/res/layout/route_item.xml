@@ -11,7 +11,7 @@
         android:layout_height="30dp"
         android:paddingLeft="5dp"
         android:paddingRight="10dp"
-        android:background="@drawable/location"
+        android:background="@drawable/location_button"
         android:layout_centerVertical="true"
         android:id="@+id/locationItem" />
 

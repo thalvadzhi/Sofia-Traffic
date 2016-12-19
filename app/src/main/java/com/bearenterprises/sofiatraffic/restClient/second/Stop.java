@@ -1,15 +1,65 @@
 
 package com.bearenterprises.sofiatraffic.restClient.second;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Stop {
+public class Stop implements Serializable{
 
     private Integer id;
     private Integer code;
     private String name;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private String longtitude;
+    private String latitude;
+    private String description;
+
+    public Stop(Integer id, Integer code, String name, String latitude, String longtitude, String description) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.longtitude = longtitude;
+        this.latitude = latitude;
+        this.description = description;
+    }
+
+    public Stop(Integer code, String name, String latitude, String longtitude, String description) {
+        this.code = code;
+        this.name = name;
+        this.longtitude = longtitude;
+        this.latitude = latitude;
+        this.description = description;
+    }
+
+
+    public Stop(Integer code, String name, String description) {
+
+        this.code = code;
+        this.name = name;
+        this.description = description;
+    }
+
+    public Stop(Integer code, String name,  String latitude, String longtitude) {
+        this.name = name;
+        this.code = code;
+        this.longtitude = longtitude;
+        this.latitude = latitude;
+    }
+
+    public String getLongtitude() {
+        return longtitude;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
 
     /**
      * 
@@ -65,12 +115,41 @@ public class Stop {
         this.name = name;
     }
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+
+
+    public String getDirection(){
+        if(this.description == null){
+            return null;
+        }
+        String patternDirection = "ПОСОКА(.*)";
+        String dir = match(patternDirection);
+        if(dir != null){
+            return dir;
+        }
+        String patternFirstStop = "НАЧАЛНА СПИРКА(.*)";
+        String firstStop = match(patternFirstStop);
+        if(firstStop != null){
+            return firstStop;
+        }
+
+        String patternLastStop = "КРАЙНА СПИРКА(.*)";
+        String lastStop = match(patternLastStop);
+        if(lastStop != null){
+            return lastStop;
+        }
+
+        return null;
+
     }
 
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    private String match(String pattern){
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(this.description);
+        if(m.find()){
+            return m.group();
+        }else{
+            return null;
+        }
     }
 
 }

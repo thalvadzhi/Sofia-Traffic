@@ -6,7 +6,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +18,13 @@ import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
+import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Route;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
-import com.bearenterprises.sofiatraffic.restClient.Transport;
 import com.bearenterprises.sofiatraffic.restClient.second.Routes;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
-import com.google.android.gms.location.places.Place;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,13 +38,13 @@ public class LocationFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     private MainActivity activity;
-    private ArrayList<Station> mStations;
+    private ArrayList<Stop> mStations;
     private List<String> transportationTypes;
     private Spinner transportationType;
     private Spinner lineId;
     private LineNamesAdapter lineNamesAdapter;
     private ArrayList<String> lineNames;
-    private ArrayList<Transport> lines;
+    private ArrayList<Line> lines;
     private int currentlySelectedType;
     private Location location;
     private LoadingFragment loadingFragment;
@@ -64,7 +61,9 @@ public class LocationFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        return new ArrayList<>(Arrays.asList("----","Трамвай", "Автобус", "Тролей"));
+        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей");
+//        types.addAll(Constants.TRANSPORTATION_TYPES);
+        return types;
     }
 
     @Override
@@ -129,7 +128,7 @@ public class LocationFragment extends Fragment {
                 String lineType = (String)transportationType.getSelectedItem();
                 int idx = transportationTypes.indexOf(lineType);
                 idx -= 1;
-                Transport transport = (Transport) lineId.getSelectedItem();
+                Line transport = (Line) lineId.getSelectedItem();
                 if (!(transport.getName().equals(Constants.LINE_ID_DEFAULT))){
                     String id = Integer.toString(transport.getId());
                     RouteGetter getter = new RouteGetter();
@@ -195,7 +194,7 @@ public class LocationFragment extends Fragment {
                 return null;
             }
 
-            ArrayList<ArrayList<Station>> stations = new ArrayList<>();
+            ArrayList<ArrayList<Stop>> stations = new ArrayList<>();
             String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE code=?";
             //TODO fix when result is null
             if (result == null){
@@ -204,7 +203,7 @@ public class LocationFragment extends Fragment {
                 return null;
             }
             for(Route route : result.getRoutes()){
-                ArrayList<Station> routeStations = new ArrayList<>();
+                ArrayList<Stop> routeStations = new ArrayList<>();
                 for (Stop stop : route.getStops()){
                     Cursor c = manipulator.readRawQuery(query, new String[]{Integer.toString(stop.getCode())});
                     if(c.getCount() != 0) {
@@ -214,7 +213,7 @@ public class LocationFragment extends Fragment {
                         String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
                         String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
                         String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
-                        routeStations.add(new Station(stationName, stationCode, latitude, longtitude, description));
+                        routeStations.add(new Stop(Integer.parseInt(stationCode), stationName, latitude, longtitude, description));
                     }
                 }
                 if(routeStations.size() != 0){
@@ -263,14 +262,14 @@ public class LocationFragment extends Fragment {
 
 
 
-    private class LineGetter extends AsyncTask<Integer, Integer, List<Transport>>{
+    private class LineGetter extends AsyncTask<Integer, Integer, List<Line>>{
 
         @Override
-        protected List<Transport> doInBackground(Integer... idxs) {
+        protected List<Line> doInBackground(Integer... idxs) {
             SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
-            Call<List<Transport>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
+            Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             try {
-                List<Transport> transports = lines.execute().body();
+                List<Line> transports = lines.execute().body();
 
                 return transports;
 
@@ -280,7 +279,7 @@ public class LocationFragment extends Fragment {
             return null;
         }
 
-        protected void onPostExecute(List<Transport> result) {
+        protected void onPostExecute(List<Line> result) {
             if(result != null) {
                 lines.clear();
                 lines.addAll(result);
@@ -292,7 +291,7 @@ public class LocationFragment extends Fragment {
         }
     }
 
-    private class StationGetter extends AsyncTask<Void, Void, ArrayList<Station>>{
+    private class StationGetter extends AsyncTask<Void, Void, ArrayList<Stop>>{
         private MainActivity activity;
 
         public StationGetter(MainActivity activity){
@@ -333,11 +332,11 @@ public class LocationFragment extends Fragment {
 
 
         @Override
-        protected ArrayList<Station> doInBackground(Void... voids) {
+        protected ArrayList<Stop> doInBackground(Void... voids) {
             Location loc = getLocation();
             if (loc != null){
                 StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
-                ArrayList<Station> closestStations = locator.getClosestStations();
+                ArrayList<Stop> closestStations = locator.getClosestStations();
                 return closestStations;
             }
             return null;
@@ -345,11 +344,11 @@ public class LocationFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Station> stations){
+        protected void onPostExecute(ArrayList<Stop> stations){
             activity.tracker.stopUpdatesButtonHandler();
             if (stations != null && stations.size() != 0){
                 //this is so as to be compatible with route fragment
-                ArrayList<ArrayList<Station>> stationsGroup = new ArrayList<>();
+                ArrayList<ArrayList<Stop>> stationsGroup = new ArrayList<>();
                 stationsGroup.add(stations);
 
                 RoutesFragment locationResults = RoutesFragment.newInstance(stationsGroup, null);

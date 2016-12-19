@@ -4,18 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.CheckedTextView;
 import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.Transport;
+import com.bearenterprises.sofiatraffic.restClient.second.Line;
 
 import java.util.ArrayList;
-
-import static android.R.attr.resource;
 
 /**
  * Created by thalv on 30-Nov-16.
@@ -23,8 +19,8 @@ import static android.R.attr.resource;
 
 public class LineNamesAdapter extends BaseAdapter {
     private Context context;
-    private ArrayList<Transport> transport;
-    public LineNamesAdapter(Context context, ArrayList<Transport> transport) {
+    private ArrayList<Line> transport;
+    public LineNamesAdapter(Context context, ArrayList<Line> transport) {
         this.context = context;
         this.transport = transport;
     }
@@ -35,9 +31,9 @@ public class LineNamesAdapter extends BaseAdapter {
     }
 
     @Override
-    public Transport getItem(int i) {
+    public Line getItem(int i) {
         if(i == 0){
-            return new Transport(0, 0, Constants.LINE_ID_DEFAULT);
+            return new Line(0, 0, Constants.LINE_ID_DEFAULT);
         }
         return transport.get(i - 1);
     }

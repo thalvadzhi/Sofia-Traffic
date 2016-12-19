@@ -3,7 +3,6 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,9 +16,7 @@ import android.widget.ToggleButton;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.stations.Station;
-import com.bearenterprises.sofiatraffic.utilities.DbHelper;
-import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
 
 import java.util.ArrayList;
@@ -68,7 +65,7 @@ public class StationNameFragment extends Fragment {
         toggleButton = (ToggleButton) view.findViewById(R.id.toggleButton);
         textView = (TextView) view.findViewById(R.id.station_name_text_view);
 
-        final Station station = getStationName(mStationCode);
+        final Stop station = getStationName(mStationCode);
         if(station == null){
             toggleButton.setVisibility(View.GONE);
         }else{
@@ -106,8 +103,8 @@ public class StationNameFragment extends Fragment {
         return name != null;
     }
 
-    private Station getStationName(String code){
-        ArrayList<Station> stationByCode = null;
+    private Stop getStationName(String code){
+        ArrayList<Stop> stationByCode = null;
         try {
             stationByCode = ((MainActivity) getContext()).getStationByCode(code);
         }catch (SQLiteDatabaseLockedException e){

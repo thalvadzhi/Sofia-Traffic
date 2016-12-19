@@ -12,6 +12,12 @@ public class Line implements Serializable {
     private String name;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
+    public Line(Integer type, Integer id, String name) {
+        this.type = type;
+        this.id = id;
+        this.name = name;
+    }
+
     /**
      * 
      * @return

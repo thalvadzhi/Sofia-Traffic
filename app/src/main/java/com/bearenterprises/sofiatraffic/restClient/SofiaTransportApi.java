@@ -1,5 +1,6 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
+import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Routes;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface SofiaTransportApi {
     Call<List<Time>> getTimes(@Path("code") String code, @Path("lineId") String lineId);
 
     @GET("lines/{lineType}")
-    Call<List<Transport>> getLines(@Path("lineType") String lineType);
+    Call<List<Line>> getLines(@Path("lineType") String lineType);
 
     @GET("lines/{lineType}/{lineId}")
     Call<Routes> getRoutes(@Path("lineType") String lineType, @Path("lineId") String lineId);

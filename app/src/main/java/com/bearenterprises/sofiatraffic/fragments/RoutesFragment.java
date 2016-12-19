@@ -2,19 +2,16 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 
-import com.bearenterprises.sofiatraffic.AnimatedExpandableListView;
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 
 import java.util.ArrayList;
 
@@ -26,7 +23,7 @@ public class RoutesFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String transportationType;
-    private ArrayList<ArrayList<Station>> routes;
+    private ArrayList<ArrayList<Stop>> routes;
 
 
     public RoutesFragment() {
@@ -34,8 +31,7 @@ public class RoutesFragment extends Fragment {
     }
 
 
-    // TODO: Rename and change types and number of parameters
-    public static RoutesFragment newInstance(ArrayList<ArrayList<Station>> routes, String type) {
+    public static RoutesFragment newInstance(ArrayList<ArrayList<Stop>> routes, String type) {
         RoutesFragment fragment = new RoutesFragment();
         Bundle args = new Bundle();
         args.putSerializable(ROUTES, routes);
@@ -48,7 +44,7 @@ public class RoutesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            routes = (ArrayList<ArrayList<Station>>) getArguments().getSerializable(ROUTES);
+            routes = (ArrayList<ArrayList<Stop>>) getArguments().getSerializable(ROUTES);
             transportationType = getArguments().getString(TR_TYPE);
         }
     }
@@ -56,7 +52,6 @@ public class RoutesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_routes, container, false);
         final AnimatedExpandableListView routesListView = (AnimatedExpandableListView) view.findViewById(R.id.routesListView);
         final RoutesAdapter adapter = new RoutesAdapter(this.routes, transportationType, getContext());
@@ -79,8 +74,8 @@ public class RoutesFragment extends Fragment {
         routesListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int group, int child, long l) {
-                Station station = adapter.getChild(group, child);
-                ((StationTimeShow) getActivity()).showTimes(station.getCode());
+                Stop station = adapter.getChild(group, child);
+                ((StationTimeShow) getActivity()).showTimes(Integer.toString(station.getCode()));
                 return true;
             }
         });

@@ -3,7 +3,7 @@ package com.bearenterprises.sofiatraffic.utilities;
 import android.content.Context;
 
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,8 +27,8 @@ public class XMLCoordinateParser {
     public XMLCoordinateParser(){
     }
 
-    public static ArrayList<Station> parse(Context context, String filename) throws ParserConfigurationException, IOException, SAXException {
-        ArrayList<Station> stations = new ArrayList<>();
+    public static ArrayList<Stop> parse(Context context, String filename) throws ParserConfigurationException, IOException, SAXException {
+        ArrayList<Stop> stations = new ArrayList<>();
 
         File  file = new File(context.getFilesDir(), filename);
 
@@ -47,7 +47,7 @@ public class XMLCoordinateParser {
             String lat = e.getAttribute(Constants.XML_ATTRIBUTE_LAT);
             String lon = e.getAttribute(Constants.XML_ATTRIBUTE_LON);
 
-            stations.add(new Station(label, code, lat, lon));
+            stations.add(new Stop(Integer.parseInt(code), label, lat, lon));
         }
 
         return stations;

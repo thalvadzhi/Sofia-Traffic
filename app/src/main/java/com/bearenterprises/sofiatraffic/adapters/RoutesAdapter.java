@@ -1,25 +1,19 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
-import android.media.Image;
-import android.provider.ContactsContract;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bearenterprises.sofiatraffic.AnimatedExpandableListView;
+import com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.fragments.MapFragment;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 
 import java.util.ArrayList;
 
@@ -29,12 +23,12 @@ import java.util.ArrayList;
 
 public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
 
-    private ArrayList<ArrayList<Station>> routes;
+    private ArrayList<ArrayList<Stop>> routes;
     private boolean[] animationStateFirst, animationStateSecond;
     private Context context;
     private String transportationType;
 
-    public RoutesAdapter(ArrayList<ArrayList<Station>> routes,String trType, Context context) {
+    public RoutesAdapter(ArrayList<ArrayList<Stop>> routes, String trType, Context context) {
         this.routes = routes;
         this.context = context;
         this.transportationType = trType;
@@ -51,12 +45,12 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
 //    }
 
     @Override
-    public ArrayList<Station> getGroup(int groupPosition) {
+    public ArrayList<Stop> getGroup(int groupPosition) {
         return routes.get(groupPosition);
     }
 
     @Override
-    public Station getChild(int groupPosition, int childPosition) {
+    public Stop getChild(int groupPosition, int childPosition) {
         return routes.get(groupPosition).get(childPosition);
     }
 
@@ -99,7 +93,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
             lastStop.setVisibility(View.GONE);
         }else{
             //case you want a route
-            ArrayList<Station> route = getGroup(i);
+            ArrayList<Stop> route = getGroup(i);
             String firstStopName = route.get(0).getName();
             String lastStopName = route.get(route.size() - 1).getName();
             firstStop.setText("от " + firstStopName);
@@ -156,7 +150,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         TextView stopName = (TextView) convertView.findViewById(R.id.stopName);
         TextView stopDirection = (TextView) convertView.findViewById(R.id.textViewRouteDirection);
         TextView stopCode = (TextView)convertView.findViewById(R.id.textViewRouteCode);
-        Station station = getChild(groupPosition, childPosition);
+        Stop station = getChild(groupPosition, childPosition);
         String stationName = station.getName();
         String direction = station.getDirection();
 
@@ -168,7 +162,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
             stopDirection.setVisibility(View.GONE);
         }
 
-        stopCode.setText(station.getCode());
+        stopCode.setText(Integer.toString(station.getCode()));
 
         rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.white));
 //        if(childPosition % 2 == 0){
@@ -180,7 +174,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<Station> station = new ArrayList<Station>();
+                ArrayList<Stop> station = new ArrayList<Stop>();
                 station.add(getChild(grPos, chPos));
                 showOnMap(station);
             }
@@ -193,7 +187,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         return this.routes.get(groupPosition).size();
     }
 
-    private void showOnMap(ArrayList<Station> stations){
+    private void showOnMap(ArrayList<Stop> stations){
         ((MainActivity)context).showOnMap(stations);
     }
 

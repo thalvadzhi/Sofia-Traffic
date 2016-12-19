@@ -1,4 +1,4 @@
-package com.bearenterprises.sofiatraffic;
+package com.bearenterprises.sofiatraffic.views;
 /*
         * Copyright (C) 2014 Gary Guo
         *

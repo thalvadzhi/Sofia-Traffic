@@ -1,75 +1,114 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 
 import java.util.ArrayList;
 
 /**
- * Created by thalv on 02-Jul-16.
+ * Created by thalv on 06-Dec-16.
  */
-public class FavouritesAdapter extends BaseAdapter {
 
-    private ArrayList<Station> favourites;
+public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.ViewHolder> {
+
+    private ArrayList<Stop> favourites;
     private Context context;
 
-    public FavouritesAdapter(Context context, ArrayList<Station> favourites){
+    public FavouritesAdapter(Context context, ArrayList<Stop> favourites){
         this.context = context;
         this.favourites = favourites;
     }
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.favourites_card, parent, false);
+
+        return new FavouritesAdapter.ViewHolder(view);
+    }
 
     @Override
-    public int getCount() {
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Stop l = this.favourites.get(position);
+        holder.textViewFavourite.setText((l.getName()).toUpperCase());
+        holder.textViewCode.setText(Integer.toString(l.getCode()));
+        holder.setOnClickListenerForButtonAtPosition(position);
+        holder.setOnLongClickListener(position);
+//        Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.map);
+//        holder.imageView.setImageBitmap(image);
+    }
+
+    @Override
+    public int getItemCount() {
         return this.favourites.size();
     }
 
-    @Override
-    public Station getItem(int position) {
-        return favourites.get(position);
-    }
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        private TextView textViewFavourite;
+        private Button locationButton;
+        private TextView textViewCode;
+        private RelativeLayout relativeLayout;
+        public ViewHolder(View itemView) {
+            super(itemView);
+            this.textViewFavourite = (TextView) itemView.findViewById(R.id.text_view_favourite2);
+            this.locationButton = (Button) itemView.findViewById(R.id.image_location2);
+            this.textViewCode = (TextView) itemView.findViewById(R.id.textViewFavoureCode);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity)context).showTimes((String)textViewCode.getText());
+                }
+            });
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        LayoutInflater inflater = LayoutInflater.from(this.context);
-
-        if(convertView == null){
-            convertView = inflater.inflate(R.layout.favourites_card, parent, false);
-            holder = new ViewHolder();
-            holder.textViewFavourite = (TextView) convertView.findViewById(R.id.text_view_favourite2);
-            holder.imageView = (ImageView) convertView.findViewById(R.id.image_location2);
-            holder.textViewCode = (TextView) convertView.findViewById(R.id.textViewFavoureCode);
-
-            convertView.setTag(holder);
-        }else{
-            holder = (ViewHolder) convertView.getTag();
         }
-        Station l = getItem(position);
-        holder.textViewFavourite.setText((l.getName()).toUpperCase());
-        holder.textViewCode.setText(l.getCode());
-        Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.map);
-        holder.imageView.setImageBitmap(image);
-        return convertView;
-    }
 
-    private class ViewHolder{
-        TextView textViewFavourite;
-        ImageView imageView;
-        TextView textViewCode;
+        public void setOnLongClickListener(final int position){
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder
+                            .setMessage("Наистина ли искате да изтриете тази любима спирка?")
+                            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ((MainActivity)context).removeFavourite(favourites.get(position).getCode());
+                                }
+                            })
+                            .setNegativeButton("Не", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            })
+                            .show();
+                    return true;
+                }
+            });
+        }
+
+        public void setOnClickListenerForButtonAtPosition(final int position){
+            this.locationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((MainActivity)context).showOnMap(favourites.get(position));
+                }
+            });
+        }
+
+
     }
 }

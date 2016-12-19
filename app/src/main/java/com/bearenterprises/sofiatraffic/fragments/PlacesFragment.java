@@ -1,11 +1,8 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +11,9 @@ import android.widget.ImageButton;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
-import com.bearenterprises.sofiatraffic.stations.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -47,8 +43,8 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
                 StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
-                ArrayList<Station> closestStations = locator.getClosestStations();
-                closestStations.add(new Station((String)place.getName(), "", Double.toString(latLng.latitude), Double.toString(latLng.longitude)));
+                ArrayList<Stop> closestStations = locator.getClosestStations();
+                closestStations.add(new Stop(-1, (String)place.getName(), Double.toString(latLng.latitude), Double.toString(latLng.longitude)));
                 if(closestStations.size() != 0){
                     ((MainActivity)getActivity()).showOnMap(closestStations);
                 }else{

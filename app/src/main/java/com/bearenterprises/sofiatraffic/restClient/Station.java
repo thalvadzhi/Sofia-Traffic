@@ -1,6 +1,5 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -11,9 +10,9 @@ public class Station {
     private int code;
     private String name;
     private String description;
-    private ArrayList<Line> lines;
+    private ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> lines;
 
-    public Station(int id, int code, String name, String description, ArrayList<Line> lines) {
+    public Station(int id, int code, String name, String description, ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> lines) {
         this.id = id;
         this.code = code;
         this.name = name;
@@ -45,7 +44,7 @@ public class Station {
         return description;
     }
 
-    public ArrayList<Line> getLines() {
+    public ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> getLines() {
         return lines;
     }
 }

@@ -8,11 +8,11 @@ import android.support.design.widget.CoordinatorLayout;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.DescriptionsParser;
 import com.bearenterprises.sofiatraffic.utilities.FileDownloader;
-import com.bearenterprises.sofiatraffic.stations.Station;
 import com.bearenterprises.sofiatraffic.utilities.JSONParser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 
@@ -49,7 +49,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             //means it's time to update
 
             try {
-                publishProgress(Constants.SHOW_DIALOG);
                 boolean wasUpdated = update();
                 if(wasUpdated) {
                     editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
@@ -59,7 +58,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             } catch (Exception e) {
                 Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
             }
-            publishProgress(Constants.DISMISS_DIALOG);
 
 
         }
@@ -106,6 +104,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, coordinates, notifier);
             downloader.download();
         }
+        publishProgress(Constants.SHOW_DIALOG);
 
         FileDownloader downloaderDescriptions = new FileDownloader(this.context, Constants.DESCRIPTIONS_DOWNLOAD_URL, Constants.DESCRIPTIONS_FILE_NAME, notifier);
         downloaderDescriptions.download();
@@ -117,19 +116,19 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
         Map<String, String> descriptions = DescriptionsParser.parse(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
-        ArrayList<Station> stations = null;
+        ArrayList<Stop> stations = null;
         stations = JSONParser.getStationsFromFile(Constants.JSON_COORDINATE_FILE, this.context);
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         if(stations == null){
             throw new Exception("stations array is null");
         }
-        for (Station station : stations) {
+        for (Stop station : stations) {
             ContentValues v = new ContentValues();
             String description = descriptions.get(station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE, station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME, station.getName());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongtitute());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongtitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION, description);
             stationInformation.add(v);
         }
@@ -139,6 +138,8 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         manipulator.deleteAll();
         manipulator.insert(stationInformation);
         manipulator.closeDb();
+        publishProgress(Constants.DISMISS_DIALOG);
+
         return true;
 
     }

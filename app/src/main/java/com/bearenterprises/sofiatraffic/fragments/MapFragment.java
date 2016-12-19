@@ -170,28 +170,6 @@ public class MapFragment extends Fragment {
                 }
             }
         });
-//
-//        if(mStations == null && location == null){
-//            //move camera to serdika
-//            //42.697842, 23.321145
-//
-//
-//
-//        }else{
-//
-//            ArrayList<Marker> markers = new ArrayList<>();
-//            setMarkers(mStations, markers);
-//            CameraUpdate cu;
-//            if(this.location == null){
-//                cu = getCameraUpdate(markers);
-//            }else{
-//                float zoomLevel = 16.0f; //This goes up to 21
-//                LatLng currentLocation = new LatLng(this.location.getLatitude(), this.location.getLongitude());
-//                cu = CameraUpdateFactory.newLatLngZoom(currentLocation, zoomLevel);
-//            }
-//            map.moveCamera(cu);
-//        }
-//
 
     }
 

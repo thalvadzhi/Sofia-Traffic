@@ -155,12 +155,13 @@ public class TimesSearchFragment extends Fragment {
                     return null;
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 if (station == null){
                     ((MainActivity)getContext()).detachFragment(l);
                     ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
                     return null;
                 }
-                e.printStackTrace();
+
             }
 
 

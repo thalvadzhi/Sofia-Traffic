@@ -3,6 +3,7 @@ package com.bearenterprises.sofiatraffic;
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
@@ -27,24 +28,28 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.fragments.FavouritesFragment;
-import com.bearenterprises.sofiatraffic.fragments.LocationFragment;
+import com.bearenterprises.sofiatraffic.fragments.LinesFragment;
 import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimeResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.GPSTracker;
+import com.bearenterprises.sofiatraffic.restClient.Registration;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.updater.DbUpdater;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.GenerateClient;
+import com.bearenterprises.sofiatraffic.utilities.RegisterUser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +70,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private FavouritesFragment favouritesFragment;
     private MapSearchFragment mapSearchFragment;
     private TimesSearchFragment timesSearchFragment;
-    private LocationFragment locationFragment;
+    private LinesFragment linesFragment;
     private ProgressDialog dialog;
+    private Registration registration;
 
     private CoordinatorLayout coordinatorLayout;
 
@@ -78,9 +84,11 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         if(savedInstanceState == null){
             favouritesFragment = FavouritesFragment.newInstance();
             timesSearchFragment = TimesSearchFragment.newInstance();
-            locationFragment = LocationFragment.newInstance();
+            linesFragment = LinesFragment.newInstance();
             mapSearchFragment = new MapSearchFragment();
         }
+        checkRegistration();
+        GenerateClient.setRegistration(registration);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
         dialog = new ProgressDialog(this);
         backupManager = new BackupManager(this);
@@ -201,6 +209,32 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         dialog.show();
     }
 
+    private void checkRegistration(){
+        SharedPreferences sp = getSharedPreferences(Constants.SHARED_PREFERENCES_REGISTRATION, Context.MODE_PRIVATE);
+        String registrationString = sp.getString(Constants.REGISTRATION, Constants.SHARED_PREFERENCES_DEFAULT_REGISTRATION);
+        if (!registrationString.equals(Constants.SHARED_PREFERENCES_DEFAULT_REGISTRATION)){
+            Gson gson = new Gson();
+            registration = gson.fromJson(registrationString, Registration.class);
+        }else{
+            RegisterUser registerUser = new RegisterUser(this);
+            registerUser.start();
+            try {
+                registerUser.join();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            registration = registerUser.getRegistration();
+            SharedPreferences.Editor editor = sp.edit();
+            Gson gson = new Gson();
+            String registrationStringRepr = gson.toJson(registration);
+            editor.putString(Constants.REGISTRATION, registrationStringRepr);
+            editor.commit();
+        }
+    }
+
+
     public void dismissLoadingStopsInfoDialog(){
         dialog.dismiss();
     }
@@ -230,9 +264,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         favouritesFragment.removeFavourite(code);
     }
 
+
     public void showRoute(String trId, String lineId){
         mViewPager.setCurrentItem(Constants.SECTION_LINES_IDX);
-        locationFragment.showRoute(trId, lineId);
+        linesFragment.showRoute(trId, lineId);
     }
 
     public void changeFragment(int id, Fragment fragment){
@@ -418,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
             }else if(position == Constants.SECTION_FAVOURITES_IDX){
                 return favouritesFragment;
             }else if(position == Constants.SECTION_LINES_IDX){
-                return locationFragment;
+                return linesFragment;
             }else if(position == Constants.SECTION_MAP_SEARCH_IDX){
                 return mapSearchFragment;
             }
@@ -458,8 +493,8 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 favouritesFragment = (FavouritesFragment) super.instantiateItem(container, position);
                 return favouritesFragment;
             }else if (position == Constants.SECTION_LINES_IDX) {
-                locationFragment = (LocationFragment) super.instantiateItem(container, position);
-                return locationFragment;
+                linesFragment = (LinesFragment) super.instantiateItem(container, position);
+                return linesFragment;
             }else {
                 mapSearchFragment = (MapSearchFragment) super.instantiateItem(container, position);
                 return mapSearchFragment;

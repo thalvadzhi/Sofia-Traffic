@@ -52,6 +52,8 @@ public class MapFragment extends Fragment {
     private Location location;
     private GoogleMap map;
     private MapView mapView;
+    private Marker previousMarker;
+
 
     public MapFragment() {
         // Required empty public constructor
@@ -128,6 +130,11 @@ public class MapFragment extends Fragment {
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
+                if(previousMarker != null){
+                    previousMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+                }
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN));
+                previousMarker = marker;
                 Stop stop = (Stop) marker.getTag();
                 if(stop != null){
                     ((MainActivity)getActivity()).showSlideUpPanelWithInfo(stop);

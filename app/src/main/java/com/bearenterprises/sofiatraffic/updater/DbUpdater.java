@@ -57,7 +57,10 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
                 }
             } catch (Exception e) {
                 Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
+                publishProgress(Constants.DISMISS_DIALOG);
             }
+            publishProgress(Constants.DISMISS_DIALOG);
+
 
 
         }
@@ -124,7 +127,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         }
         for (Stop station : stations) {
             ContentValues v = new ContentValues();
-            String description = descriptions.get(station.getCode());
+            String description = descriptions.get(Integer.toString(station.getCode()));
             v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE, station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME, station.getName());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
@@ -138,7 +141,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         manipulator.deleteAll();
         manipulator.insert(stationInformation);
         manipulator.closeDb();
-        publishProgress(Constants.DISMISS_DIALOG);
 
         return true;
 

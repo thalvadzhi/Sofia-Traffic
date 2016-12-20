@@ -36,6 +36,7 @@ import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
 import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.vision.text.Text;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
@@ -72,6 +73,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
     public MapFragment getMapFragment(){
         return mapFragment;
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -246,10 +248,12 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Line> lines){
-            linesForAdapter.clear();
-            linesForAdapter.addAll(lines);
-            Log.i("Lines size", ""+lines.size());
-            slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, lines.size());
+            if(lines != null){
+                linesForAdapter.clear();
+                linesForAdapter.addAll(lines);
+                Log.i("Lines size", ""+lines.size());
+                slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, lines.size());
+            }
         }
     }
 

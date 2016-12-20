@@ -141,7 +141,7 @@ public class LinesFragment extends Fragment {
 
             }
         });
-        
+
         return v;
     }
 

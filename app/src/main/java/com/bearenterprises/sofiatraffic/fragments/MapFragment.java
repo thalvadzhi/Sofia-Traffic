@@ -201,6 +201,7 @@ public class MapFragment extends Fragment {
 
     public void showOnMap(ArrayList<Stop> stations){
         if(map != null){
+            previousMarker = null;
             map.clear();
             ArrayList<Marker> markers = new ArrayList<>();
             setMarkers(stations, markers);

@@ -94,7 +94,6 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-                Log.i("stateChanged", "onPanelStateChanged " + newState);
                 if(previousState == SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING){
                     TransitionDrawable transition = (TransitionDrawable) backgroundColor.getBackground();
                     TransitionDrawable transitionShape = (TransitionDrawable) code.getBackground();
@@ -106,6 +105,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
 
                 }else if(previousState == SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
+                    slidingUpPanelLayout.setPanelHeight(backgroundColor.getHeight());
                     TransitionDrawable transition = (TransitionDrawable) backgroundColor.getBackground();
                     TransitionDrawable transitionShape = (TransitionDrawable) code.getBackground();
                     transition.startTransition(animationDuration);
@@ -251,7 +251,6 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
             if(lines != null){
                 linesForAdapter.clear();
                 linesForAdapter.addAll(lines);
-                Log.i("Lines size", ""+lines.size());
                 slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, lines.size());
             }
         }

@@ -54,6 +54,7 @@ public class LinesFragment extends Fragment {
     private LoadingFragment loadingFragment;
     private PlacesFragment placesFragment;
 //    private ArrayList<ArrayList<Station>> routes;
+    private boolean dontActivateListener;
     public LinesFragment() {
         // Required empty public constructor
     }
@@ -76,6 +77,8 @@ public class LinesFragment extends Fragment {
 //        if (savedInstanceState == null) {
             loadingFragment = LoadingFragment.newInstance();
 //        }
+        dontActivateListener = false;
+
         activity = (MainActivity) getActivity();
         mStations = new ArrayList<>();
         View v = inflater.inflate(R.layout.fragment_location, container, false);
@@ -105,15 +108,6 @@ public class LinesFragment extends Fragment {
                     currentlySelectedType -= 1;
                     LineGetter lineGetter = new LineGetter();
                     lineGetter.execute(currentlySelectedType);
-//                    lineId.setEnabled(true);
-                }else if(selectionIdx == 4) {
-                    transportationType.setSelection(0);
-                    lineId.setEnabled(false);
-                    StationGetter locationGetter = new StationGetter((MainActivity) getActivity());
-                    locationGetter.execute();
-                }else if(selectionIdx == 5){
-
-                    ((MainActivity)getActivity()).changeFragment(R.id.location_container, placesFragment);
                 }else{
                     lineId.setEnabled(false);
                 }
@@ -126,6 +120,7 @@ public class LinesFragment extends Fragment {
             }
         });
         transportationType.setSelection(0);
+
         lineId.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -146,9 +141,7 @@ public class LinesFragment extends Fragment {
 
             }
         });
-
-
-
+        
         return v;
     }
 
@@ -241,18 +234,7 @@ public class LinesFragment extends Fragment {
                     typeString = Constants.TROLLEY;
                     break;
             }
-//            switch (currentlySelectedType){
-//                case 0:
-//                    type = Constants.TRAM;
-//                    break;
-//                case 1:
-//                    type = Constants.BUS;
-//                    break;
-//                case 2:
-//                    type = Constants.TROLLEY;
-//                    break;
-//
-//            }
+
             if (stations.size() != 0){
                 RoutesFragment f = RoutesFragment.newInstance(stations, typeString);
                 ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
@@ -299,6 +281,7 @@ public class LinesFragment extends Fragment {
                 lines.clear();
                 lines.addAll(result);
                 lineNamesAdapter.notifyDataSetChanged();
+
                 lineId.setEnabled(true);
             }else{
                 ((MainActivity)getActivity()).makeSnackbar("Няма информация за този маршрут.");

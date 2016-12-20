@@ -53,6 +53,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 
 public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -73,8 +74,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private LinesFragment linesFragment;
     private ProgressDialog dialog;
     private Registration registration;
-
+    private Stack<Integer> pageHistory;
+    private boolean saveToHistory;
     private CoordinatorLayout coordinatorLayout;
+    private int currentPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         //Check if station info needs updating
         DbUpdater updater = new DbUpdater(this);
         updater.execute();
+
+        currentPage = 0;
+
 
         tracker = new GPSTracker(this);
         createLocationRequest();
@@ -126,9 +132,12 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                     }
                 }
-//                }else{
-//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-//                }
+
+                if(saveToHistory){
+                    pageHistory.push(currentPage);
+                    currentPage = position;
+                }
+//
 
             }
 
@@ -137,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
 
             }
         });
+        pageHistory = new Stack<>();
+        saveToHistory = true;
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -358,8 +369,15 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     public void onBackPressed() {
         if(getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
-        }else{
+            return;
+        }
+
+        if(pageHistory.empty()){
             super.onBackPressed();
+        }else{
+            saveToHistory = false;
+            mViewPager.setCurrentItem(pageHistory.pop());
+            saveToHistory = true;
         }
     }
 

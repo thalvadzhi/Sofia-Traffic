@@ -167,6 +167,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapClick(LatLng latLng) {
                 map.clear();
+                previousMarker = null;
                 ((MainActivity)getActivity()).hideSlideUpPanel();
                 Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
                 loc.setLatitude(latLng.latitude);

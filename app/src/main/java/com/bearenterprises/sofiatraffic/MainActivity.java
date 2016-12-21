@@ -165,10 +165,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                         makeSnackbar("Няма сиренце :(");
                         return;
                     }
-                    LocationServices.FusedLocationApi.requestLocationUpdates(
-                            mGoogleApiClient, mLocationRequest, tracker);
+                    mapSearchFragment.getMapFragment().getMap();
                 }else{
-                    Utility.toastOnUiThread("Ни моа та намеря без GPS, бе!", this);
+                    Utility.toastOnUiThread("Без достъп до местоположението някои от функциите няма да работят правилно", this);
                 }
                 break;
         }

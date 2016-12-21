@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
@@ -86,16 +88,19 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
 
         mapView = ((MapView) view.findViewById(R.id.map));
+
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((MainActivity) getContext(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    Constants.REQUEST_CODE_FINE_LOCATION);
+
+        }
         mapView.onCreate(savedInstanceState);
 
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                map = googleMap;
-                setUpMap();
-                mapView.onResume();
-            }
-        });
+
+        getMap();
         //setUpMap();
 
         return view;
@@ -191,6 +196,17 @@ public class MapFragment extends Fragment {
             }
         });
 
+    }
+
+    public void getMap(){
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                map = googleMap;
+                setUpMap();
+                mapView.onResume();
+            }
+        });
     }
 
     private ArrayList<Stop> getmStationsAround(Location location){

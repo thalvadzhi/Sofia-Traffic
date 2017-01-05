@@ -11,6 +11,7 @@ public class Station {
     private String name;
     private String description;
     private ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> lines;
+    private String alias;
 
     public Station(int id, int code, String name, String description, ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> lines) {
         this.id = id;
@@ -26,6 +27,14 @@ public class Station {
         this.name = name;
         this.description = null;
         this.lines = null;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public int getId() {

@@ -4,10 +4,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
 
 import java.util.ArrayList;
 
@@ -42,10 +46,17 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Stop l = this.favourites.get(position);
-        holder.textViewFavourite.setText((l.getName()).toUpperCase());
+        String name;
+        if(l.getAlias() != null && !"".equals(l.getAlias())){
+            name = l.getAlias();
+        }else{
+            name = l.getName();
+        }
+        holder.textViewFavourite.setText(name.toUpperCase());
         holder.textViewCode.setText(Integer.toString(l.getCode()));
         holder.setOnClickListenerForButtonAtPosition(position);
         holder.setOnLongClickListener(position);
+        holder.setEditAliasAction(position);
 //        Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.map);
 //        holder.imageView.setImageBitmap(image);
     }
@@ -59,12 +70,14 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         private TextView textViewFavourite;
         private Button locationButton;
         private TextView textViewCode;
+        private ImageButton editAlias;
         private RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {
             super(itemView);
             this.textViewFavourite = (TextView) itemView.findViewById(R.id.text_view_favourite2);
             this.locationButton = (Button) itemView.findViewById(R.id.image_location2);
             this.textViewCode = (TextView) itemView.findViewById(R.id.textViewFavoureCode);
+            this.editAlias = (ImageButton) itemView.findViewById(R.id.ImageButtonEditAlias);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -73,6 +86,53 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
             });
 
 
+        }
+
+        public void setEditAliasAction(final int position){
+            editAlias.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final EditText input = new EditText(context);
+                    String name;
+                    Stop stop = favourites.get(position);
+                    if(stop.getAlias() != null && !"".equals(stop.getAlias())){
+                        name = stop.getAlias();
+                    }else{
+                        name = stop.getName();
+                    }
+                    input.setText(name);
+                    input.setSelectAllOnFocus(true);
+
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Въведето ново име на тази спирка.")
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    String alias = input.getText().toString();
+                                    if(alias != null){
+                                        Stop stop = favourites.get(position);
+                                        stop.setAlias(alias);
+                                        FavouritesModifier.save(stop, context);
+                                        notifyDataSetChanged();
+                                    }else if("".equals(alias)){
+                                        Stop stop = favourites.get(position);
+                                        stop.setAlias(null);
+                                        FavouritesModifier.save(stop, context);
+                                        notifyDataSetChanged();
+                                    }
+                                }
+                            })
+                            .setNegativeButton("Отказ", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //No Op
+                                }
+                            })
+                            .setView(input)
+                            .show();
+                }
+            });
         }
 
         public void setOnLongClickListener(final int position){

@@ -15,6 +15,7 @@ public class Stop implements Serializable{
     private String longtitude;
     private String latitude;
     private String description;
+    private String alias;
 
     public Stop(Integer id, Integer code, String name, String latitude, String longtitude, String description) {
         this.id = id;
@@ -46,6 +47,14 @@ public class Stop implements Serializable{
         this.code = code;
         this.longtitude = longtitude;
         this.latitude = latitude;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     public String getLongtitude() {

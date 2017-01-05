@@ -36,12 +36,10 @@
                 android:id="@+id/image_location2"
                 android:maxWidth="50dp"
                 android:maxHeight="50dp"
-            android:scaleType="fitXY"
+                android:layout_centerVertical="true"
+                android:scaleType="fitXY"
                 android:layout_alignParentLeft="true"/>
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_alignParentTop="true"-->
-                <!--android:layout_alignParentStart="true" />-->
+
 
             <TextView
                 android:layout_width="match_parent"

@@ -18,15 +18,15 @@
        />
 
     <ToggleButton
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:text="New ToggleButton"
         android:id="@+id/toggleButton"
         android:layout_gravity="left|top"
 
         style="@style/toggleButton"
         android:background="@drawable/toggle_bg"
-        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/station_name_text_view" />
 
 

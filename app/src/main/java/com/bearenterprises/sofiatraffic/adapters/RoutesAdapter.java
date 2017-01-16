@@ -96,8 +96,8 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
             ArrayList<Stop> route = getGroup(i);
             String firstStopName = route.get(0).getName();
             String lastStopName = route.get(route.size() - 1).getName();
-            firstStop.setText("от " + firstStopName);
-            lastStop.setText("до " + lastStopName);
+            firstStop.setText("от " + firstStopName.toUpperCase());
+            lastStop.setText("до " + lastStopName.toUpperCase());
 
 
             switch (transportationType){

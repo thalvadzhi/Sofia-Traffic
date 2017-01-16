@@ -117,8 +117,7 @@ public class TimesSearchFragment extends Fragment {
         Response<Station> response = call.execute();
         if(!response.isSuccessful()){
             ApiError error = ParseApiError.parseError(response);
-            Log.i("Error", error.getCode());
-            if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
+            if(error.getCode() != null && error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
                 ((MainActivity)getActivity()).removeRegistration();
                 call = sofiaTransportApi.getStation(code);
                 response = call.execute();

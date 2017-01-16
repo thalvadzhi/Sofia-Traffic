@@ -308,6 +308,15 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
                 commitAllowingStateLoss();
     }
 
+    public void changeFragmentWithAnimation(int containderId, int inAnim, int outAnim, Fragment fragment){
+        getSupportFragmentManager().
+                beginTransaction().
+                setCustomAnimations(inAnim, outAnim).
+
+                replace(containderId, fragment).
+                commitAllowingStateLoss();
+    }
+
     public void changeFragmentNotSupport(int id, android.app.Fragment fragment){
         getFragmentManager().
                 beginTransaction().
@@ -403,8 +412,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
     public ArrayList<Stop> getStationByCode(String code) throws SQLiteDatabaseLockedException{
+        String codeNoZeroes = code.replaceFirst("^0+(?!$)", "");
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
-        String[] args = new String[]{code};
+        String[] args = new String[]{codeNoZeroes};
         return getStationsFromDatabase(query, args);
 
     }

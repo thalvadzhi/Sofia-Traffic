@@ -133,7 +133,7 @@ public class LinesFragment extends Fragment {
                     RouteGetter getter = new RouteGetter();
                     getter.execute(Integer.toString(idx), id);
                 }
-                lineId.setSelection(0);
+//                lineId.setSelection(0);
             }
 
             @Override
@@ -153,7 +153,7 @@ public class LinesFragment extends Fragment {
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
         protected void onPreExecute(){
-            ((MainActivity)getActivity()).changeFragment(R.id.location_container, loadingFragment);
+            ((MainActivity)getActivity()).changeFragmentWithAnimation(R.id.location_container,android.R.anim.fade_in, android.R.anim.fade_out, loadingFragment);
         }
         @Override
         protected Routes doInBackground(String... strings) {
@@ -237,7 +237,7 @@ public class LinesFragment extends Fragment {
 
             if (stations.size() != 0){
                 RoutesFragment f = RoutesFragment.newInstance(stations, typeString);
-                ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
+                ((MainActivity)getActivity()).changeFragmentWithAnimation(R.id.location_container,android.R.anim.fade_in, android.R.anim.fade_out, f);
             }else{
                 ((MainActivity)getActivity()).detachFragment(loadingFragment);
             }

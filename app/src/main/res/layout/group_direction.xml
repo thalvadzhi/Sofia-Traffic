@@ -25,7 +25,6 @@
         android:id="@+id/firstStop"
         android:gravity="center"
         android:textSize="20dp"
-        android:textAllCaps="true"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/locationGroup" />
 
@@ -33,7 +32,6 @@
         android:text="TextView"
         android:gravity="center"
         android:textSize="20dp"
-        android:textAllCaps="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/firstStop"

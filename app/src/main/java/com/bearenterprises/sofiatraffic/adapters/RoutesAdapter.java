@@ -1,7 +1,11 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,8 +100,14 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
             ArrayList<Stop> route = getGroup(i);
             String firstStopName = route.get(0).getName();
             String lastStopName = route.get(route.size() - 1).getName();
-            firstStop.setText("от " + firstStopName.toUpperCase());
-            lastStop.setText("до " + lastStopName.toUpperCase());
+            final SpannableStringBuilder firstStopColoured = new SpannableStringBuilder("от " + firstStopName.toUpperCase());
+            final ForegroundColorSpan fcs = new ForegroundColorSpan(Color.rgb(100, 100, 100));
+            firstStopColoured.setSpan(fcs, 0, 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            final SpannableStringBuilder lastStopColoured = new SpannableStringBuilder("до " + lastStopName.toUpperCase());
+            lastStopColoured.setSpan(fcs, 0, 2, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+            firstStop.setText(firstStopColoured);
+            lastStop.setText(lastStopColoured);
 
 
             switch (transportationType){

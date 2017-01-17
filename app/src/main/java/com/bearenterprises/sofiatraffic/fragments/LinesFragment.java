@@ -15,6 +15,7 @@ import android.widget.Spinner;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.adapters.ChangeListener;
 import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
@@ -53,8 +54,11 @@ public class LinesFragment extends Fragment {
     private Location location;
     private LoadingFragment loadingFragment;
     private PlacesFragment placesFragment;
+    private volatile boolean canSelectLineId;
+    private ShowLineFromTimeResult cond;
 //    private ArrayList<ArrayList<Station>> routes;
     private boolean dontActivateListener;
+    private ShouldShowLineInfoFromTimeResultsListener listener;
     public LinesFragment() {
         // Required empty public constructor
     }
@@ -77,8 +81,11 @@ public class LinesFragment extends Fragment {
 //        if (savedInstanceState == null) {
             loadingFragment = LoadingFragment.newInstance();
 //        }
-        dontActivateListener = false;
+        listener = new ShouldShowLineInfoFromTimeResultsListener();
+        cond = new ShowLineFromTimeResult();
 
+        dontActivateListener = false;
+        canSelectLineId = false;
         activity = (MainActivity) getActivity();
         mStations = new ArrayList<>();
         View v = inflater.inflate(R.layout.fragment_location, container, false);
@@ -106,6 +113,10 @@ public class LinesFragment extends Fragment {
                 if (selectionIdx >= 1 && selectionIdx <= 3) {
                     currentlySelectedType = transportationTypes.indexOf(selection);
                     currentlySelectedType -= 1;
+                    lineId.setSelection(0);
+                    lineId.setEnabled(false);
+                    canSelectLineId = false;
+                    cond.setBoo(false);
                     LineGetter lineGetter = new LineGetter();
                     lineGetter.execute(currentlySelectedType);
                 }else{
@@ -133,6 +144,7 @@ public class LinesFragment extends Fragment {
                     RouteGetter getter = new RouteGetter();
                     getter.execute(Integer.toString(idx), id);
                 }
+//                cond.removeListener();
 //                lineId.setSelection(0);
             }
 
@@ -144,16 +156,31 @@ public class LinesFragment extends Fragment {
 
         return v;
     }
+    private class ShouldShowLineInfoFromTimeResultsListener implements ChangeListener {
+        @Override
+        public void onChange(String lineID) {
+
+            for (int i = 0; i < lines.size(); i++) {
+                if (lines.get(i).getId() == Integer.parseInt(lineID)) {
+                    lineId.setSelection(i + 1);
+                    break;
+                }
+            }
+            cond.removeListener();
+        }
+    }
 
     public void showRoute(String transportationTypeId, String lineId){
-        RouteGetter getter = new RouteGetter();
-        getter.execute(transportationTypeId, lineId);
+        cond.setLineID(lineId);
+        cond.setListener(listener);
+        transportationType.setSelection(Integer.parseInt(transportationTypeId) + 1);
     }
+
 
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
         protected void onPreExecute(){
-            ((MainActivity)getActivity()).changeFragmentWithAnimation(R.id.location_container,android.R.anim.fade_in, android.R.anim.fade_out, loadingFragment);
+            ((MainActivity)getActivity()).changeFragment(R.id.location_container, loadingFragment);
         }
         @Override
         protected Routes doInBackground(String... strings) {
@@ -237,7 +264,7 @@ public class LinesFragment extends Fragment {
 
             if (stations.size() != 0){
                 RoutesFragment f = RoutesFragment.newInstance(stations, typeString);
-                ((MainActivity)getActivity()).changeFragmentWithAnimation(R.id.location_container,android.R.anim.fade_in, android.R.anim.fade_out, f);
+                ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
             }else{
                 ((MainActivity)getActivity()).detachFragment(loadingFragment);
             }
@@ -283,81 +310,40 @@ public class LinesFragment extends Fragment {
                 lineNamesAdapter.notifyDataSetChanged();
 
                 lineId.setEnabled(true);
+                synchronized (cond){
+                    cond.setBoo(true);
+                }
+
             }else{
                 ((MainActivity)getActivity()).makeSnackbar("Няма информация за този маршрут.");
             }
         }
     }
 
-    private class StationGetter extends AsyncTask<Void, Void, ArrayList<Stop>>{
-        private MainActivity activity;
+    public class ShowLineFromTimeResult {
+        private boolean boo = false;
+        private ChangeListener listener;
+        private String lineID;
 
-        public StationGetter(MainActivity activity){
-            this.activity = activity;
+
+        public void setLineID(String lineID){
+            this.lineID = lineID;
         }
 
-        @Override
-        protected void onPreExecute(){
-            ((MainActivity)getActivity()).changeFragment(R.id.location_container, loadingFragment);
-            activity.tracker.startUpdatesButtonHandler();
-        }
-
-
-        private Location getLocation(){
-            Location loc;
-            long startTime = System.currentTimeMillis();
-            long endTime;
-            long lastUpdated;
-            while(true){
-                loc = activity.tracker.getLocation();
-
-                lastUpdated = activity.tracker.getLastUpdateTime();
-                if(loc != null){
-
-                    if((System.currentTimeMillis() - lastUpdated) <= Constants.FIVE_SECONDS_MS &&loc.getAccuracy() <= Constants.MINIMUM_ACCURACY){
-                        location = loc;
-                        break;
-                    }
-                }
-                endTime = System.currentTimeMillis();
-                if(endTime - startTime > Constants.MAXIMUM_TIME_GPS_LOCK){
-                    ((MainActivity)getActivity()).makeSnackbar("Определянето на местоположението отнема твърде много време.");
-                    return null;
-                }
-            }
-            return loc;
-        }
-
-
-        @Override
-        protected ArrayList<Stop> doInBackground(Void... voids) {
-            Location loc = getLocation();
-            if (loc != null){
-                StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
-                ArrayList<Stop> closestStations = locator.getClosestStations();
-                return closestStations;
-            }
-            return null;
-//            return getLocation();
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Stop> stations){
-            activity.tracker.stopUpdatesButtonHandler();
-            if (stations != null && stations.size() != 0){
-                //this is so as to be compatible with route fragment
-                ArrayList<ArrayList<Stop>> stationsGroup = new ArrayList<>();
-                stationsGroup.add(stations);
-
-                RoutesFragment locationResults = RoutesFragment.newInstance(stationsGroup, null);
-                ((MainActivity)getActivity()).changeFragment(R.id.location_container, locationResults);
-            }else{
-                ((MainActivity)getActivity()).detachFragment(loadingFragment);
-//                ((MainActivity) getActivity()).makeSnackbar("Няма спирки в радиус от 200 метра");
+        public void setBoo(boolean boo) {
+            this.boo = boo;
+            if (listener != null && boo == true){
+                listener.onChange(lineID);
             }
         }
 
+        public void removeListener(){
+            listener = null;
+        }
 
+        public void setListener(ChangeListener listener) {
+            this.listener = listener;
+        }
 
     }
 

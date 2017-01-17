@@ -27,6 +27,15 @@
         android:textSize="20dp"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/locationGroup" />
+    <View
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#646464"
+        android:layout_toEndOf="@+id/locationGroup"
+        android:id="@+id/lineSeparator"
+        android:layout_below="@+id/firstStop"/>
 
     <TextView
         android:text="TextView"
@@ -34,7 +43,7 @@
         android:textSize="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/firstStop"
+        android:layout_below="@+id/lineSeparator"
         android:layout_toEndOf="@+id/locationGroup"
         android:id="@+id/lastStop" />
 </RelativeLayout>

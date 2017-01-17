@@ -302,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     public void changeFragment(int id, Fragment fragment){
         getSupportFragmentManager().
                 beginTransaction().
-                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
+//                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
 
                 replace(id, fragment).
                 commitAllowingStateLoss();
@@ -312,7 +312,6 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         getSupportFragmentManager().
                 beginTransaction().
                 setCustomAnimations(inAnim, outAnim).
-
                 replace(containderId, fragment).
                 commitAllowingStateLoss();
     }

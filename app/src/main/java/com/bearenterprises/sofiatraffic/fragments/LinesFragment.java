@@ -110,11 +110,11 @@ public class LinesFragment extends Fragment {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getSelectedItem();
                 int selectionIdx = transportationTypes.indexOf(selection);
+                lineId.setSelection(0);
+                lineId.setEnabled(false);
                 if (selectionIdx >= 1 && selectionIdx <= 3) {
                     currentlySelectedType = transportationTypes.indexOf(selection);
                     currentlySelectedType -= 1;
-                    lineId.setSelection(0);
-                    lineId.setEnabled(false);
                     canSelectLineId = false;
                     cond.setBoo(false);
                     LineGetter lineGetter = new LineGetter();
@@ -144,8 +144,7 @@ public class LinesFragment extends Fragment {
                     RouteGetter getter = new RouteGetter();
                     getter.execute(Integer.toString(idx), id);
                 }
-//                cond.removeListener();
-//                lineId.setSelection(0);
+
             }
 
             @Override
@@ -160,20 +159,30 @@ public class LinesFragment extends Fragment {
         @Override
         public void onChange(String lineID) {
 
-            for (int i = 0; i < lines.size(); i++) {
-                if (lines.get(i).getId() == Integer.parseInt(lineID)) {
-                    lineId.setSelection(i + 1);
-                    break;
-                }
-            }
-            cond.removeListener();
+            selectLineId(lineID);
         }
+    }
+
+    private void selectLineId(String lineID){
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).getId() == Integer.parseInt(lineID)) {
+                lineId.setSelection(i + 1);
+                break;
+            }
+        }
+        cond.removeListener();
     }
 
     public void showRoute(String transportationTypeId, String lineId){
         cond.setLineID(lineId);
         cond.setListener(listener);
-        transportationType.setSelection(Integer.parseInt(transportationTypeId) + 1);
+        int currentPosition = transportationType.getSelectedItemPosition();
+        int targetPoisiton = Integer.parseInt(transportationTypeId) + 1;
+        if(currentPosition == targetPoisiton){
+           selectLineId(lineId);
+        }else{
+            transportationType.setSelection(targetPoisiton);
+        }
     }
 
 

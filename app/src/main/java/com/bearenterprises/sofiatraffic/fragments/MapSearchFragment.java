@@ -78,6 +78,8 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.i("onCreateView", "yuhuuu");
         View v = inflater.inflate(R.layout.fragment_map_search, container, false);
         animationDuration = 200;
         // Inflate the layout for this fragment
@@ -234,6 +236,28 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                 linesForAdapter.addAll(lines);
                 slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, lines.size());
             }
+        }
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+    }
+
+    public void onResume(){
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle b){
+        super.onViewStateRestored(b);
+        if(stopName.getText() == null || stopName.getText().equals("")){
+            hideSlideUpPanel();
         }
     }
 

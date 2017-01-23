@@ -224,26 +224,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         @Override
         protected ArrayList<Line> doInBackground(String... strings) {
             String code = strings[0];
-            SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
-            Call<Station> station = sofiaTransportApi.getStation(code);
-            try {
-                Response<Station> response = station.execute();
-                if(!response.isSuccessful()){
-                    ApiError error = ParseApiError.parseError(response);
-                    if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
-                        ((MainActivity)getActivity()).removeRegistration();
-                        station = sofiaTransportApi.getStation(code);
-                        response = station.execute();
-                    }
-
-                }
-
-                return response.body().getLines();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
+            return ((MainActivity)getActivity()).getLinesByStationCode(code);
         }
 
         @Override

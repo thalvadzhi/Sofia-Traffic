@@ -34,7 +34,10 @@ import com.bearenterprises.sofiatraffic.fragments.TimeResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.GPSTracker;
+import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
+import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
@@ -42,6 +45,7 @@ import com.bearenterprises.sofiatraffic.updater.DbUpdater;
 import com.bearenterprises.sofiatraffic.utilities.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.GenerateClient;
+import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
 import com.bearenterprises.sofiatraffic.utilities.RegisterUser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.google.android.gms.appindexing.Action;
@@ -51,9 +55,13 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import retrofit2.Call;
+import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -297,6 +305,34 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     public void showRoute(String trId, String lineId){
         mViewPager.setCurrentItem(Constants.SECTION_LINES_IDX);
         linesFragment.showRoute(trId, lineId);
+    }
+
+    public ArrayList<Line> getLinesByStationCode(String code){
+        SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+        Call<Station> station = sofiaTransportApi.getStation(code);
+        try {
+            Response<Station> response = station.execute();
+            if(!response.isSuccessful()){
+                ApiError error = ParseApiError.parseError(response);
+                if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
+                    removeRegistration();
+                    station = sofiaTransportApi.getStation(code);
+                    response = station.execute();
+                }
+
+            }
+
+            Station st = response.body();
+            if(st != null){
+                return st.getLines();
+            }else{
+                return null;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void changeFragment(int id, Fragment fragment){

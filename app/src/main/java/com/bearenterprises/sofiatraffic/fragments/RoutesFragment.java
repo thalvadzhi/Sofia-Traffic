@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
@@ -24,6 +25,7 @@ public class RoutesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String transportationType;
     private ArrayList<ArrayList<Stop>> routes;
+    private  AnimatedExpandableListView routesListView;
 
 
     public RoutesFragment() {
@@ -53,7 +55,7 @@ public class RoutesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_routes, container, false);
-        final AnimatedExpandableListView routesListView = (AnimatedExpandableListView) view.findViewById(R.id.routesListView);
+        routesListView = (AnimatedExpandableListView) view.findViewById(R.id.routesListView);
         final RoutesAdapter adapter = new RoutesAdapter(this.routes, transportationType, getContext());
         routesListView.setAdapter(adapter);
 
@@ -83,6 +85,25 @@ public class RoutesFragment extends Fragment {
         return view;
     }
 
+    public void expandGroup(int groupPosition){
+        routesListView.expandGroup(groupPosition);
+        routesListView.setSelectedGroup(groupPosition);
+    }
+
+    public void scrollToPosition(int position){
+        routesListView.setSelection(position);
+    }
+
+    public void setPositionOnCurrentStop(Station station){
+        for(int i = 0; i < routes.size(); i++){
+            for(int j = 0; j < routes.get(i).size(); j++){
+                if(routes.get(i).get(j).getId() == station.getId()){
+                    expandGroup(i);
+                    scrollToPosition(j);
+                }
+            }
+        }
+    }
 
 
 }

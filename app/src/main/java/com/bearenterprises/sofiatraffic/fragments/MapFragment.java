@@ -122,7 +122,6 @@ public class MapFragment extends Fragment {
                         if (stations != null){
                             if(stations.size() != 0){
                                 showOnMap(stations);
-
                             }
 
                         }

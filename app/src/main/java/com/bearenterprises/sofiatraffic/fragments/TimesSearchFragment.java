@@ -164,7 +164,7 @@ public class TimesSearchFragment extends Fragment {
                 station = getStation(code, sofiaTransportApi);
                 if(station == null){
                     ((MainActivity)getContext()).detachFragment(l);
-//                        m.beginTransaction().detach(l).commit();
+
                     ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
                     return null;
                 }
@@ -183,7 +183,7 @@ public class TimesSearchFragment extends Fragment {
             for(com.bearenterprises.sofiatraffic.restClient.second.Line line : station.getLines()){
                 lineTimes.add(new LineTimes(line, Integer.toString(line.getType())));
             }
-            timeResultsFragment = TimeResultsFragment.newInstance(lineTimes);
+            timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, station);
             ((MainActivity)getActivity()).changeFragment(R.id.result_container, timeResultsFragment);
             return station.getLines();
 

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.ResultsAdapter;
+import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 
@@ -20,21 +21,24 @@ import java.util.Iterator;
 
 public class TimeResultsFragment extends Fragment {
     private static final String TIMES = "param2";
+    private static final String STATION = "STATION";
 
     private RecyclerView resultsView;
     private String stationName;
     private ArrayList<LineTimes> lineTimes;
     private ResultsAdapter resultsAdapter;
+    private Station station;
 
 
     public TimeResultsFragment() {
         // Required empty public constructor
     }
 
-    public static TimeResultsFragment newInstance(ArrayList<LineTimes> vt) {
+    public static TimeResultsFragment newInstance(ArrayList<LineTimes> vt, Station station) {
         TimeResultsFragment fragment = new TimeResultsFragment();
         Bundle args = new Bundle();
         args.putSerializable(TIMES, vt);
+        args.putSerializable(STATION, station);
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,8 +73,8 @@ public class TimeResultsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-//            stationName = getArguments().getString(STATION_NAME);
             lineTimes = (ArrayList<LineTimes>)getArguments().getSerializable(TIMES);
+            station = (Station)getArguments().getSerializable(STATION);
         }
     }
 
@@ -99,7 +103,7 @@ public class TimeResultsFragment extends Fragment {
                 ((MainActivity)getActivity()).setEnablednessRefreshLayout(enable);
             }
         });
-        resultsAdapter = new ResultsAdapter(getContext(), lineTimes);
+        resultsAdapter = new ResultsAdapter(getContext(), lineTimes, station);
         resultsView.setAdapter(resultsAdapter);
         resultsView.setLayoutManager(new LinearLayoutManager(getContext()));
 

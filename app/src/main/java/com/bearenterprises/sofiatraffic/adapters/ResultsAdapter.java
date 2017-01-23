@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 
 import java.util.ArrayList;
@@ -28,8 +29,10 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
 
     private Context context;
     private ArrayList<LineTimes> times;
+    private Station station;
 
-    public ResultsAdapter(Context context, ArrayList<LineTimes> times) {
+    public ResultsAdapter(Context context, ArrayList<LineTimes> times, Station station) {
+        this.station = station;
         this.context = context;
         this.times = times;
 
@@ -48,7 +51,6 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
         LineTimes vt = times.get(position);
         holder.stationName.setText(vt.getLine().getName());
         if(vt.getTimes() != null){
-
             holder.progressBar.setVisibility(View.GONE);
             holder.vTimes.setText(vt.getTimes());
         }

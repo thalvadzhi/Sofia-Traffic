@@ -43,10 +43,6 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
         return routes.size();
     }
 
-//    @Override
-//    public int getChildrenCount(int groupPosition) {
-//        return routes.get(groupPosition).size();
-//    }
 
     @Override
     public ArrayList<Stop> getGroup(int groupPosition) {

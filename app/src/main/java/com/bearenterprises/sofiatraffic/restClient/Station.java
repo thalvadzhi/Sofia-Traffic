@@ -1,11 +1,12 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by thalv on 29-Aug-16.
  */
-public class Station {
+public class Station implements Serializable{
     private int id;
     private int code;
     private String name;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="choose_screen_human_readable">
+        <item>@string/search</item>
+        <item>@string/favourites</item>
+        <item>@string/lines</item>
+        <item>@string/map</item>
+    </string-array>
+
+    <string-array name="choose_screen_values">
+        <item>@string/settings_search_value</item>
+        <item>@string/settings_favourites_value</item>
+        <item>@string/settings_lines_value</item>
+        <item>@string/settings_map_value</item>
+    </string-array>
+</resources>

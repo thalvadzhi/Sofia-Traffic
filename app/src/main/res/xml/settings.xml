@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="@string/key_choose_startup_screen"
+        android:title="@string/choose_startup_screen"
+        android:entries="@array/choose_screen_human_readable"
+        android:entryValues="@array/choose_screen_values"
+        android:defaultValue="@string/default_startup_screen"
+        android:summary="@string/summary_startup_screen"
+        />
+
+</PreferenceScreen>

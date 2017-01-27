@@ -3,10 +3,12 @@ package com.bearenterprises.sofiatraffic;
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
@@ -20,6 +22,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
 
         if(savedInstanceState == null){
             favouritesFragment = FavouritesFragment.newInstance();
@@ -159,8 +166,26 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        setFavouritePage();
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+    private void setFavouritePage(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String startupScreen = sharedPref.getString(getResources().getString(R.string.key_choose_startup_screen), getResources().getString(R.string.default_startup_screen));
+        String search = getResources().getString(R.string.settings_search_value);
+        String favorites = getResources().getString(R.string.settings_favourites_value);
+        String lines = getResources().getString(R.string.settings_lines_value);
+        String map = getResources().getString(R.string.settings_map_value);
+        if(startupScreen.equals(search)){
+            setPage(Constants.SECTION_SEARCH_IDX);
+        }else if(startupScreen.equals(favorites)){
+            setPage(Constants.SECTION_FAVOURITES_IDX);
+        }else if(startupScreen.equals(lines)){
+            setPage(Constants.SECTION_LINES_IDX);
+        }else if(startupScreen.equals(map)){
+            setPage(Constants.SECTION_MAP_SEARCH_IDX);
+        }
     }
 
     @Override
@@ -209,9 +234,10 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
     }
+
 
     public void makeSnackbar(String message){
         Snackbar
@@ -273,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     public BackupManager getBackupManager(){
         return backupManager;
     }
+
     public void setPage (int index){
         mViewPager.setCurrentItem(index, true);
     }
@@ -380,7 +407,9 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.search) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 

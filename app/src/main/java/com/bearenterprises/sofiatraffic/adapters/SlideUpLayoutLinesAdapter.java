@@ -1,9 +1,11 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,15 +43,27 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         Line l = lines.get(position);
         holder.setOnClickListener(position);
 
+        TypedValue typedValueBus = new TypedValue();
+        TypedValue typedValueTrolley = new TypedValue();
+        TypedValue typedValueTram = new TypedValue();
+
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.iconBus, typedValueBus, true);
+        theme.resolveAttribute(R.attr.iconTram, typedValueTram, true);
+        theme.resolveAttribute(R.attr.iconTrolley, typedValueTrolley, true);
+
+        int bus = typedValueBus.resourceId;
+        int tram = typedValueTram.resourceId;
+        int trolley = typedValueTrolley.resourceId;
         switch (l.getType()){
             case 0:
-                Bitmap imageTram = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram);
+                Bitmap imageTram = BitmapFactory.decodeResource(context.getResources(), tram);
                 holder.trType.setImageBitmap(imageTram);break;
             case 1:
-                Bitmap imageBus = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus);
+                Bitmap imageBus = BitmapFactory.decodeResource(context.getResources(), bus);
                 holder.trType.setImageBitmap(imageBus);break;
             case 2:
-                Bitmap imageTrolley = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_smaller);
+                Bitmap imageTrolley = BitmapFactory.decodeResource(context.getResources(), trolley);
                 holder.trType.setImageBitmap(imageTrolley);break;
         }
         holder.lineName.setText(l.getName());

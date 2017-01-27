@@ -19,7 +19,16 @@
         <item name="transitionSlideUpPanel">@drawable/transition_purple_white</item>
         <item name="backgroundColorSlideUpPanel">@color/white</item>
         <item name="clock">@drawable/clock</item>
-        <item name="locationInSlideUp" format="reference">@drawable/location</item>
+        <item name="locationInSlideUp">@drawable/location</item>
+        <item name="busColor">@color/colorBus</item>
+        <item name="tramColor">@color/colorTram</item>
+        <item name="trolleyColor">@color/colorTrolley</item>
+        <item name="busRoundedEdges">@drawable/rounded_edges_bus</item>
+        <item name="tramRoundedEdges">@drawable/rounded_edges_tram</item>
+        <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley</item>
+        <item name="iconBus">@drawable/bus</item>
+        <item name="iconTram">@drawable/tram</item>
+        <item name="iconTrolley">@drawable/trolley_smaller</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -35,8 +44,18 @@
         <item name="transitionSlideUpPanel">@drawable/transition_black_white</item>
         <item name="backgroundColorSlideUpPanel">@color/darkGrey</item>
 
-        <item name="locationInSlideUp" format="reference">@drawable/location_white</item>
+        <item name="locationInSlideUp">@drawable/location_white</item>
         <item name="clock">@drawable/clock_white1</item>
+        <item name="busColor">@color/colorBusDarker</item>
+        <item name="tramColor">@color/colorTramDarker</item>
+        <item name="trolleyColor">@color/colorTrolleyDarker</item>
+        <item name="busRoundedEdges">@drawable/rounded_edges_bus_darker</item>
+        <item name="tramRoundedEdges">@drawable/rounded_edges_tram_darker</item>
+        <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley_darker</item>
+        <item name="iconBus">@drawable/bus_white</item>
+        <item name="iconTram">@drawable/tram_white</item>
+        <item name="iconTrolley">@drawable/trolley_smaller_white</item>
+
 
 
     </style>

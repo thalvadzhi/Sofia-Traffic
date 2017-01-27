@@ -2,10 +2,12 @@ package com.bearenterprises.sofiatraffic.adapters;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,21 +56,34 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
             holder.progressBar.setVisibility(View.GONE);
             holder.vTimes.setText(vt.getTimes());
         }
+        TypedValue typedValueBus = new TypedValue();
+        TypedValue typedValueTrolley = new TypedValue();
+        TypedValue typedValueTram = new TypedValue();
+
+        Resources.Theme theme = context.getTheme();
+        theme.resolveAttribute(R.attr.busColor, typedValueBus, true);
+        theme.resolveAttribute(R.attr.tramColor, typedValueTram, true);
+        theme.resolveAttribute(R.attr.trolleyColor, typedValueTrolley, true);
+
+        int colorBus = typedValueBus.data;
+        int colorTram = typedValueTram.data;
+        int colorTrolley = typedValueTrolley.data;
+
 
         switch(vt.getType()){
-            case "1": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
-                holder.bg.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
-                holder.stationName.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBus));
+            case "1": holder.imageView.setBackgroundColor(colorBus);
+                holder.bg.setBackgroundColor(colorBus);
+                holder.stationName.setBackgroundColor(colorBus);
                 Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
                 holder.imageView.setImageBitmap(image);break;
-            case "0": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTram));
-                holder.bg.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTram));
-                holder.stationName.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTram));
+            case "0": holder.imageView.setBackgroundColor(colorTram);
+                holder.bg.setBackgroundColor(colorTram);
+                holder.stationName.setBackgroundColor(colorTram);
                 Bitmap image2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram_white);
                 holder.imageView.setImageBitmap(image2);break;
-            case "2": holder.imageView.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolley));
-                holder.bg.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolley));
-                holder.stationName.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolley));
+            case "2": holder.imageView.setBackgroundColor(colorTrolley);
+                holder.bg.setBackgroundColor(colorTrolley);
+                holder.stationName.setBackgroundColor(colorTrolley);
                 Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_smaller_white);
                 holder.imageView.setImageBitmap(image3);break;
         }

@@ -13,4 +13,13 @@
     <attr name="backgroundColorSlideUpPanel" format="color"/>
     <attr name="clock" format="reference"/>
     <attr name="locationInSlideUp" format="reference"/>
+    <attr name="busColor" format="color"/>
+    <attr name="trolleyColor" format="color"/>
+    <attr name="tramColor" format="color"/>
+    <attr name="tramRoundedEdges" format="reference"/>
+    <attr name="trolleyRoundedEdges" format="reference"/>
+    <attr name="busRoundedEdges" format="reference"/>
+    <attr name="iconBus" format="reference"/>
+    <attr name="iconTram" format="reference"/>
+    <attr name="iconTrolley" format="reference"/>
 </resources>

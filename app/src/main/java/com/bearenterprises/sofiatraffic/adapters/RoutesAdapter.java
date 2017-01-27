@@ -1,11 +1,14 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,23 +107,33 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
 
             firstStop.setText(firstStopColoured);
             lastStop.setText(lastStopColoured);
+            TypedValue typedValueBus = new TypedValue();
+            TypedValue typedValueTrolley = new TypedValue();
+            TypedValue typedValueTram = new TypedValue();
 
+            Resources.Theme theme = context.getTheme();
+            theme.resolveAttribute(R.attr.busRoundedEdges, typedValueBus, true);
+            theme.resolveAttribute(R.attr.tramRoundedEdges, typedValueTram, true);
+            theme.resolveAttribute(R.attr.trolleyRoundedEdges, typedValueTrolley, true);
 
+            int bus = typedValueBus.resourceId;
+            int tram = typedValueTram.resourceId;
+            int trolley = typedValueTrolley.resourceId;
             switch (transportationType){
                 case Constants.BUS:
-                    rl.setBackgroundResource(R.drawable.rounded_edges_bus);
+                    rl.setBackgroundResource(bus);
 //                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorBusGroup));
                     firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     break;
                 case Constants.TRAM:
-                    rl.setBackgroundResource(R.drawable.rounded_edges_tram);
+                    rl.setBackgroundResource(tram);
 //                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTramGroup));
                     firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     break;
                 case Constants.TROLLEY:
-                    rl.setBackgroundResource(R.drawable.rounded_edges_trolley);
+                    rl.setBackgroundResource(trolley);
 //                    rl.setBackgroundColor(ContextCompat.getColor(this.context, R.color.colorTrolleyGroup));
                     firstStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));
                     lastStop.setTextColor(ContextCompat.getColor(this.context, R.color.white));

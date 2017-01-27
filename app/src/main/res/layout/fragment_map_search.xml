@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/transition_purple_white"
+            android:background="?transitionSlideUpPanel"
             android:id="@+id/LinearLayoutBackground">
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -92,8 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
-
-            android:background="@color/white"
+            android:background="?backgroundColorSlideUpPanel"
             android:gravity="center_horizontal">
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -105,7 +104,7 @@
 
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:background="@drawable/clock"
+                    android:background="?clock"
                     android:id="@+id/ImageButtonGetTimes" />
 
                 <TextView
@@ -127,7 +126,7 @@
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     style="@style/toggleButton"
-                    android:background="@drawable/toggle_bg"
+                    android:background="?starToggle"
                     android:id="@+id/ToggleButtonFavourite"
                     />
                 <TextView
@@ -144,20 +143,20 @@
             android:id="@+id/RecyclerViewLines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"/>
+            android:background="?backgroundColorSlideUpPanel"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingTop="10dp"
-            android:background="@color/white">
+            android:background="?backgroundColorSlideUpPanel">
             <ImageView
                 android:layout_marginLeft="10dp"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:paddingLeft="10dp"
-                android:background="@drawable/location"/>
+                android:background="?locationInSlideUp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,7 +167,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"/>
+            android:background="?backgroundColorSlideUpPanel"/>
 
     </LinearLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

@@ -2,9 +2,14 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.preference.ListPreference;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,5 +30,32 @@ public class SettingsFragment extends PreferenceFragment {
 
         // Load the preferences from an XML resource
        addPreferencesFromResource(R.xml.settings);
+        Preference preference = findPreference(getString(R.string.key_choose_theme));
+        preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                String key = preference.getKey();
+                if(key.equals(getActivity().getResources().getString(R.string.key_choose_theme))){
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Искате ли да рестартирате приложението?")
+                            .setMessage("За да влязат в сила промените е нужно приложението да се рестартира.")
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent i = getActivity().getBaseContext().getPackageManager()
+                                            .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // do nothing
+                                }
+                            })
+                            .show();
+                }
+                return true;
+            }
+        });
     }
 }

@@ -9,4 +9,13 @@
         android:summary="@string/summary_startup_screen"
         />
 
+    <ListPreference
+        android:key="@string/key_choose_theme"
+        android:title="@string/choose_theme"
+        android:entries="@array/choose_theme_human_readable"
+        android:entryValues="@array/choose_theme_values"
+        android:defaultValue="@string/light_theme_value"
+        android:summary="@string/theme_summary"
+        />
+
 </PreferenceScreen>

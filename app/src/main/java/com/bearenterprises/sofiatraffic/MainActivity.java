@@ -64,6 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utility.setTheme(this);
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);

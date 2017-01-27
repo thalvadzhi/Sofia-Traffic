@@ -15,10 +15,17 @@
     <string name="settings_favourites_value">favourites</string>
     <string name="settings_lines_value">lines</string>
     <string name="settings_map_value">map</string>
+    <string name="dark_theme">Тъмна</string>
+    <string name="light_theme">Светла</string>
+    <string name="dark_theme_value">dark</string>
+    <string name="light_theme_value">light</string>
 
 
     <string name="summary_startup_screen">Кой да бъде началният екран(Любими, Карта и тн.)</string>
     <string name="key_choose_startup_screen">choose_startup_screen</string>
+    <string name="key_choose_theme">choose_theme</string>
+    <string name="choose_theme">Тема</string>
+    <string name="theme_summary">Дали темата да бъде тъмна или светла</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

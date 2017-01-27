@@ -25,7 +25,7 @@
         android:layout_gravity="left|top"
 
         style="@style/toggleButton"
-        android:background="@drawable/toggle_bg"
+        android:background="?starToggle"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/station_name_text_view" />
 

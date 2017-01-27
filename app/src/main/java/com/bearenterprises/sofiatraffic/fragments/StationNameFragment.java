@@ -89,11 +89,6 @@ public class StationNameFragment extends Fragment {
             });
         }
 
-
-
-
-
-
         return view;
     }
 

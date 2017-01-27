@@ -7,10 +7,19 @@
         <item>@string/map</item>
     </string-array>
 
+    <string-array name="choose_theme_human_readable">
+        <item>@string/dark_theme</item>
+        <item>@string/light_theme</item>
+    </string-array>
+
     <string-array name="choose_screen_values">
         <item>@string/settings_search_value</item>
         <item>@string/settings_favourites_value</item>
         <item>@string/settings_lines_value</item>
         <item>@string/settings_map_value</item>
+    </string-array>
+    <string-array name="choose_theme_values">
+        <item>@string/dark_theme_value</item>
+        <item>@string/light_theme_value</item>
     </string-array>
 </resources>

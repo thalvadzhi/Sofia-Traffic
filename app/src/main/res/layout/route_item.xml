@@ -22,6 +22,7 @@
         android:textSize="20dp"
         android:textAllCaps="true"
         android:textAlignment="center"
+        android:textColor="@android:color/black"
         android:layout_toRightOf="@+id/locationItem"
         android:layout_toLeftOf="@+id/textViewRouteCode"
         />
@@ -34,6 +35,7 @@
         android:textSize="10dp"
         android:paddingTop="5dp"
         android:textAlignment="center"
+        android:textColor="@android:color/black"
         android:layout_toRightOf="@+id/locationItem"
         android:layout_toLeftOf="@+id/textViewRouteCode"/>
 

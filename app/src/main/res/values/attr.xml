@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="viewPagerBackgroundColor" format="color" />
+    <attr name="tabSelectedColor" format="color" />
+    <attr name="tabUnselectedColor" format="color" />
+    <attr name="actionBarColor" format="color" />
+    <attr name="locationSelector" format="reference"/>
+    <attr name="starToggle" format="reference"/>
+    <attr name="iconEdit" format="reference"/>
+    <attr name="stationCodeBackgroundFavourites" format="reference"/>
+    <attr name="stationCodeTextColorFavourites" format="color"/>
+    <attr name="transitionSlideUpPanel" format="reference"/>
+    <attr name="backgroundColorSlideUpPanel" format="color"/>
+    <attr name="clock" format="reference"/>
+    <attr name="locationInSlideUp" format="reference"/>
+</resources>

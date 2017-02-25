@@ -13,3 +13,4 @@ local.properties
 app/*
 !app/src/
 !app/build.gradle
+app/src/main/res/values/api_keys.xml

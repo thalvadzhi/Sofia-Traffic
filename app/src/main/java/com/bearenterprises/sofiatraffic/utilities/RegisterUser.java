@@ -3,6 +3,7 @@ package com.bearenterprises.sofiatraffic.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
@@ -26,7 +27,7 @@ public class RegisterUser extends Thread{
 
     @Override
     public void run(){
-        SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+        SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
         Call<Registration> registrationCall = sofiaTransportApi.registerUser();
         try {
             registration = registrationCall.execute().body();

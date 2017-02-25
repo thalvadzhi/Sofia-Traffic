@@ -1,5 +1,6 @@
 package com.bearenterprises.sofiatraffic.utilities;
 
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 
@@ -18,7 +19,7 @@ public class ParseApiError {
 
     public static ApiError parseError(Response<?> response) {
         Converter<ResponseBody, ApiError> converter =
-                SofiaTransportApi.retrofit
+                MainActivity.retrofit
                         .responseBodyConverter(ApiError.class, new Annotation[0]);
 
         ApiError error;

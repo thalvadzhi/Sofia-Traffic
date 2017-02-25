@@ -1,0 +1,16 @@
+.idea/
+.gradle/
+.git/
+backupGradle/
+gradle/
+files/
+projectFilesBackup/
+build/
+AppMedia/
+keystore.properties
+app/app.iml
+SofiaTraffic.iml
+local.properties
+app/ 
+!app/src/
+!app/build.gradle

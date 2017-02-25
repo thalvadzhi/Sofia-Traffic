@@ -1,7 +1,9 @@
 package com.bearenterprises.sofiatraffic.utilities;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
 
@@ -20,13 +22,15 @@ import okhttp3.Response;
 public class GenerateClient {
     private static Registration registration;
 
+
+
     /**
      * This method should be called from MainActivity after registration has been settled
      */
     public static void setRegistration(Registration reg){
         registration = reg;
     }
-    public static OkHttpClient getClient(){
+    public static OkHttpClient getClient(final Context context){
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
@@ -40,9 +44,9 @@ public class GenerateClient {
                             .header("X-User-Id", registration.getId());
 
                 }
-
+                String ivkos_api_key = context.getResources().getString(R.string.ivkos_api_key);
                 Request request = requestBuilder
-                        .header("X-Api-Key", Constants.IVKOS_API_KEY)
+                        .header("X-Api-Key", ivkos_api_key)
                         .method(original.method(), original.body())
                         .build();
 

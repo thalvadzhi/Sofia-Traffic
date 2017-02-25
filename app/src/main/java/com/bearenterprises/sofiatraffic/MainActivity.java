@@ -67,6 +67,8 @@ import java.util.Stack;
 import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements StationTimeShow, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private boolean saveToHistory;
     private CoordinatorLayout coordinatorLayout;
     private int currentPage;
+    public static Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
+        initializeRetrofitInstance();
 
         if(savedInstanceState == null){
             favouritesFragment = FavouritesFragment.newInstance();
@@ -171,6 +174,14 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         setFavouritePage();
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void initializeRetrofitInstance(){
+        retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.IVKOS_API_BASE_URL)
+                .client(GenerateClient.getClient(this))
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
     private void setFavouritePage(){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -337,7 +348,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     }
 
     public ArrayList<Line> getLinesByStationCode(String code){
-        SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+        SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
         Call<Station> station = sofiaTransportApi.getStation(code);
         try {
             Response<Station> response = station.execute();
@@ -367,8 +378,6 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     public void changeFragment(int id, Fragment fragment){
         getSupportFragmentManager().
                 beginTransaction().
-//                setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
-
                 replace(id, fragment).
                 commitAllowingStateLoss();
     }

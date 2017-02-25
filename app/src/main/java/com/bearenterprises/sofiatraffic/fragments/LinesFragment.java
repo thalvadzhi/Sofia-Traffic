@@ -195,7 +195,7 @@ public class LinesFragment extends Fragment {
         protected Routes doInBackground(String... strings) {
             String lineType = strings[0];
             String lineId = strings[1];
-            SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
             try {
                 Routes route = routes.execute().body();
@@ -290,7 +290,7 @@ public class LinesFragment extends Fragment {
 
         @Override
         protected List<Line> doInBackground(Integer... idxs) {
-            SofiaTransportApi sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             try {
                 Response<List<Line>> response = lines.execute();

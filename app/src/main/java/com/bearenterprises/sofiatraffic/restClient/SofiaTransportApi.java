@@ -1,5 +1,7 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
+import android.content.Context;
+
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Routes;
@@ -42,10 +44,4 @@ public interface SofiaTransportApi {
 
     @POST("users")
     Call<Registration> registerUser();
-
-    public static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Constants.IVKOS_API_BASE_URL)
-            .client(GenerateClient.getClient())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
 }

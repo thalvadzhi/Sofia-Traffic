@@ -158,7 +158,7 @@ public class TimesSearchFragment extends Fragment {
 
         @Override
         protected ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> doInBackground(Void... params) {
-            sofiaTransportApi = SofiaTransportApi.retrofit.create(SofiaTransportApi.class);
+            sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Station station= null;
             try {
                 station = getStation(code, sofiaTransportApi);

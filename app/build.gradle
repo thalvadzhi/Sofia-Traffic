@@ -11,8 +11,8 @@ android {
         applicationId "com.bearenterprises.sofiatraffic"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 9
-        versionName "1.1.1"
+        versionCode 10
+        versionName "1.1.2"
         multiDexEnabled true
     }
     buildTypes {

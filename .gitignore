@@ -8,9 +8,8 @@ projectFilesBackup/
 build/
 AppMedia/
 keystore.properties
-app/app.iml
 SofiaTraffic.iml
 local.properties
-app/ 
+app/*
 !app/src/
 !app/build.gradle

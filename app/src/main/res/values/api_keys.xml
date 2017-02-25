@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="google_maps_api_key">GOOGLE_MAPS_API_KEY</string>
+    <string name="android_backup_api_key">ANDROID_BACKUP</string>
+    <string name="ivkos_api_key">IVKOS_API</string>
+</resources>

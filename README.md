@@ -1,6 +1,6 @@
 # Sofia-Traffic (Градски Транспорт София)
 
-The app allows the user to check the arrival time of trolleys, buses and trams in the SUMC system. Other features include favourites(just stops for now), search by line, show stop on the map, search for stops on the map or search by place (for e.g. you can search for Serdika Center which will give you the nearest stops to Serdika Center).
+[The app](https://play.google.com/store/apps/details?id=com.bearenterprises.sofiatraffic) allows the user to check the arrival time of trolleys, buses and trams in the SUMC system. Other features include favourites(just stops for now), search by line, show stop on the map, search for stops on the map or search by place (for e.g. you can search for Serdika Center which will give you the nearest stops to Serdika Center).
 
 ## Prerequisites
 The app expects to find a file `api_keys.xml` in the `res/values` folder in the following format :

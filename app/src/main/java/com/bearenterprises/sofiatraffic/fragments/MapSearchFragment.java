@@ -37,7 +37,7 @@ import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
 import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.vision.text.Text;
+//import com.google.android.gms.vision.text.Text;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.io.IOException;

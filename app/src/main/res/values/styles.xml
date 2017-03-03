@@ -29,6 +29,7 @@
         <item name="iconBus">@drawable/bus</item>
         <item name="iconTram">@drawable/tram</item>
         <item name="iconTrolley">@drawable/trolley_smaller</item>
+        <item name="moreButtonBorder">@color/darkGrey</item>
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -55,6 +56,7 @@
         <item name="iconBus">@drawable/bus_white</item>
         <item name="iconTram">@drawable/tram_white</item>
         <item name="iconTrolley">@drawable/trolley_smaller_white</item>
+        <item name="moreButtonBorder">@color/grey</item>
 
 
 

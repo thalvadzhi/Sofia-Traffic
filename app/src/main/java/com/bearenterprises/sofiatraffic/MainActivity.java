@@ -94,6 +94,8 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
     private CoordinatorLayout coordinatorLayout;
     private int currentPage;
     public static Retrofit retrofit;
+    private static String queryMethod;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,10 +174,27 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         setFavouritePage();
-
+        setQueryMethod();
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
+    public <T> T handleUnauthorizedQuery(Call<T> call) throws IOException{
+        Response<T> response = call.execute();
+        if(!response.isSuccessful()){
+            ApiError error = ParseApiError.parseError(response);
+            if(error.getCode() != null && error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
+                removeRegistration();
+                Call<T> cll = call.clone();
+                response = cll.execute();
+            }
+
+        }
+        return response.body();
+    }
+
+    public static void setQueryMethod(String method){
+        queryMethod = method;
+    }
     private void initializeRetrofitInstance(){
         retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.IVKOS_API_BASE_URL)
@@ -199,6 +218,21 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         }else if(startupScreen.equals(map)){
             setPage(Constants.SECTION_MAP_SEARCH_IDX);
         }
+    }
+
+    private void setQueryMethod(){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        queryMethod = sharedPreferences.getString(getResources().getString(R.string.key_choose_query_method), getResources().getString(R.string.query_method_default));
+    }
+
+
+    public String getQueryMethod(){
+
+        return queryMethod;
+    }
+
+    public void updateLineInfoSlow(Station station, ArrayList<Line> lines){
+        timesSearchFragment.updateLineInfoSlowForSelectLines(station, lines);
     }
 
     @Override
@@ -351,23 +385,7 @@ public class MainActivity extends AppCompatActivity implements StationTimeShow, 
         SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
         Call<Station> station = sofiaTransportApi.getStation(code);
         try {
-            Response<Station> response = station.execute();
-            if(!response.isSuccessful()){
-                ApiError error = ParseApiError.parseError(response);
-                if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
-                    removeRegistration();
-                    station = sofiaTransportApi.getStation(code);
-                    response = station.execute();
-                }
-
-            }
-
-            Station st = response.body();
-            if(st != null){
-                return st.getLines();
-            }else{
-                return null;
-            }
+            return handleUnauthorizedQuery(station).getLines();
 
         } catch (IOException e) {
             e.printStackTrace();

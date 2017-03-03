@@ -18,4 +18,13 @@
         android:summary="@string/theme_summary"
         />
 
+    <ListPreference
+        android:key="@string/key_choose_query_method"
+        android:title="@string/choose_query_method"
+        android:entries="@array/choose_query_method_human_readable"
+        android:entryValues="@array/choose_query_method_values"
+        android:defaultValue="@string/query_method_fast_value"
+        android:summary="@string/query_method_summary"
+        />
+
 </PreferenceScreen>

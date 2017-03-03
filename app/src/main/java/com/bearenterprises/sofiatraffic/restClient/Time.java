@@ -16,6 +16,11 @@ public class Time implements Serializable{
         this.hasPlatform = hasPlatform;
     }
 
+    public Time(String time) {
+        this.time = time;
+    }
+
+
     public String getTime() {
         return time;
     }

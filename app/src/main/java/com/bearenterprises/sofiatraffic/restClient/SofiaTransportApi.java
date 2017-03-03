@@ -31,6 +31,10 @@ public interface SofiaTransportApi {
     Call<Station> getStation(@Path("code") String code);
 
     @Headers("@: userID")
+    @GET("beta/stops/{code}")
+    Call<Station> getStationWithTimes(@Path("code") String code);
+
+    @Headers("@: userID")
     @GET("stops/{code}/lines/{lineId}")
     Call<List<Time>> getTimes(@Path("code") String code, @Path("lineId") String lineId);
 

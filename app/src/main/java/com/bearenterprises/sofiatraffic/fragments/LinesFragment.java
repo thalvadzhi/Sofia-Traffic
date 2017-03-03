@@ -293,18 +293,7 @@ public class LinesFragment extends Fragment {
             SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             try {
-                Response<List<Line>> response = lines.execute();
-                if(!response.isSuccessful()){
-                    ApiError error = ParseApiError.parseError(response);
-                    if(error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
-                        ((MainActivity)getActivity()).removeRegistration();
-                        lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
-                        response = lines.execute();
-                    }
-
-                }
-
-                return response.body();
+                return ((MainActivity)getActivity()).handleUnauthorizedQuery(lines);
 
             } catch (IOException e) {
                 e.printStackTrace();

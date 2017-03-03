@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 
 public class SettingsFragment extends PreferenceFragment {
@@ -29,7 +30,15 @@ public class SettingsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
-       addPreferencesFromResource(R.xml.settings);
+        addPreferencesFromResource(R.xml.settings);
+        Preference preferenceQueryMethod = findPreference(getString(R.string.key_choose_query_method));
+        preferenceQueryMethod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                MainActivity.setQueryMethod((String)newValue);
+                return true;
+            }
+        });
         Preference preference = findPreference(getString(R.string.key_choose_theme));
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override

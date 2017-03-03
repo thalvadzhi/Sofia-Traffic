@@ -22,6 +22,7 @@ import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
+import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
 
@@ -41,6 +42,7 @@ import retrofit2.Response;
 public class TimesSearchFragment extends Fragment {
     private  EditText t;
     private SwipeRefreshLayout refreshLayout;
+    private TimeResultsFragment timeResultsFragment;
     public TimesSearchFragment() {
     }
 
@@ -57,6 +59,7 @@ public class TimesSearchFragment extends Fragment {
             getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -114,17 +117,15 @@ public class TimesSearchFragment extends Fragment {
 
     private Station getStation(String code, SofiaTransportApi sofiaTransportApi) throws IOException {
         Call<Station> call = sofiaTransportApi.getStation(code);
-        Response<Station> response = call.execute();
-        if(!response.isSuccessful()){
-            ApiError error = ParseApiError.parseError(response);
-            if(error.getCode() != null && error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
-                ((MainActivity)getActivity()).removeRegistration();
-                call = sofiaTransportApi.getStation(code);
-                response = call.execute();
-            }
+        return ((MainActivity)getActivity()).handleUnauthorizedQuery(call);
+    }
 
-        }
-        return response.body();
+    /*
+    This uses the fast method(parsed from mobile site)
+     */
+    private Station getStationFast(String code, SofiaTransportApi sofiaTransportApi) throws IOException{
+        Call<Station> call = sofiaTransportApi.getStationWithTimes(code);
+        return ((MainActivity)getActivity()).handleUnauthorizedQuery(call);
     }
 
     public void showStationTimes(String code){
@@ -141,13 +142,15 @@ public class TimesSearchFragment extends Fragment {
         }
     }
 
-    class SearchQuery extends AsyncTask<Void, Void, ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line>>{
+    class SearchQuery extends AsyncTask<Void, Void, Station>{
         private String code;
         private FragmentManager m;
         private LoadingFragment l;
         private MainActivity a;
-        private TimeResultsFragment timeResultsFragment;
+//        private TimeResultsFragment timeResultsFragment;
         private SofiaTransportApi sofiaTransportApi;
+        private String queryMethod;
+
         public SearchQuery(String code, LoadingFragment l, FragmentManager m, MainActivity a){
             this.code = code;
             this.m = m;
@@ -157,11 +160,16 @@ public class TimesSearchFragment extends Fragment {
         }
 
         @Override
-        protected ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> doInBackground(Void... params) {
+        protected Station doInBackground(Void... params) {
             sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Station station= null;
             try {
-                station = getStation(code, sofiaTransportApi);
+                queryMethod = ((MainActivity)getActivity()).getQueryMethod();
+                if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)){
+                    station = getStation(code, sofiaTransportApi);
+                }else if(queryMethod.equals(Constants.QUERY_METHOD_FAST)){
+                    station = getStationFast(code, sofiaTransportApi);
+                }
                 if(station == null){
                     ((MainActivity)getContext()).detachFragment(l);
 
@@ -185,34 +193,68 @@ public class TimesSearchFragment extends Fragment {
             }
             timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, station);
             ((MainActivity)getActivity()).changeFragment(R.id.result_container, timeResultsFragment);
-            return station.getLines();
+            return station;
 
 
         }
 
         @Override
-        protected void onPostExecute(ArrayList<com.bearenterprises.sofiatraffic.restClient.second.Line> lines){
+        protected void onPostExecute(Station station){
+            if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)){
+                updateLineInfoSlow(station);
+            }else if(queryMethod.equals(Constants.QUERY_METHOD_FAST)){
+                updateLineInfoFast(station);
+            }
+        }
+
+    }
+
+    private void updateLineInfoFast(Station station){
+        //if station was gotten the fast way, it should contain time info
+        if (station != null){
+            ArrayList<Line> lines = station.getLines();
             if(lines != null){
-                for(int i = 0; i < lines.size(); i++){
-                    final com.bearenterprises.sofiatraffic.restClient.second.Line l = lines.get(i);
-                    Call<List<Time>> call = this.sofiaTransportApi.getTimes(code, Integer.toString(l.getId()));
-                    call.enqueue(new Callback<List<Time>>() {
-                        @Override
-                        public void onResponse(Call<List<Time>> call, Response<List<Time>> response) {
-                            List<Time> times = response.body();
-                            ((MainActivity) getActivity()).addTimes(timeResultsFragment, l, times);
-                        }
-
-                        @Override
-                        public void onFailure(Call<List<Time>> call, Throwable t) {
-
-                        }
-                    });
-
+                for (Line line : lines){
+                    List<Time> times = line.getTimes();
+                    ((MainActivity)getActivity()).addTimes(timeResultsFragment, line, times);
                 }
             }
         }
     }
+
+    /*
+        Update the line information by using the slow method that outputs many arrival times
+    */
+    private void updateLineInfoSlow(Station station){
+        if (station != null){
+            ArrayList<Line> lines = station.getLines();
+            updateLineInfoSlowForSelectLines(station, lines);
+        }
+    }
+
+    public void updateLineInfoSlowForSelectLines(Station station, ArrayList<Line> lines){
+        SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
+        if(lines != null){
+            for(int i = 0; i < lines.size(); i++){
+                final com.bearenterprises.sofiatraffic.restClient.second.Line l = lines.get(i);
+                Call<List<Time>> call = sofiaTransportApi.getTimes(Integer.toString(station.getCode()), Integer.toString(l.getId()));
+                call.enqueue(new Callback<List<Time>>() {
+                    @Override
+                    public void onResponse(Call<List<Time>> call, Response<List<Time>> response) {
+                        List<Time> times = response.body();
+                        ((MainActivity) getActivity()).addTimes(timeResultsFragment, l, times);
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Time>> call, Throwable t) {
+
+                    }
+                });
+
+            }
+        }
+    }
+
 
 
     public void getTimes(String code, FragmentManager manager){

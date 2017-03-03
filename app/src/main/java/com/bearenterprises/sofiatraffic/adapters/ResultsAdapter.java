@@ -18,10 +18,13 @@ import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Station;
+import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by thalv on 06-Dec-16.
@@ -52,10 +55,18 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
         holder.setOnClickListeners(position);
         LineTimes vt = times.get(position);
         holder.stationName.setText(vt.getLine().getName());
+        holder.moreButton.setVisibility(View.GONE);
+        holder.vTimes.setVisibility(View.GONE);
         if(vt.getTimes() != null){
+            if (((MainActivity)context).getQueryMethod().equals(Constants.QUERY_METHOD_FAST)){
+                holder.moreButton.setVisibility(View.VISIBLE);
+            }
             holder.progressBar.setVisibility(View.GONE);
+            holder.vTimes.setVisibility(View.VISIBLE);
             holder.vTimes.setText(vt.getTimes());
         }
+
+
         TypedValue typedValueBus = new TypedValue();
         TypedValue typedValueTrolley = new TypedValue();
         TypedValue typedValueTram = new TypedValue();
@@ -101,6 +112,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
         private ImageView imageView;
         private TextView bg;
         private ProgressBar progressBar;
+        private TextView moreButton;
         public ViewHolder(View itemView) {
             super(itemView);
             this.stationName = (TextView) itemView.findViewById(R.id.textView_card_station_name);
@@ -108,6 +120,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
             this.imageView = (ImageView) itemView.findViewById(R.id.imageView_transportation_type);
             this.bg = (TextView)itemView.findViewById(R.id.background);
             this.progressBar = (ProgressBar)itemView.findViewById(R.id.progressBarSingleLine);
+            this.moreButton = (TextView)itemView.findViewById(R.id.more_button);
         }
 
         private class RouteListener implements View.OnClickListener{
@@ -123,11 +136,32 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
             }
         }
 
+        /*
+            listener for the MORE button in the results card
+         */
+        private class MoreTimesListener implements View.OnClickListener{
+            private int position;
+
+            public MoreTimesListener(int position){
+                this.position = position;
+            }
+
+            @Override
+            public void onClick(View view) {
+                moreButton.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                Line line = times.get(position).getLine();
+                ((MainActivity)context).updateLineInfoSlow(station, new ArrayList<>(Arrays.asList(line)));
+            }
+        }
+
         public void setOnClickListeners(int position){
             RouteListener listener = new RouteListener(position);
+            MoreTimesListener moreTimesListener = new MoreTimesListener(position);
             stationName.setOnClickListener(listener);
             imageView.setOnClickListener(listener);
             bg.setOnClickListener(listener);
+            moreButton.setOnClickListener(moreTimesListener);
         }
     }
 }

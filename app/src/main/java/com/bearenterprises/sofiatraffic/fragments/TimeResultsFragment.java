@@ -48,7 +48,7 @@ public class TimeResultsFragment extends Fragment {
             int idx = 0;
             if(times != null){
                 for(LineTimes vt : lineTimes){
-                    if(vt.getLine().getName().equals(line.getName())){
+                    if(vt.getLine().getId().equals(line.getId())){
                         vt.setVehicleTimes(times);
                         this.resultsAdapter.notifyItemChanged(idx);
                     }
@@ -58,7 +58,7 @@ public class TimeResultsFragment extends Fragment {
                 Iterator<LineTimes> i = lineTimes.iterator();
                 while (i.hasNext()) {
                     LineTimes vt = i.next();
-                    if (vt.getLine().getName().equals(line.getName())) {
+                    if (vt.getLine().getId().equals(line.getId())) {
                         i.remove();
                         this.resultsAdapter.notifyItemRemoved(idx);
                     }

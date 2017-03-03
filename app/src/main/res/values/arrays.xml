@@ -22,4 +22,14 @@
         <item>@string/dark_theme_value</item>
         <item>@string/light_theme_value</item>
     </string-array>
+
+    <string-array name="choose_query_method_values">
+        <item>@string/query_method_fast_value</item>
+        <item>@string/query_method_slow_value</item>
+    </string-array>
+
+    <string-array name="choose_query_method_human_readable">
+        <item>@string/query_method_fast</item>
+        <item>@string/query_method_slow</item>
+    </string-array>
 </resources>

@@ -38,10 +38,10 @@ public class LineTimes implements Serializable{
         if (vehicleTimes == null){
             return null;
         }
-        if(times == null){
-            times = generateTimes();
-        }
-        return times;
+//        if(times == null){
+//            times = generateTimes();
+//        }
+        return generateTimes();
     }
 
     public void setLine(com.bearenterprises.sofiatraffic.restClient.second.Line line) {

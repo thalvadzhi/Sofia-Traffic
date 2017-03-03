@@ -60,6 +60,10 @@ public class Constants {
     public static final String REGISTRATION = "reg";
     public static final String SHARED_PREFERENCES_DEFAULT_REGISTRATION = "no_reg";
     public static final String UNAUTHOROZIED_USER_ID = "UnauthorizedUserIdError";
+    public static final String QUERY_METHOD_SLOW = "slow";
+    public static final String QUERY_METHOD_FAST = "fast";
+
+
 
 
     public static final String COORDINATES_DOWNLOAD_URL_JSON = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/coordinates.json";

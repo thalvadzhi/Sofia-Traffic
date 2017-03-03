@@ -22,4 +22,5 @@
     <attr name="iconBus" format="reference"/>
     <attr name="iconTram" format="reference"/>
     <attr name="iconTrolley" format="reference"/>
+    <attr name="moreButtonBorder" format="color"/>
 </resources>

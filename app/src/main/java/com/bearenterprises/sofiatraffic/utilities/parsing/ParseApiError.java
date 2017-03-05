@@ -1,8 +1,7 @@
-package com.bearenterprises.sofiatraffic.utilities;
+package com.bearenterprises.sofiatraffic.utilities.parsing;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.ApiError;
-import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

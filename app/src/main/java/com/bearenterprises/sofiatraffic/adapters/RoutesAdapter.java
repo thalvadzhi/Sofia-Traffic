@@ -2,7 +2,6 @@ package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
@@ -16,8 +15,9 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView;
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
@@ -207,7 +207,7 @@ public class RoutesAdapter extends AnimatedExpandableListView.AnimatedExpandable
     }
 
     private void showOnMap(ArrayList<Stop> stations){
-        ((MainActivity)context).showOnMap(stations);
+        CommunicationUtility.showOnMap(stations, (MainActivity)context);
     }
 
     @Override

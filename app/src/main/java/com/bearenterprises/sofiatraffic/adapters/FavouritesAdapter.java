@@ -11,14 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
 
 import java.util.ArrayList;
 
@@ -81,7 +81,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity)context).showTimes((String)textViewCode.getText());
+                    CommunicationUtility.showTimes((String)textViewCode.getText(), (MainActivity)context);
                 }
             });
 
@@ -145,7 +145,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
                             .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    ((MainActivity)context).removeFavourite(favourites.get(position).getCode());
+                                    CommunicationUtility.removeFavourite(favourites.get(position).getCode(), (MainActivity)context);
                                 }
                             })
                             .setNegativeButton("Не", new DialogInterface.OnClickListener() {
@@ -164,7 +164,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
             this.locationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ((MainActivity)context).showOnMap(favourites.get(position));
+                    CommunicationUtility.showOnMap(favourites.get(position), (MainActivity)context);
                 }
             });
         }

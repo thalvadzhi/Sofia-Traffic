@@ -7,11 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.Station;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
-import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class RoutesFragment extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int group, int child, long l) {
                 Stop station = adapter.getChild(group, child);
-                ((StationTimeShow) getActivity()).showTimes(Integer.toString(station.getCode()));
+                CommunicationUtility.showTimes(Integer.toString(station.getCode()), (MainActivity)getActivity());
                 return true;
             }
         });

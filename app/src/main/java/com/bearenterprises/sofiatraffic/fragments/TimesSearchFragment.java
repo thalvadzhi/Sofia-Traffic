@@ -6,7 +6,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +14,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
-import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -117,7 +117,7 @@ public class TimesSearchFragment extends Fragment {
 
     private Station getStation(String code, SofiaTransportApi sofiaTransportApi) throws IOException {
         Call<Station> call = sofiaTransportApi.getStation(code);
-        return ((MainActivity)getActivity()).handleUnauthorizedQuery(call);
+        return RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) getActivity());
     }
 
     /*
@@ -125,7 +125,7 @@ public class TimesSearchFragment extends Fragment {
      */
     private Station getStationFast(String code, SofiaTransportApi sofiaTransportApi) throws IOException{
         Call<Station> call = sofiaTransportApi.getStationWithTimes(code);
-        return ((MainActivity)getActivity()).handleUnauthorizedQuery(call);
+        return RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) getActivity());
     }
 
     public void showStationTimes(String code){
@@ -138,7 +138,7 @@ public class TimesSearchFragment extends Fragment {
             t.setSelection(t.getText().length());
             getTimes(code, manager);
         }else{
-            ((MainActivity)getActivity()).makeSnackbar("Няма въведен код на спирка!");
+            Utility.makeSnackbar("Няма въведен код на спирка!", (MainActivity)getActivity());
         }
     }
 
@@ -171,16 +171,16 @@ public class TimesSearchFragment extends Fragment {
                     station = getStationFast(code, sofiaTransportApi);
                 }
                 if(station == null){
-                    ((MainActivity)getContext()).detachFragment(l);
+                    Utility.detachFragment(l, (MainActivity)getActivity());
 
-                    ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
+                    Utility.makeSnackbar("Няма информация!", (MainActivity)getActivity());
                     return null;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
                 if (station == null){
-                    ((MainActivity)getContext()).detachFragment(l);
-                    ((MainActivity)getActivity()).makeSnackbar("Няма информация!");
+                    Utility.detachFragment(l, (MainActivity)getActivity());
+                    Utility.makeSnackbar("Няма информация!", (MainActivity)getActivity());
                     return null;
                 }
 
@@ -192,7 +192,7 @@ public class TimesSearchFragment extends Fragment {
                 lineTimes.add(new LineTimes(line, Integer.toString(line.getType())));
             }
             timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, station);
-            ((MainActivity)getActivity()).changeFragment(R.id.result_container, timeResultsFragment);
+            Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity)getActivity());
             return station;
 
 
@@ -216,7 +216,7 @@ public class TimesSearchFragment extends Fragment {
             if(lines != null){
                 for (Line line : lines){
                     List<Time> times = line.getTimes();
-                    ((MainActivity)getActivity()).addTimes(timeResultsFragment, line, times);
+                    CommunicationUtility.addTimes(timeResultsFragment, line, times);
                 }
             }
         }
@@ -242,7 +242,7 @@ public class TimesSearchFragment extends Fragment {
                     @Override
                     public void onResponse(Call<List<Time>> call, Response<List<Time>> response) {
                         List<Time> times = response.body();
-                        ((MainActivity) getActivity()).addTimes(timeResultsFragment, l, times);
+                        CommunicationUtility.addTimes(timeResultsFragment, l, times);
                     }
 
                     @Override

@@ -1,19 +1,15 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
 
-import android.animation.ValueAnimator;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,27 +21,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.SlideUpLayoutLinesAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.ApiError;
-import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
-import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
-import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
-import com.google.android.gms.maps.model.Marker;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 //import com.google.android.gms.vision.text.Text;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Response;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
@@ -126,7 +114,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         getTimes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity)getActivity()).showTimes(Integer.toString(currentStop.getCode()));
+                CommunicationUtility.showTimes(Integer.toString(currentStop.getCode()), (MainActivity)getActivity());
             }
         });
         favourite = (ToggleButton) v.findViewById(R.id.ToggleButtonFavourite);
@@ -137,10 +125,10 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
                     //means previously was not checked
-                    ((MainActivity) getActivity()).addFavourite(currentStop);
+                    CommunicationUtility.addFavourite(currentStop, (MainActivity) getActivity());
                 }else{
                     //means previously was
-                    ((MainActivity) getActivity()).removeFavourite(currentStop.getCode());
+                    CommunicationUtility.removeFavourite(currentStop.getCode(), (MainActivity) getActivity());
                 }
             }
         });
@@ -151,7 +139,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                 ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("Координатите на спирката", ((TextView)view).getText());
                 clipboard.setPrimaryClip(clip);
-                ((MainActivity)getActivity()).makeSnackbar("Координатите на спирката бяха копирани!");
+                Utility.makeSnackbar("Координатите на спирката бяха копирани!", (MainActivity)getActivity());
                 return true;
             }
         });
@@ -164,9 +152,9 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         lines.setLayoutManager(new GridLayoutManager(getContext(), 6));
 
         mapFragment = MapFragment.newInstance(null, null);
-        ((MainActivity)getActivity()).changeFragment(R.id.mapContainer, mapFragment);
+        Utility.changeFragment(R.id.mapContainer, mapFragment, (MainActivity)getActivity());
         PlacesFragment placesFragment = new PlacesFragment();
-        ((MainActivity)getActivity()).changeFragment(R.id.placeSearchBarContainer, placesFragment);
+        Utility.changeFragment(R.id.placeSearchBarContainer, placesFragment, (MainActivity) getActivity());
 
         return v;
     }
@@ -176,10 +164,10 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
             if(isChecked){
                 //means previously was not checked
-                ((MainActivity) getActivity()).addFavourite(currentStop);
+                CommunicationUtility.addFavourite(currentStop, (MainActivity) getActivity());
             }else{
                 //means previously was
-                ((MainActivity) getActivity()).removeFavourite(currentStop.getCode());
+                CommunicationUtility.removeFavourite(currentStop.getCode(), ((MainActivity) getActivity()));
             }
         }
     }
@@ -226,7 +214,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         @Override
         protected ArrayList<Line> doInBackground(String... strings) {
             String code = strings[0];
-            return ((MainActivity)getActivity()).getLinesByStationCode(code);
+            return RetrofitUtility.getLinesByStationCode(code, (MainActivity)getActivity());
         }
 
         @Override

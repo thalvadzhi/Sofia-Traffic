@@ -1,17 +1,14 @@
 package com.bearenterprises.sofiatraffic.utilities;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
-import android.view.View;
 import android.widget.Toast;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 
 /**
@@ -29,9 +26,9 @@ public class Utility {
             });
     }
 
-    public static void makeSnackbar(String message, CoordinatorLayout coordinatorLayout){
+    public static void makeSnackbar(String message, MainActivity mainActivity){
         Snackbar
-                .make(coordinatorLayout, message, Snackbar.LENGTH_LONG)
+                .make(mainActivity.getCoordinatorLayout(), message, Snackbar.LENGTH_LONG)
                 .show();
     }
 
@@ -44,5 +41,17 @@ public class Utility {
         }else{
             activity.setTheme(R.style.LightTheme);
         }
+    }
+
+    public static void changeFragment(int id, Fragment fragment, AppCompatActivity activity){
+       activity.getSupportFragmentManager().
+                beginTransaction().
+                replace(id, fragment).
+                commitAllowingStateLoss();
+    }
+
+
+    public static void detachFragment(Fragment fragment, AppCompatActivity activity){
+        activity.getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
     }
 }

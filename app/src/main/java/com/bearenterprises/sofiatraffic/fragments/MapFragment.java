@@ -10,17 +10,17 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.fragments.communication.StationTimeShow;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -156,8 +156,7 @@ public class MapFragment extends Fragment {
                 if(code == null){
                     return;
                 }
-                StationTimeShow show = (StationTimeShow) getActivity();
-                show.showTimes(code);
+                CommunicationUtility.showTimes(code, (MainActivity)getActivity());
             }
         });
 
@@ -173,7 +172,7 @@ public class MapFragment extends Fragment {
             public void onMapClick(LatLng latLng) {
                 map.clear();
                 previousMarker = null;
-                ((MainActivity)getActivity()).hideSlideUpPanel();
+                CommunicationUtility.hideSlideUpPanel((MainActivity)getActivity());
                 Location loc = new Location(LocationManager.PASSIVE_PROVIDER);
                 loc.setLatitude(latLng.latitude);
                 loc.setLongitude(latLng.longitude);
@@ -191,7 +190,7 @@ public class MapFragment extends Fragment {
                     CameraUpdate cu = getCameraUpdate(markers);
                     map.animateCamera(cu);
                 }else{
-                    ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това място");
+                    Utility.makeSnackbar("Няма спирки в близост до това място", (MainActivity)getActivity());
                 }
             }
         });

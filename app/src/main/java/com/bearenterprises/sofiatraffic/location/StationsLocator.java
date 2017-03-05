@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.location.Location;
 
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.DbHelper;
-import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 
 import java.util.ArrayList;
 import java.util.Comparator;

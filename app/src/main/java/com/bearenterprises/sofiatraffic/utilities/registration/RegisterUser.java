@@ -1,13 +1,10 @@
-package com.bearenterprises.sofiatraffic.utilities;
+package com.bearenterprises.sofiatraffic.utilities.registration;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
-import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 

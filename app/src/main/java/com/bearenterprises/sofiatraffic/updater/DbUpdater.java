@@ -6,14 +6,14 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.CoordinatorLayout;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.DbHelper;
-import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
-import com.bearenterprises.sofiatraffic.utilities.DescriptionsParser;
-import com.bearenterprises.sofiatraffic.utilities.FileDownloader;
-import com.bearenterprises.sofiatraffic.utilities.JSONParser;
+import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.parsing.DescriptionsParser;
+import com.bearenterprises.sofiatraffic.utilities.network.FileDownloader;
+import com.bearenterprises.sofiatraffic.utilities.parsing.JSONParser;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import org.apache.commons.io.FileUtils;
@@ -32,7 +32,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
     public DbUpdater(Context context) {
         this.context = context;
-        this.coordinatorLayout = ((MainActivity)this.context).getCoordinatorLayout();
         this.fileDownloaderExceptionHappened = false;
     }
 
@@ -53,10 +52,10 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
                 if(wasUpdated) {
                     editor.putLong(Constants.KEY_LAST_UPDATE, System.currentTimeMillis());
                     editor.commit();
-                    Utility.makeSnackbar("Информацията за спирките беше обновена!", coordinatorLayout);
+                    Utility.makeSnackbar("Информацията за спирките беше обновена!", (MainActivity)context);
                 }
             } catch (Exception e) {
-                Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", coordinatorLayout);
+                Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", (MainActivity)context);
                 publishProgress(Constants.DISMISS_DIALOG);
             }
             publishProgress(Constants.DISMISS_DIALOG);
@@ -113,7 +112,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         downloaderDescriptions.download();
 
         if (fileDownloaderExceptionHappened == true){
-            ((MainActivity)context).makeSnackbar("Няма връзка с интернет :(");
+            Utility.makeSnackbar("Няма връзка с интернет :(", (MainActivity)context);
             throw new Exception("No internet connection");
         }
 

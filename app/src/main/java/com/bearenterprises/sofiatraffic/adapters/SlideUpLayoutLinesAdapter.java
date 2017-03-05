@@ -12,9 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 
 import java.util.ArrayList;
 
@@ -91,7 +92,7 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
                 @Override
                 public void onClick(View view) {
                     Line l = lines.get(position);
-                    ((MainActivity)context).showRoute(Integer.toString(l.getType()), Integer.toString(l.getId()));
+                    CommunicationUtility.showRoute(Integer.toString(l.getType()), Integer.toString(l.getId()), (MainActivity)context);
                 }
             });
         }

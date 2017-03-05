@@ -8,12 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.ResultsAdapter;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -88,7 +89,7 @@ public class TimeResultsFragment extends Fragment {
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 boolean enable = false;
                 if(recyclerView.getAdapter().getItemCount() == 0){
-                    ((MainActivity)getActivity()).setEnablednessRefreshLayout(true);
+                    CommunicationUtility.setEnablednessRefreshLayout(true, (MainActivity)getActivity());
                     return;
                 }
                 if(recyclerView != null && recyclerView.getChildCount() > 0){
@@ -100,7 +101,7 @@ public class TimeResultsFragment extends Fragment {
                     // enabling or disabling the refresh layout
                     enable = firstItemVisible && topOfFirstItemVisible;
                 }
-                ((MainActivity)getActivity()).setEnablednessRefreshLayout(enable);
+                CommunicationUtility.setEnablednessRefreshLayout(enable, (MainActivity) getActivity());
             }
         });
         resultsAdapter = new ResultsAdapter(getContext(), lineTimes, station);

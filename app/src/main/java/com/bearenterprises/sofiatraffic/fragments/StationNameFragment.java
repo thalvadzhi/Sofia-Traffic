@@ -13,11 +13,14 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
+import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import java.util.ArrayList;
 
@@ -79,11 +82,11 @@ public class StationNameFragment extends Fragment {
                     if(isChecked){
                         //means previously was not checked
                         FavouritesModifier.save(station, getContext());
-                        ((MainActivity) getActivity()).addFavourite(station);
+                        CommunicationUtility.addFavourite(station, (MainActivity) getActivity());
                     }else{
                         //means previously was
                         FavouritesModifier.remove(station.getCode(), getContext());
-                        ((MainActivity) getActivity()).removeFavourite(station.getCode());
+                        CommunicationUtility.removeFavourite(station.getCode(), (MainActivity) getActivity());
                     }
                 }
             });
@@ -101,9 +104,9 @@ public class StationNameFragment extends Fragment {
     private Stop getStationName(String code){
         ArrayList<Stop> stationByCode = null;
         try {
-            stationByCode = ((MainActivity) getContext()).getStationByCode(code);
+            stationByCode = DbUtility.getStationByCode(code, (MainActivity) getContext());
         }catch (SQLiteDatabaseLockedException e){
-            ((MainActivity) getContext()).makeSnackbar("Информацията за спирките все още се обновява, моля изчакайте.");
+            Utility.makeSnackbar("Информацията за спирките все още се обновява, моля изчакайте.", (MainActivity)getActivity());
         }
         if(stationByCode != null && stationByCode.size() >= 1){
             return stationByCode.get(0);

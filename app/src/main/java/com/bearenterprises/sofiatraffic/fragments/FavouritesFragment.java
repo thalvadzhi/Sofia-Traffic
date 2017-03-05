@@ -14,7 +14,7 @@ import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.FavouritesAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.FavouritesModifier;
+import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

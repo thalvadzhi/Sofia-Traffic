@@ -1,4 +1,4 @@
-package com.bearenterprises.sofiatraffic.utilities;
+package com.bearenterprises.sofiatraffic.utilities.parsing;
 
 import android.content.Context;
 

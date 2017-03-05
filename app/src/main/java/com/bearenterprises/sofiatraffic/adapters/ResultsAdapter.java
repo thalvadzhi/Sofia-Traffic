@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -16,12 +15,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,7 +132,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
             public void onClick(View view) {
                 LineTimes lineTimes = times.get(position);
 
-                ((MainActivity)context).showRoute(Integer.toString(lineTimes.getLine().getType()), Integer.toString(lineTimes.getLine().getId()));
+                CommunicationUtility.showRoute(Integer.toString(lineTimes.getLine().getType()), Integer.toString(lineTimes.getLine().getId()), (MainActivity)context);
             }
         }
 
@@ -151,7 +151,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
                 moreButton.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 Line line = times.get(position).getLine();
-                ((MainActivity)context).updateLineInfoSlow(station, new ArrayList<>(Arrays.asList(line)));
+                CommunicationUtility.updateLineInfoSlow(station, new ArrayList<>(Arrays.asList(line)), (MainActivity)context);
             }
         }
 

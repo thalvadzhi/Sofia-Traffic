@@ -8,10 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -34,7 +36,7 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_places, container, false);
         placeAutocompleteFragment = new SupportPlaceAutocompleteFragment();
-        ((MainActivity)getActivity()).changeFragment(R.id.places_search_container, placeAutocompleteFragment);
+        Utility.changeFragment(R.id.places_search_container, placeAutocompleteFragment, (MainActivity)getActivity());
         placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -46,9 +48,9 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
                 ArrayList<Stop> closestStations = locator.getClosestStations();
                 closestStations.add(new Stop(-1, (String)place.getName(), Double.toString(latLng.latitude), Double.toString(latLng.longitude)));
                 if(closestStations.size() != 0){
-                    ((MainActivity)getActivity()).showOnMap(closestStations);
+                    CommunicationUtility.showOnMap(closestStations, (MainActivity)getActivity());
                 }else{
-                    ((MainActivity)getActivity()).makeSnackbar("Няма спирки в близост до това място");
+                    Utility.makeSnackbar("Няма спирки в близост до това място", (MainActivity)getActivity());
                 }
             }
 

@@ -6,29 +6,27 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-import com.bearenterprises.sofiatraffic.MainActivity;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.ChangeListener;
 import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.location.StationsLocator;
-import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.restClient.second.Route;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.second.Routes;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
-import com.bearenterprises.sofiatraffic.utilities.DbHelper;
-import com.bearenterprises.sofiatraffic.utilities.DbManipulator;
-import com.bearenterprises.sofiatraffic.utilities.ParseApiError;
+import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +34,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Response;
 
 public class LinesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -189,7 +186,7 @@ public class LinesFragment extends Fragment {
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
         protected void onPreExecute(){
-            ((MainActivity)getActivity()).changeFragment(R.id.location_container, loadingFragment);
+            Utility.changeFragment(R.id.location_container, loadingFragment, (MainActivity)getActivity());
         }
         @Override
         protected Routes doInBackground(String... strings) {
@@ -225,7 +222,7 @@ public class LinesFragment extends Fragment {
             try {
                manipulator = new DbManipulator(getContext());
             }catch (SQLiteDatabaseLockedException e){
-                ((MainActivity)getContext()).makeSnackbar("Информацията за спирките все още се обновява");
+                Utility.makeSnackbar("Информацията за спирките все още се обновява", (MainActivity)getActivity());
                 return null;
             }
 
@@ -234,7 +231,7 @@ public class LinesFragment extends Fragment {
             //TODO fix when result is null
             if (result == null){
                 manipulator.closeDb();
-                ((MainActivity)getActivity()).detachFragment(loadingFragment);
+                Utility.detachFragment(loadingFragment, (MainActivity)getActivity());
                 return null;
             }
             for(Route route : result.getRoutes()){
@@ -273,9 +270,9 @@ public class LinesFragment extends Fragment {
 
             if (stations.size() != 0){
                 RoutesFragment f = RoutesFragment.newInstance(stations, typeString);
-                ((MainActivity)getActivity()).changeFragment(R.id.location_container, f);
+                Utility.changeFragment(R.id.location_container, f, (MainActivity)getActivity());
             }else{
-                ((MainActivity)getActivity()).detachFragment(loadingFragment);
+                Utility.detachFragment(loadingFragment, (MainActivity) getActivity());
             }
 
             return null;
@@ -293,7 +290,7 @@ public class LinesFragment extends Fragment {
             SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             try {
-                return ((MainActivity)getActivity()).handleUnauthorizedQuery(lines);
+                return RetrofitUtility.handleUnauthorizedQuery(lines, (MainActivity) getActivity());
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -313,7 +310,7 @@ public class LinesFragment extends Fragment {
                 }
 
             }else{
-                ((MainActivity)getActivity()).makeSnackbar("Няма информация за този маршрут.");
+                Utility.makeSnackbar("Няма информация за този маршрут.", (MainActivity)getActivity());
             }
         }
     }

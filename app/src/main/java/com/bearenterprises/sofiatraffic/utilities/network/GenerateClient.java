@@ -1,4 +1,4 @@
-package com.bearenterprises.sofiatraffic.utilities;
+package com.bearenterprises.sofiatraffic.utilities.network;
 
 import android.content.Context;
 import android.util.Log;
@@ -22,14 +22,13 @@ import okhttp3.Response;
 public class GenerateClient {
     private static Registration registration;
 
-
-
     /**
      * This method should be called from MainActivity after registration has been settled
      */
     public static void setRegistration(Registration reg){
         registration = reg;
     }
+
     public static OkHttpClient getClient(final Context context){
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {

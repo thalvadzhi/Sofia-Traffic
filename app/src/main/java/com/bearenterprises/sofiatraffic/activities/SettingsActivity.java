@@ -1,9 +1,10 @@
-package com.bearenterprises.sofiatraffic;
+package com.bearenterprises.sofiatraffic.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.fragments.SettingsFragment;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 

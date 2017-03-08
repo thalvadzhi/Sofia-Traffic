@@ -23,6 +23,9 @@ public class CommunicationUtility {
     }
 
     public static void addTimes(TimeResultsFragment fragment, Line line, List<Time> times){
+        if (fragment == null){
+            return;
+        }
         fragment.addTimeSchedule(line, (ArrayList<Time>) times);
     }
 

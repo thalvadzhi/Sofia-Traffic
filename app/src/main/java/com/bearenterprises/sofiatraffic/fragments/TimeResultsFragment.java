@@ -25,7 +25,6 @@ public class TimeResultsFragment extends Fragment {
     private static final String STATION = "STATION";
 
     private RecyclerView resultsView;
-    private String stationName;
     private ArrayList<LineTimes> lineTimes;
     private ResultsAdapter resultsAdapter;
     private Station station;

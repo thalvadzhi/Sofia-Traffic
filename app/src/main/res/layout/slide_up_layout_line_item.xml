@@ -1,21 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="10dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingBottom="5dp">
 
-    <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/ImageViewTransportationTypeSlideUpLayout"/>
-
-    <TextView
+    <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
-        android:minWidth="40dp"
-        android:layout_height="30dp"
-        android:id="@+id/TextViewLineName"
-        android:textAlignment="center"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true"
+        app:cardPreventCornerOverlap="false"
+        android:id="@+id/iconAndLineName"
+        android:layout_marginRight="10dp"
+        android:paddingRight="5dp">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:id="@+id/RelativeLayoutMapSlideupLineBackground"
+            >
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/ImageViewTransportationTypeSlideUpLayout"/>
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:minWidth="40dp"
+                android:layout_height="30dp"
+                android:id="@+id/TextViewLineName"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:paddingLeft="10dp"
+                android:layout_toRightOf="@+id/ImageViewTransportationTypeSlideUpLayout"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/RelativeLayoutMapSlideupLineBackground"
+            android:layout_alignTop="@+id/RelativeLayoutMapSlideupLineBackground"
+            android:layout_alignBottom="@+id/RelativeLayoutMapSlideupLineBackground"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/textViewMapSlideUpDirection"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:paddingLeft="10dp"/>
+        </RelativeLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

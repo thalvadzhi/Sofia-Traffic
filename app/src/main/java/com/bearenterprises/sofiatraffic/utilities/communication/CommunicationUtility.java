@@ -2,7 +2,11 @@ package com.bearenterprises.sofiatraffic.utilities.communication;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.fragments.FavouritesFragment;
+import com.bearenterprises.sofiatraffic.fragments.LinesFragment;
+import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimeResultsFragment;
+import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
@@ -19,7 +23,14 @@ import java.util.List;
 public class CommunicationUtility {
 
     public static void setEnablednessRefreshLayout(boolean enable, MainActivity mainActivity){
-        mainActivity.getTimesSearchFragment().setEnablednessRefreshLayout(enable);
+        if (mainActivity == null){
+            return;
+        }
+        TimesSearchFragment f = mainActivity.getTimesSearchFragment();
+        if (f == null){
+            return;
+        }
+        f.setEnablednessRefreshLayout(enable);
     }
 
     public static void addTimes(TimeResultsFragment fragment, Line line, List<Time> times){
@@ -30,14 +41,28 @@ public class CommunicationUtility {
     }
 
     public static void showTimes(String code, MainActivity mainActivity) {
+        if (mainActivity == null){
+            return;
+        }
         mainActivity.setPage(Constants.SECTION_SEARCH_IDX);
-        mainActivity.getTimesSearchFragment().showStationTimes(code);
+        TimesSearchFragment f = mainActivity.getTimesSearchFragment();
+        if (f == null){
+            return;
+        }
+        f.showStationTimes(code);
     }
 
     public static void showOnMap(ArrayList<Stop> stations, MainActivity mainActivity){
+        if (mainActivity == null){
+            return;
+        }
         CommunicationUtility.hideSlideUpPanel(mainActivity);
         mainActivity.setPage(Constants.SECTION_MAP_SEARCH_IDX);
-        mainActivity.getMapSearchFragment().getMapFragment().showOnMap(stations);
+        MapSearchFragment f = mainActivity.getMapSearchFragment();
+        if (f == null){
+            return;
+        }
+        f.getMapFragment().showOnMap(stations);
     }
 
     public static void showOnMap(Stop st, MainActivity mainActivity){
@@ -47,24 +72,58 @@ public class CommunicationUtility {
     }
 
     public static void hideSlideUpPanel(MainActivity mainActivity){
-        mainActivity.getMapSearchFragment().hideSlideUpPanel();
+        if (mainActivity == null){
+            return;
+        }
+        MapSearchFragment f = mainActivity.getMapSearchFragment();
+        if (f == null){
+            return;
+        }
+        f.hideSlideUpPanel();
     }
 
     public static void showRoute(String trId, String lineId, MainActivity mainActivity){
+        if (mainActivity == null){
+            return;
+        }
         mainActivity.setPage(Constants.SECTION_LINES_IDX);
-        mainActivity.getLinesFragment().showRoute(trId, lineId);
+        LinesFragment f = mainActivity.getLinesFragment();
+        if (f == null){
+            return;
+        }
+        f.showRoute(trId, lineId);
     }
 
     public static void addFavourite(Stop st, MainActivity mainActivity){
-        mainActivity.getFavouritesFragment().addFavourite(st);
+        if (mainActivity == null || st == null){
+            return;
+        }
+        FavouritesFragment f = mainActivity.getFavouritesFragment();
+        if (f == null){
+            return;
+        }
+        f.addFavourite(st);
     }
 
     public static void removeFavourite(int code, MainActivity mainActivity){
-        mainActivity.getFavouritesFragment().removeFavourite(code);
+        if (mainActivity == null){
+            return;
+        }
+        FavouritesFragment f = mainActivity.getFavouritesFragment();
+        if (f == null){
+            return;
+        }
+        f.removeFavourite(code);
     }
 
     public static void updateLineInfoSlow(Station station, ArrayList<Line> lines, MainActivity mainActivity){
-        //Move to utility
-        mainActivity.getTimesSearchFragment().updateLineInfoSlowForSelectLines(station, lines);
+        if (mainActivity == null){
+            return;
+        }
+        TimesSearchFragment f = mainActivity.getTimesSearchFragment();
+        if (f == null){
+            return;
+        }
+        f.updateLineInfoSlowForSelectLines(station, lines);
     }
 }

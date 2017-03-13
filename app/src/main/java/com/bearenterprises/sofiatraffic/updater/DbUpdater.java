@@ -11,6 +11,7 @@ import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
 import com.bearenterprises.sofiatraffic.utilities.parsing.DescriptionsParser;
 import com.bearenterprises.sofiatraffic.utilities.network.FileDownloader;
 import com.bearenterprises.sofiatraffic.utilities.parsing.JSONParser;
@@ -19,8 +20,12 @@ import com.bearenterprises.sofiatraffic.utilities.Utility;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import static com.bearenterprises.sofiatraffic.R.id.coordinates;
 
 /**
  * Created by thalv on 08-Jul-16.
@@ -78,45 +83,63 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
     }
 
 
-    public class ExceptionNotifier extends FileDownloader.ExceptionInFileDownloaderNotifier{
 
-        @Override
-        public void notifyExceptionHappened() {
-            fileDownloaderExceptionHappened = true;
+
+    /*
+        Downloads the new file and checks if it has changed
+        returns true if file has changed or it is the first time that the file is created
+        returns false otherwise
+     */
+    private boolean handleFileDownloading(String fileName) throws IOException {
+        String newFile = null, downloadUrl = null;
+        switch (fileName){
+            case Constants.JSON_COORDINATE_FILE:
+                newFile = Constants.JSON_COORDINATE_FILE_NEW;
+                downloadUrl = Constants.COORDINATES_DOWNLOAD_URL_JSON;
+                break;
+            case Constants.DESCRIPTIONS_FILE_NAME:
+                newFile = Constants.DESCRIPTIONS_FILE_NAME_NEW;
+                downloadUrl = Constants.DESCRIPTIONS_DOWNLOAD_URL;
         }
-    }
-
-
-    public boolean update() throws Exception{
-        ExceptionNotifier notifier = new ExceptionNotifier();
-        //unfortunately FileDownloader is a thread - so no exceptions can be carried to caller thread
-        File coordinates = new File(context.getFilesDir() + File.separator + Constants.JSON_COORDINATE_FILE);
-        if(coordinates.exists()){
-            File new_coordinates = new File(context.getFilesDir() + File.separator + Constants.JSON_COORDINATE_FILE_NEW);
-            FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, new_coordinates, notifier);
+        File f = new File(context.getFilesDir() + File.separator + fileName);
+        if(f.exists()){
+            File new_f = new File(context.getFilesDir() + File.separator + newFile);
+            FileDownloader downloader = new FileDownloader(this.context, downloadUrl, new_f);
             downloader.download();
-            if(FileUtils.contentEquals(coordinates, new_coordinates)){
-                new_coordinates.delete();
+            if(FileUtils.contentEquals(f, new_f)){
+                new_f.delete();
                 return false;
             }else{
-                coordinates.delete();
-                new_coordinates.renameTo(new File(context.getFilesDir() + File.separator + Constants.JSON_COORDINATE_FILE));
+                f.delete();
+                new_f.renameTo(new File(context.getFilesDir() + File.separator + fileName));
             }
         }else{
-            FileDownloader downloader = new FileDownloader(this.context, Constants.COORDINATES_DOWNLOAD_URL_JSON, coordinates, notifier);
+            FileDownloader downloader = new FileDownloader(this.context, downloadUrl, f);
             downloader.download();
         }
-        publishProgress(Constants.SHOW_DIALOG);
+        return true;
 
-        FileDownloader downloaderDescriptions = new FileDownloader(this.context, Constants.DESCRIPTIONS_DOWNLOAD_URL, Constants.DESCRIPTIONS_FILE_NAME, notifier);
-        downloaderDescriptions.download();
+    }
 
-        if (fileDownloaderExceptionHappened == true){
-            Utility.makeSnackbar("Няма връзка с интернет :(", (MainActivity)context);
-            throw new Exception("No internet connection");
+    public boolean update() throws Exception{
+        boolean updatedCoordinates, updatedDescriptions ;
+        try{
+            updatedCoordinates = handleFileDownloading(Constants.JSON_COORDINATE_FILE);
+            updatedDescriptions = handleFileDownloading(Constants.DESCRIPTIONS_FILE_NAME);
+        }catch (IOException e){
+            Utility.makeSnackbar("Настъпи грешка при изтеглянето", (MainActivity) context);
+            return false;
         }
 
-        Map<String, String> descriptions = DescriptionsParser.parse(this.context, Constants.DESCRIPTIONS_FILE_NAME);
+        if (!updatedCoordinates && !updatedDescriptions){
+            return false;
+        }
+
+        publishProgress(Constants.SHOW_DIALOG);
+
+
+
+        List<Description> descriptions = DescriptionsParser.parseDescriptions(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
         ArrayList<Stop> stations = null;
         stations = JSONParser.getStationsFromFile(Constants.JSON_COORDINATE_FILE, this.context);
@@ -126,19 +149,28 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         }
         for (Stop station : stations) {
             ContentValues v = new ContentValues();
-            String description = descriptions.get(Integer.toString(station.getCode()));
             v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE, station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME, station.getName());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongtitude());
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION, description);
+
             stationInformation.add(v);
         }
 
+        ArrayList<ContentValues> descriptionContentValues = new ArrayList<>();
+        for (Description desc : descriptions){
+            ContentValues v = new ContentValues();
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_TR_TYPE, desc.getTransportationType());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_NAME, desc.getLineName());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_STOP_CODE, desc.getStopCode());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_DIRECTION, desc.getDirection());
+            descriptionContentValues.add(v);
+        }
 
         DbManipulator manipulator = new DbManipulator(this.context);
         manipulator.deleteAll();
-        manipulator.insert(stationInformation);
+        manipulator.insert(stationInformation, DbHelper.FeedEntry.TABLE_NAME_STATIONS);
+        manipulator.insert(descriptionContentValues, DbHelper.FeedEntry.TABLE_NAME_DESCRIPTIONS);
         manipulator.closeDb();
 
         return true;

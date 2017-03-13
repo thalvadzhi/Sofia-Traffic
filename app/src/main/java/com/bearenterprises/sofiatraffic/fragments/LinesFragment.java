@@ -227,7 +227,7 @@ public class LinesFragment extends Fragment {
             }
 
             ArrayList<ArrayList<Stop>> stations = new ArrayList<>();
-            String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME + " WHERE code=?";
+            String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS + " WHERE code=?";
             //TODO fix when result is null
             if (result == null){
                 manipulator.closeDb();

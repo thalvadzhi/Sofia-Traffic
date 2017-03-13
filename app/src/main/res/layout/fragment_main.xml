@@ -1,12 +1,12 @@
 <android.support.v4.widget.SwipeRefreshLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swiperefresh"
     xmlns:android="http://schemas.android.com/apk/res/android">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp"
     android:gravity="center_horizontal"
     android:layout_centerHorizontal="true"
 
@@ -16,6 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="60dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        app:cardElevation="3dp"
         android:id="@+id/cv2">
         <RelativeLayout
             android:padding="5dp"
@@ -24,28 +26,28 @@
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:layout_centerHorizontal="true">
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:ems="10"
-        android:digits="0123456789"
-        android:hint="@string/station_code"
-        android:id="@+id/station_code"
-        android:width="150dp"  />
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    android:ems="10"
+                    android:digits="0123456789"
+                    android:hint="@string/station_code"
+                    android:id="@+id/station_code"
+                    android:width="150dp"  />
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginLeft="5dp"
-                android:textColor="#FFFFFF"
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="#FFFFFF"
 
-                android:text="@string/button_search"
-                android:id="@+id/button_search"
-                android:layout_toEndOf="@+id/station_code"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true" />
+                    android:text="@string/button_search"
+                    android:id="@+id/button_search"
+                    android:layout_toEndOf="@+id/station_code"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentBottom="true" />
 
 
         </RelativeLayout>
@@ -65,12 +67,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:padding="5dp"
+
         android:id="@+id/result_container"
         android:layout_below="@+id/station_name_fragment"/>
-
-
-
 
 
 </RelativeLayout>

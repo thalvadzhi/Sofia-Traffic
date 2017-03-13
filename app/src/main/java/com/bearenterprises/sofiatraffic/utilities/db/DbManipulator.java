@@ -40,11 +40,11 @@ public class DbManipulator {
      * @param values key value pairs of the type : column name - value
      * @return the primary key of the inserted row
      */
-    public long insert(ContentValues values){
+    public long insert(ContentValues values, String tableName){
         //TODO catch exception when unique constraint is violated
         long primaryKey = -1;
         try {
-            primaryKey = db.insert(DbHelper.FeedEntry.TABLE_NAME, null, values);
+            primaryKey = db.insert(tableName, null, values);
         }catch(SQLiteConstraintException e){
             Log.d("Constraint Violation", "A unique constraint was violated", e);
         }
@@ -56,11 +56,11 @@ public class DbManipulator {
      * Inserts all of the values in the db
       * @param values ArrayList of values to be inserted
      */
-    public void insert(ArrayList<ContentValues> values){
+    public void insert(ArrayList<ContentValues> values, String tableName){
         try {
             db.beginTransaction();
             for (ContentValues value : values) {
-                insert(value);
+                insert(value, tableName);
             }
             db.setTransactionSuccessful();
         }finally {
@@ -77,7 +77,7 @@ public class DbManipulator {
      * @return Cursor to browse the queried lines
      */
     public Cursor read(String selection, String[] selectionArgs, String[] projection, String sortOrder){
-        return db.query(DbHelper.FeedEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+        return db.query(DbHelper.FeedEntry.TABLE_NAME_STATIONS, projection, selection, selectionArgs, null, null, sortOrder);
     }
 
     /**
@@ -85,7 +85,7 @@ public class DbManipulator {
      * @return Cursor to browse the queried lines
      */
     public Cursor read(){
-        return db.query(DbHelper.FeedEntry.TABLE_NAME, null, null, null, null, null, null);
+        return db.query(DbHelper.FeedEntry.TABLE_NAME_STATIONS, null, null, null, null, null, null);
     }
 
     public Cursor readRawQuery(String query, String[] args){
@@ -93,10 +93,11 @@ public class DbManipulator {
     }
 
     public void dropDatabase(){
-        db.execSQL(DbHelper.FeedEntry.SQL_DROP_DB);
+        db.execSQL(DbHelper.FeedEntry.SQL_DROP_STATIONS);
     }
 
     public void deleteAll(){
-        db.execSQL(DbHelper.FeedEntry.SQL_DELETE_ALL);
+        db.execSQL(DbHelper.FeedEntry.SQL_DELETE_ALL_STATIONS);
+        db.execSQL(DbHelper.FeedEntry.SQL_DELETE_ALL_DESCRIPTIONS);
     }
 }

@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,7 +47,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
     private MapFragment mapFragment;
     private SlidingUpPanelLayout slidingUpPanelLayout;
     private TextView stopName;
-    private TextView direction;
+//    private TextView direction;
     private TextView code;
     private TextView coordinates;
     private RecyclerView lines;
@@ -58,6 +59,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
     private Stop currentStop;
     private OnCheckChangeListenerForLaterSetting listener;
     private int animationDuration;
+    private LinearLayout coords;
     public MapFragment getMapFragment(){
         return mapFragment;
     }
@@ -69,11 +71,13 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
         Log.i("onCreateView", "yuhuuu");
         View v = inflater.inflate(R.layout.fragment_map_search, container, false);
+
+        coords = (LinearLayout) v.findViewById(R.id.coordinates);
         animationDuration = 200;
         // Inflate the layout for this fragment
 
         linesForAdapter = new ArrayList<>();
-        slideUpLayoutLinesAdapter = new SlideUpLayoutLinesAdapter(getContext(), linesForAdapter);
+        slideUpLayoutLinesAdapter = new SlideUpLayoutLinesAdapter(getContext(), linesForAdapter, null);
         listener = new OnCheckChangeListenerForLaterSetting();
         slidingUpPanelLayout = (SlidingUpPanelLayout) v.findViewById(R.id.SlideUpPanelLayout);
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
@@ -91,7 +95,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                     transitionShape.reverseTransition(animationDuration);
                     code.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
                     stopName.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
-                    direction.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
+//                    direction.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
 
 
                 }else if(previousState == SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
@@ -102,7 +106,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                     transitionShape.reverseTransition(animationDuration);
                     code.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                     stopName.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
-                    direction.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
+//                    direction.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
                 }
             }
         });
@@ -146,10 +150,13 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
         code = (TextView) v.findViewById(R.id.TextViewSlideUpCode);
         stopName = (TextView) v.findViewById(R.id.TextViewStopName);
-        direction = (TextView) v.findViewById(R.id.TextViewDirection);
+
         lines = (RecyclerView) v.findViewById(R.id.RecyclerViewLines);
         lines.setAdapter(slideUpLayoutLinesAdapter);
-        lines.setLayoutManager(new GridLayoutManager(getContext(), 6));
+        lines.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        lines.setNestedScrollingEnabled(true);
+
+
 
         mapFragment = MapFragment.newInstance(null, null);
         Utility.changeFragment(R.id.mapContainer, mapFragment, (MainActivity)getActivity());
@@ -186,7 +193,8 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         favourite.setOnCheckedChangeListener(listener);
         currentStop = stop;
         stopName.setText(stop.getName());
-        direction.setText(stop.getDirection());
+//        direction.setVisibility(View.GONE);
+//        direction.setText(stop.getDirection());
 
         coordinates.setText(stop.getLatitude() + ", " + stop.getLongtitude());
         GetLinesOnStop getLinesOnStop = new GetLinesOnStop();
@@ -211,9 +219,11 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
             linesForAdapter.clear();
             slideUpLayoutLinesAdapter.notifyDataSetChanged();
         }
+        private String code;
         @Override
         protected ArrayList<Line> doInBackground(String... strings) {
             String code = strings[0];
+            this.code = code;
             return RetrofitUtility.getLinesByStationCode(code, (MainActivity)getActivity());
         }
 
@@ -222,6 +232,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
             if(lines != null){
                 linesForAdapter.clear();
                 linesForAdapter.addAll(lines);
+                slideUpLayoutLinesAdapter.setStopCode(this.code);
                 slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, lines.size());
             }
         }

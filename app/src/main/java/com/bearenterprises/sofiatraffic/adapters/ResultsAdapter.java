@@ -22,6 +22,8 @@ import com.bearenterprises.sofiatraffic.restClient.Station;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
+import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +56,10 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.setOnClickListeners(position);
         LineTimes vt = times.get(position);
+        Description desc = DbUtility.getDescription(Integer.toString(vt.getLine().getType()), vt.getLine().getName(), Integer.toString(station.getCode()), context);
+        if (desc != null){
+            holder.dir.setText(desc.getDirection());
+        }
         holder.stationName.setText(vt.getLine().getName());
         holder.moreButton.setVisibility(View.GONE);
         holder.vTimes.setVisibility(View.GONE);
@@ -83,16 +89,21 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
 
         switch(vt.getType()){
             case "1": holder.imageView.setBackgroundColor(colorBus);
+//                holder.direction.setBackgroundColor(colorBus);
                 holder.bg.setBackgroundColor(colorBus);
                 holder.stationName.setBackgroundColor(colorBus);
                 Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
                 holder.imageView.setImageBitmap(image);break;
             case "0": holder.imageView.setBackgroundColor(colorTram);
+//                holder.dir.setBackgroundColor(colorTram);
+//                holder.padding.setBackgroundColor(colorTram);
+//                holder.direction.setBackgroundColor(colorTram);
                 holder.bg.setBackgroundColor(colorTram);
                 holder.stationName.setBackgroundColor(colorTram);
                 Bitmap image2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram_white);
                 holder.imageView.setImageBitmap(image2);break;
             case "2": holder.imageView.setBackgroundColor(colorTrolley);
+//                holder.direction.setBackgroundColor(colorTrolley);
                 holder.bg.setBackgroundColor(colorTrolley);
                 holder.stationName.setBackgroundColor(colorTrolley);
                 Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_smaller_white);
@@ -108,19 +119,25 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder {
         private Button button;
         private TextView stationName;
+        private TextView direction;
         private TextView vTimes;
         private ImageView imageView;
-        private TextView bg;
+        private View bg;
         private ProgressBar progressBar;
         private TextView moreButton;
+        private TextView dir;
+        private View padding;
         public ViewHolder(View itemView) {
             super(itemView);
-            this.stationName = (TextView) itemView.findViewById(R.id.textView_card_station_name);
+            this.stationName = (TextView) itemView.findViewById(R.id.textView_card_line_name);
             this.vTimes = (TextView) itemView.findViewById(R.id.textView_card_times);
             this.imageView = (ImageView) itemView.findViewById(R.id.imageView_transportation_type);
-            this.bg = (TextView)itemView.findViewById(R.id.background);
+            this.bg = itemView.findViewById(R.id.background);
             this.progressBar = (ProgressBar)itemView.findViewById(R.id.progressBarSingleLine);
             this.moreButton = (TextView)itemView.findViewById(R.id.more_button);
+//            this.direction = (TextView) itemView.findViewById(R.id.textView_card_direction);
+            this.dir = (TextView) itemView.findViewById(R.id.dir_alt);
+//            this.padding = itemView.findViewById(R.id.padding);
         }
 
         private class RouteListener implements View.OnClickListener{

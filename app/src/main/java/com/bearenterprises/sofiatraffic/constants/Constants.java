@@ -16,16 +16,9 @@ public class Constants {
     public static final String SHOW_DIALOG = "show dialog";
     public static final String DISMISS_DIALOG = "dismiss dialog";
     public static final String DESCRIPTIONS_FILE_NAME = "descriptions.txt";
-    public static final String XML_TAG_STATION = "station";
-    public static final String XML_ATTRIBUTE_LABEL = "label";
-    public static final String XML_ATTRIBUTE_CODE = "code";
-    public static final String XML_ATTRIBUTE_LAT = "lat";
-    public static final String XML_ATTRIBUTE_LON = "lon";
-    public static final String JSON_LINES = "lines";
-    public static final String JSON_ID = "id";
-    public static final String JSON_TYPE = "type";
-    public static final String JSON_NAME = "name";
-    public static final String JSON_TIME = "time";
+    public static final String DESCRIPTIONS_FILE_NAME_NEW = "new_descriptions.txt";
+
+
     public static final String SECTION_SEARCH = "ТЪРСЕНЕ";
     public static final String SECTION_FAVOURITES = "ЛЮБИМИ";
     public static final String SECTION_LINES = "ЛИНИИ";
@@ -66,8 +59,7 @@ public class Constants {
 
 
 
-    public static final String COORDINATES_DOWNLOAD_URL_JSON = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/coordinates.json";
-    public static final String COORDINATES_DOWNLOAD_URL = "https://raw.githubusercontent.com/ptanov/sofia-public-transport-navigator/master/sptn/res/raw/coordinates.xml";
-    public static final String DESCRIPTIONS_DOWNLOAD_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions.txt";
+    public static final String COORDINATES_DOWNLOAD_URL_JSON = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/coordinates.json";
+    public static final String DESCRIPTIONS_DOWNLOAD_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/descriptions.txt";
 
 }

@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -20,30 +21,22 @@ public class FileDownloader {
     private final String downloadUrl;
     private final File outputFile;
     private String tag;
-    private ExceptionInFileDownloaderNotifier exceptionInFileDownloaderNotifier;
 
-    public FileDownloader(Context context, String downloadUrl, String filename, ExceptionInFileDownloaderNotifier notifier) {
+    public FileDownloader(Context context, String downloadUrl, String filename) {
         this.context = context;
         this.downloadUrl = downloadUrl;
         this.outputFile = new File(context.getFilesDir() + File.separator + filename);
-        this.exceptionInFileDownloaderNotifier = notifier;
     }
 
-    public FileDownloader(Context context, String downloadUrl, File file, ExceptionInFileDownloaderNotifier notifier){
+    public FileDownloader(Context context, String downloadUrl, File file){
         this.context = context;
         this.downloadUrl = downloadUrl;
         this.outputFile = file;
-        this.exceptionInFileDownloaderNotifier = notifier;
     }
 
 
 
-    public static abstract class ExceptionInFileDownloaderNotifier{
-        public abstract void notifyExceptionHappened();
-    }
-
-
-    public void download() {
+    public void download() throws IOException {
 
         try {
             final URLConnection conn = new URL(downloadUrl).openConnection();
@@ -69,9 +62,9 @@ public class FileDownloader {
             Log.i(TAG, "File is stored in direcotry:" + outputFile.getAbsolutePath().toString());
         } catch (Exception e) {
             Log.e(TAG, "Error while downloading " + downloadUrl, e);
-            this.exceptionInFileDownloaderNotifier.notifyExceptionHappened();
-
             tag = null;
+            e.printStackTrace();
+            throw e;
         }
     }
     public String getTag() {

@@ -64,9 +64,9 @@ public class StationsLocator {
 
     private ArrayList<Stop> getAllStations(){
         DbManipulator dbManipulator = new DbManipulator(this.context);
-        ArrayList<Stop> stations = new ArrayList<>();
+        ArrayList<Stop> stations = null;
         try(Cursor cursor = dbManipulator.read()) {
-
+            stations = new ArrayList<>();
             cursor.moveToFirst();
             for (int i = 0; i < cursor.getCount(); i++) {
                 String stationName = cursor.getString(cursor.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
@@ -93,6 +93,9 @@ public class StationsLocator {
     public ArrayList<Stop> getClosestStations(){
         ArrayList<Stop> closestStations = new ArrayList<>();
         ArrayList<Stop> allStations = getAllStations();
+        if (allStations == null || allStations.size() == 0){
+            return null;
+        }
         PriorityQueue<Stop> priorityQueue = new PriorityQueue<>(allStations.size(), comparator);
         if(allStations == null){
             return null;

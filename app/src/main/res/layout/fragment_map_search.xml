@@ -2,6 +2,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     sothree:umanoParallaxOffset="300dp"
+    sothree:umanoScrollableView="@+id/RecyclerViewLines"
     android:gravity="bottom"
     sothree:umanoShadowHeight="4dp"
     sothree:umanoOverlay="true"
@@ -9,7 +10,8 @@
 
 
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto">
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    >
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -37,7 +39,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,9 +57,13 @@
                     android:id="@+id/TextViewStopName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="30dp"
+                    android:minHeight="70dp"
                     android:paddingBottom="5dp"
                     android:textAlignment="center"
+                    android:gravity="center"
+
+
+                    android:layout_centerVertical="true"
                     android:textSize="20dp"
                     android:textColor="@color/white"
                     android:layout_toLeftOf="@+id/TextViewSlideUpCode"/>
@@ -72,20 +78,11 @@
                     android:textColor="@android:color/black"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true" />
-                <TextView
-                    android:id="@+id/TextViewDirection"
-                    android:layout_width="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:layout_height="20dp"
-                    android:textAlignment="center"
-                    android:textSize="10dp"
-                    android:textColor="@color/white"
-                    android:layout_below="@+id/TextViewStopName"
-                    android:layout_alignStart="@+id/TextViewStopName"
-                    android:layout_toLeftOf="@id/TextViewSlideUpCode"/>
+
             </RelativeLayout>
 
         </LinearLayout>
+
 
 
         <RelativeLayout
@@ -93,13 +90,17 @@
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:background="?backgroundColorSlideUpPanel"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            >
+
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:id="@+id/LinearLayoutGetTimes"
-                android:gravity="center">
+                android:gravity="center"
+                >
                 <ImageButton
 
                     android:layout_width="35dp"
@@ -137,19 +138,13 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:paddingLeft="10dp"
-            android:paddingTop="10dp"
-            android:id="@+id/RecyclerViewLines"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?backgroundColorSlideUpPanel"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/coordinates"
             android:orientation="horizontal"
             android:paddingTop="10dp"
+            android:paddingBottom="5dp"
             android:background="?backgroundColorSlideUpPanel">
             <ImageView
                 android:layout_marginLeft="10dp"
@@ -164,10 +159,30 @@
                 android:id="@+id/TextViewCoordinates"/>
         </LinearLayout>
 
+            <android.support.v7.widget.RecyclerView
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:id="@+id/RecyclerViewLines"
+                android:layout_width="match_parent"
+
+
+                android:layout_height="wrap_content"
+
+                android:background="?backgroundColorSlideUpPanel"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?backgroundColorSlideUpPanel"/>
+
+
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?backgroundColorSlideUpPanel"/>
+            android:background="?backgroundColorSlideUpPanel"
+            android:id="@+id/dragView"/>
+
 
     </LinearLayout>
 </com.sothree.slidinguppanel.SlidingUpPanelLayout>

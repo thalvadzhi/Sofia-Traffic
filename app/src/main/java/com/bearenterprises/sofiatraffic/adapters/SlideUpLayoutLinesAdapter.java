@@ -10,12 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.second.Line;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
+import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -26,10 +31,16 @@ import java.util.ArrayList;
 public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayoutLinesAdapter.ViewHolder> {
     private ArrayList<Line> lines;
     private Context context;
+    private String stopCode;
 
-    public SlideUpLayoutLinesAdapter(Context context, ArrayList<Line> lines) {
+    public SlideUpLayoutLinesAdapter(Context context, ArrayList<Line> lines, String stopCode) {
         this.context = context;
         this.lines = lines;
+        this.stopCode = stopCode;
+    }
+
+    public void setStopCode(String stopCode) {
+        this.stopCode = stopCode;
     }
 
     @Override
@@ -44,6 +55,12 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         Line l = lines.get(position);
         holder.setOnClickListener(position);
 
+        Description desc = DbUtility.getDescription(Integer.toString(l.getType()), l.getName(), stopCode, context);
+        if (desc != null){
+            holder.direction.setText(desc.getDirection());
+        }
+
+
         TypedValue typedValueBus = new TypedValue();
         TypedValue typedValueTrolley = new TypedValue();
         TypedValue typedValueTram = new TypedValue();
@@ -56,14 +73,34 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         int bus = typedValueBus.resourceId;
         int tram = typedValueTram.resourceId;
         int trolley = typedValueTrolley.resourceId;
+
+
+        TypedValue typedValueBusColor = new TypedValue();
+        TypedValue typedValueTrolleyColor = new TypedValue();
+        TypedValue typedValueTramColor= new TypedValue();
+
+
+        theme.resolveAttribute(R.attr.busColor, typedValueBusColor, true);
+        theme.resolveAttribute(R.attr.tramColor, typedValueTramColor, true);
+        theme.resolveAttribute(R.attr.trolleyColor, typedValueTrolleyColor, true);
+
+        int colorBus = typedValueBusColor.data;
+        int colorTram = typedValueTramColor.data;
+        int colorTrolley = typedValueTrolleyColor.data;
         switch (l.getType()){
             case 0:
+
+                holder.rl.setBackgroundColor(colorTram);
                 Bitmap imageTram = BitmapFactory.decodeResource(context.getResources(), tram);
                 holder.trType.setImageBitmap(imageTram);break;
             case 1:
+                holder.rl.setBackgroundColor(colorBus);
+
                 Bitmap imageBus = BitmapFactory.decodeResource(context.getResources(), bus);
                 holder.trType.setImageBitmap(imageBus);break;
             case 2:
+                holder.rl.setBackgroundColor(colorTrolley);
+
                 Bitmap imageTrolley = BitmapFactory.decodeResource(context.getResources(), trolley);
                 holder.trType.setImageBitmap(imageTrolley);break;
         }
@@ -79,12 +116,16 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView trType;
         private TextView lineName;
+        private TextView direction;
         private View itemView;
+        private RelativeLayout rl;
         public ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
             trType = (ImageView) itemView.findViewById(R.id.ImageViewTransportationTypeSlideUpLayout);
             lineName = (TextView) itemView.findViewById(R.id.TextViewLineName);
+            direction = (TextView) itemView.findViewById(R.id.textViewMapSlideUpDirection);
+            rl = (RelativeLayout) itemView.findViewById(R.id.RelativeLayoutMapSlideupLineBackground);
         }
 
         public void setOnClickListener(final int position){

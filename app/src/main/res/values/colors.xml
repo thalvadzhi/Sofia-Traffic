@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="viewPagerBackgroundDark">#000000</color>
     <color name="lightGray">#DCDCDC</color>
+    <color name="favouritesGray">#646464</color>
+
     <color name="viewPagerBackgroundLight">@color/lightGray</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorOrange">#FF6600</color>

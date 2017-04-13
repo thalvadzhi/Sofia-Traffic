@@ -1,5 +1,7 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -17,10 +19,13 @@ import android.widget.TextView;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
 
 import java.util.ArrayList;
+
+import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by thalv on 06-Dec-16.
@@ -52,17 +57,14 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         }else{
             name = l.getName();
         }
-        String lat = l.getLatitude();
-        String lon = l.getLongtitude();
+
 
         holder.stopName.setText(name);
         holder.textViewCode.setText(Integer.toString(l.getCode()));
-        holder.coordinates.setText(lat + ", " + lon);
+
         holder.setOnClickListenerForButtonAtPosition(position);
         holder.setOnLongClickListener(position);
         holder.setEditAliasAction(position);
-//        Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.map);
-//        holder.imageView.setImageBitmap(image);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
             this.locationButton = (Button) itemView.findViewById(R.id.button_favourites_location);
             this.textViewCode = (TextView) itemView.findViewById(R.id.textView_favourites_code);
             this.editAlias = (ImageButton) itemView.findViewById(R.id.imageButton_edit_alias);
-            this.coordinates = (TextView) itemView.findViewById(R.id.textView_favourites_coordinates);
+            this.coordinates = (TextView) itemView.findViewById(R.id.copy_coordinates_button);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -171,6 +173,18 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
                 @Override
                 public void onClick(View view) {
                     CommunicationUtility.showOnMap(favourites.get(position), (MainActivity)context);
+                }
+            });
+
+            this.coordinates.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Stop s = favourites.get(position);
+                    String coords = s.getLatitude() + "," + s.getLongtitude();
+                    ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText("Координатите на спирката", coords);
+                    clipboard.setPrimaryClip(clip);
+                    Utility.makeSnackbar("Координатите на спирката бяха копирани!", (MainActivity)context);
                 }
             });
         }

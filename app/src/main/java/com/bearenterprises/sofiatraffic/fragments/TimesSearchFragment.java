@@ -134,7 +134,7 @@ public class TimesSearchFragment extends Fragment {
         if(code != null){
             //hide soft keyboard
             ((MainActivity)getActivity()).hideSoftKeyboad();
-            
+
             refreshLayout.setEnabled(true);
             FragmentManager manager = getFragmentManager();
             StationNameFragment stationNameFragment = StationNameFragment.newInstance(code);

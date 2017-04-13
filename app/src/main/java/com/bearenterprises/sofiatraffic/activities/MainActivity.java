@@ -121,12 +121,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
             @Override
             public void onPageSelected(int position) {
-                final InputMethodManager imm = (InputMethodManager)getSystemService(
-                        Context.INPUT_METHOD_SERVICE);
+
                 if(position != Constants.SECTION_SEARCH_IDX) {
-                    if (getCurrentFocus() != null) {
-                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-                    }
+                    hideSoftKeyboad();
                 }
 
                 if(saveToHistory){
@@ -156,6 +153,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         queryMethod = method;
     }
 
+    public void hideSoftKeyboad(){
+        final InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        if (getCurrentFocus() != null) {
+            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+    }
     private void initializeRetrofitInstance(){
         retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.IVKOS_API_BASE_URL)

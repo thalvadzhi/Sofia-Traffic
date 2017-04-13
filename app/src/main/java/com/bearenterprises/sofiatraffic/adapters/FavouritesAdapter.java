@@ -38,7 +38,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.favourites_card, parent, false);
+                .inflate(R.layout.favourites_card_new, parent, false);
 
         return new FavouritesAdapter.ViewHolder(view);
     }
@@ -52,8 +52,12 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         }else{
             name = l.getName();
         }
-        holder.textViewFavourite.setText(name.toUpperCase());
+        String lat = l.getLatitude();
+        String lon = l.getLongtitude();
+
+        holder.stopName.setText(name);
         holder.textViewCode.setText(Integer.toString(l.getCode()));
+        holder.coordinates.setText(lat + ", " + lon);
         holder.setOnClickListenerForButtonAtPosition(position);
         holder.setOnLongClickListener(position);
         holder.setEditAliasAction(position);
@@ -67,17 +71,19 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView textViewFavourite;
+        private TextView stopName;
         private Button locationButton;
         private TextView textViewCode;
         private ImageButton editAlias;
+        private TextView coordinates;
         private RelativeLayout relativeLayout;
         public ViewHolder(View itemView) {
             super(itemView);
-            this.textViewFavourite = (TextView) itemView.findViewById(R.id.text_view_favourite2);
-            this.locationButton = (Button) itemView.findViewById(R.id.image_location2);
-            this.textViewCode = (TextView) itemView.findViewById(R.id.textViewFavoureCode);
-            this.editAlias = (ImageButton) itemView.findViewById(R.id.ImageButtonEditAlias);
+            this.stopName = (TextView) itemView.findViewById(R.id.textView_favourites_stop_name);
+            this.locationButton = (Button) itemView.findViewById(R.id.button_favourites_location);
+            this.textViewCode = (TextView) itemView.findViewById(R.id.textView_favourites_code);
+            this.editAlias = (ImageButton) itemView.findViewById(R.id.imageButton_edit_alias);
+            this.coordinates = (TextView) itemView.findViewById(R.id.textView_favourites_coordinates);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

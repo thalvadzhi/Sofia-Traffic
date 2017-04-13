@@ -30,6 +30,7 @@ public class GenerateClient {
     }
 
     public static OkHttpClient getClient(final Context context){
+
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
         httpClient.addInterceptor(new Interceptor() {
             @Override
@@ -37,7 +38,7 @@ public class GenerateClient {
                 Request original = chain.request();
                 List<String> customAnnotations = original.headers().values("@");
                 Request.Builder requestBuilder = original.newBuilder();
-                if(customAnnotations.size() != 0){
+                if(customAnnotations.size() != 0 && registration != null){
                     requestBuilder
                             .removeHeader("@")
                             .header("X-User-Id", registration.getId());

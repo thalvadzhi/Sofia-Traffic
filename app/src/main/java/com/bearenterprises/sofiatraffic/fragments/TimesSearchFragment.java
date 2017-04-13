@@ -1,5 +1,6 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -130,6 +132,9 @@ public class TimesSearchFragment extends Fragment {
 
     public void showStationTimes(String code){
         if(code != null){
+            //hide soft keyboard
+            ((MainActivity)getActivity()).hideSoftKeyboad();
+            
             refreshLayout.setEnabled(true);
             FragmentManager manager = getFragmentManager();
             StationNameFragment stationNameFragment = StationNameFragment.newInstance(code);

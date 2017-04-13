@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="viewPagerBackgroundDark">#000000</color>
+    <color name="viewPagerBackgroundDark">@color/darkGrey</color>
     <color name="lightGray">#DCDCDC</color>
     <color name="favouritesGray">#646464</color>
 

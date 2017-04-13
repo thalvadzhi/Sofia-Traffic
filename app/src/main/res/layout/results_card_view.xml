@@ -6,160 +6,143 @@
     android:orientation="horizontal">
 
 
-<android.support.v7.widget.CardView
-    android:layout_width="330dp"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/cardView_results"
-    app:cardElevation="8dp"
-    app:cardCornerRadius="5dp"
-    app:cardUseCompatPadding="true"
-    app:cardPreventCornerOverlap="false"
-
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardView_results"
+        android:layout_width="330dp"
         android:layout_height="wrap_content"
-        android:minHeight="40dp"
+        app:cardCornerRadius="5dp"
+        app:cardElevation="8dp"
+        app:cardPreventCornerOverlap="false"
 
-        android:id="@+id/toBeAbove">
-        <View
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/background"
-            android:background="#FF0000"
-            android:layout_alignParentTop="true"
-            android:layout_alignBottom="@+id/lineInfo"
-            >
-        </View>
-        <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/imageView_transportation_type"
-            android:background="@drawable/rounded_edges"
-            android:layout_centerVertical="true"/>
+        app:cardUseCompatPadding="true">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/imageView_transportation_type"
-            android:id="@+id/lineInfo"
-            >
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/toBeAbove"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Large Text"
-                android:textColor="#FFFFFF"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal"
-                android:id="@+id/textView_card_line_name"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true" />
 
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Large Text"-->
-                <!--android:textAlignment="center"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:id="@+id/textView_card_direction"-->
-                <!--android:layout_below="@+id/textView_card_line_name"-->
-                <!--android:textSize="12dp"-->
-                <!--android:textColor="?stationCodeTextColorFavourites"-->
-                <!--android:layout_marginLeft="10dp"-->
-                <!--android:layout_marginRight="10dp"-->
-                <!--android:background="?stationCodeBackgroundFavourites"-->
-                <!--android:padding="3dp"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:layout_alignParentEnd="true" />-->
+                android:minHeight="40dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textAlignment="center"
-                android:id="@+id/textView_card_times"
-                android:paddingBottom="5dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_below="@+id/textView_card_line_name"
-                android:layout_alignParentEnd="true"
-                 />
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:id="@+id/more_button_and_progressbar_container"
-                android:layout_below="@id/textView_card_times">
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/more_button"
-                    android:id="@+id/more_button"
-                    android:padding="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:textSize="10dp"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/border"
-                    android:textAlignment="center"
-                    android:textAllCaps="true"
-                    />
-
-                <ProgressBar
-                    style="?android:attr/progressBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    android:paddingTop="5dp"
-                    android:id="@+id/progressBarSingleLine" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:paddingTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/more_button_and_progressbar_container"
-
-                >
                 <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@android:color/darker_gray"
-                    />
-                <TextView
+                    android:id="@+id/background"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/lineInfo"
+                    android:layout_alignParentTop="true"
+                    android:background="#FF0000"/>
+
+                <ImageView
+                    android:id="@+id/imageView_transportation_type"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/rounded_edges" />
+
+                <RelativeLayout
+                    android:id="@+id/lineInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:maxHeight="40dp"
-                    android:id="@+id/dir_alt"
-                    android:textSize="10dp"
-                    android:textAlignment="center"/>
+                    android:layout_toRightOf="@+id/imageView_transportation_type">
 
+                    <TextView
+                        android:id="@+id/textView_card_line_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Large Text"
+                        android:textAlignment="center"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="#FFFFFF" />
+
+
+                    <TextView
+                        android:id="@+id/textView_card_times"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@+id/textView_card_line_name"
+                        android:layout_gravity="center_horizontal"
+                        android:paddingBottom="5dp"
+                        android:textAlignment="center"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <RelativeLayout
+                        android:id="@+id/more_button_and_progressbar_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textView_card_times"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/more_button"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginLeft="5dp"
+                            android:background="@drawable/border"
+                            android:padding="5dp"
+                            android:text="@string/more_button"
+                            android:textAlignment="center"
+                            android:textAllCaps="true"
+                            android:textSize="10dp" />
+
+                        <ProgressBar
+                            android:id="@+id/progressBarSingleLine"
+                            style="?android:attr/progressBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:paddingTop="5dp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/more_button_and_progressbar_container"
+                        android:paddingTop="5dp"
+
+                        >
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@android:color/darker_gray" />
+
+                        <TextView
+                            android:id="@+id/dir_alt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:maxHeight="40dp"
+                            android:padding="5dp"
+                            android:textAlignment="center"
+                            android:textSize="10dp" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
             </RelativeLayout>
 
-        </RelativeLayout>
-    </RelativeLayout>
 
+            <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
 
-    <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-
-        <!--&gt;-->
-        <!--<View-->
+            <!--&gt;-->
+            <!--<View-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="1dp"-->
             <!--android:background="@android:color/darker_gray"-->
             <!--/>-->
-        <!--<TextView-->
+            <!--<TextView-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:padding="10dp"-->
@@ -168,13 +151,13 @@
             <!--android:textSize="12dp"-->
             <!--android:textAlignment="center"/>-->
 
-    <!--</RelativeLayout>-->
-    </LinearLayout>
-    <!--</RelativeLayout>-->
+            <!--</RelativeLayout>-->
+        </LinearLayout>
+        <!--</RelativeLayout>-->
 
 
-</android.support.v7.widget.CardView>
+    </android.support.v7.widget.CardView>
 
 
-<!--</LinearLayout>-->
+    <!--</LinearLayout>-->
 </LinearLayout>

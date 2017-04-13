@@ -2,20 +2,19 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ExpandableListView;
 
-import com.bearenterprises.sofiatraffic.activities.MainActivity;
-import com.bearenterprises.sofiatraffic.restClient.Station;
-import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
-import com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView;
-import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
+import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.Direction;
+import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.second.Stop;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoutesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -26,7 +25,7 @@ public class RoutesFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String transportationType;
     private ArrayList<ArrayList<Stop>> routes;
-    private  AnimatedExpandableListView routesListView;
+    private RecyclerView routesRecyclerView;
 
 
     public RoutesFragment() {
@@ -56,55 +55,16 @@ public class RoutesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_routes, container, false);
-        routesListView = (AnimatedExpandableListView) view.findViewById(R.id.routesListView);
-        final RoutesAdapter adapter = new RoutesAdapter(this.routes, transportationType, getContext());
-        routesListView.setAdapter(adapter);
+        routesRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_routes);
+        List<Direction> directions = new ArrayList<>();
+        for (ArrayList<Stop> route : routes){
+            directions.add(new Direction(route, transportationType));
+        }
+        final RoutesAdapter alternativeAdapter = new RoutesAdapter(directions, getContext());
 
-        routesListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                if (routesListView.isGroupExpanded(groupPosition)) {
-                    routesListView.collapseGroupWithAnimation(groupPosition);
-                } else {
-                    routesListView.expandGroupWithAnimation(groupPosition);
-                }
-                return true;
-            }
-        });
-
-
-        routesListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView expandableListView, View view, int group, int child, long l) {
-                Stop station = adapter.getChild(group, child);
-                CommunicationUtility.showTimes(Integer.toString(station.getCode()), (MainActivity)getActivity());
-                return true;
-            }
-        });
+        routesRecyclerView.setAdapter(alternativeAdapter);
+        routesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return view;
     }
-
-    public void expandGroup(int groupPosition){
-        routesListView.expandGroup(groupPosition);
-        routesListView.setSelectedGroup(groupPosition);
-    }
-
-    public void scrollToPosition(int position){
-        routesListView.setSelection(position);
-    }
-
-    public void setPositionOnCurrentStop(Station station){
-        for(int i = 0; i < routes.size(); i++){
-            for(int j = 0; j < routes.get(i).size(); j++){
-                if(routes.get(i).get(j).getId() == station.getId()){
-                    expandGroup(i);
-                    scrollToPosition(j);
-                }
-            }
-        }
-    }
-
-
 }

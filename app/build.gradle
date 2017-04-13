@@ -76,5 +76,6 @@ dependencies {
     compile 'com.android.support:preference-v14:25.2.0'
     compile 'com.google.firebase:firebase-appindexing:10.2.0'
     compile 'com.google.android.gms:play-services-places:10.2.0';
+    compile 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
     testCompile 'junit:junit:4.12'
 }

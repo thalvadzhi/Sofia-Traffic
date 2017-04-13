@@ -4,13 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.bearenterprises.sofiatraffic.fragments.RoutesFragment">
 
-   <com.bearenterprises.sofiatraffic.views.AnimatedExpandableListView
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       android:id="@+id/routesListView"
-       android:dividerHeight="5dp"
-       android:divider="#00FFFFFF"
-       android:groupIndicator="@null"
-       android:childDivider="#00FFFFFF"
-       />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_routes"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 </RelativeLayout>

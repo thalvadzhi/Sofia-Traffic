@@ -24,4 +24,5 @@
     <attr name="iconTrolley" format="reference"/>
     <attr name="moreButtonBorder" format="color"/>
     <attr name="whiteBlack" format="color"/>
+    <attr name="downArrow" format="reference"/>
 </resources>

@@ -31,6 +31,8 @@
         <item name="iconTrolley">@drawable/trolley_smaller</item>
         <item name="moreButtonBorder">@color/darkGrey</item>
         <item name="whiteBlack">@color/black</item>
+        <item name="downArrow">@drawable/down_arrow_black</item>
+
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -58,6 +60,7 @@
         <item name="iconTram">@drawable/tram_white</item>
         <item name="iconTrolley">@drawable/trolley_smaller_white</item>
         <item name="moreButtonBorder">@color/grey</item>
+        <item name="downArrow">@drawable/down_arrow_white</item>
 
 
 

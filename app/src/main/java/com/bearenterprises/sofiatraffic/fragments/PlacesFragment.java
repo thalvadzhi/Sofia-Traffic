@@ -19,6 +19,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 
@@ -33,9 +34,12 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        //Bounding box of Sofia
+        LatLngBounds sofiaBounds = new LatLngBounds(new LatLng(42.6227,23.2108), new LatLng(42.7587, 23.4173));
+
         View v = inflater.inflate(R.layout.fragment_places, container, false);
         placeAutocompleteFragment = new SupportPlaceAutocompleteFragment();
+        placeAutocompleteFragment.setBoundsBias(sofiaBounds);
         Utility.changeFragment(R.id.places_search_container, placeAutocompleteFragment, (MainActivity)getActivity());
         placeAutocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override

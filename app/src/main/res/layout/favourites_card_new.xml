@@ -31,20 +31,10 @@
                     android:id="@+id/textView_favourites_stop_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toLeftOf="@+id/imageButton_edit_alias"
                     android:text="Кемпински Хотел Зографски"
                     android:textColor="?whiteBlack"
                     android:textSize="20dp" />
 
-                <!--<ImageButton-->
-                <!--android:id="@+id/imageButton_edit_alias"-->
-                <!--android:layout_width="20dp"-->
-                <!--android:layout_height="20dp"-->
-
-                <!--android:layout_alignParentRight="true"-->
-                <!--android:layout_centerVertical="true"-->
-                <!--android:layout_marginRight="5dp"-->
-                <!--android:background="?iconEdit" />-->
             </RelativeLayout>
 
             <TextView

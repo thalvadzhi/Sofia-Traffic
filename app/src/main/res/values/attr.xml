@@ -25,4 +25,5 @@
     <attr name="moreButtonBorder" format="color"/>
     <attr name="whiteBlack" format="color"/>
     <attr name="downArrow" format="reference"/>
+    <attr name="borderColorForMoreButton" format="reference"/>
 </resources>

@@ -2,8 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/test"
@@ -15,77 +14,86 @@
         app:cardUseCompatPadding="true">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:id="@+id/relativeLayout_tr_type"
-                android:layout_width="60dp"
+            <LinearLayout
+                android:id="@+id/left"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/relativeLayout_stops_container"
-                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/imageButton_show_on_map_group"
+                android:orientation="horizontal">
 
-                android:background="@color/colorBus"
-                android:padding="5dp">
+                <RelativeLayout
+                    android:id="@+id/relativeLayout_tr_type"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
 
-                <ImageView
-                    android:id="@+id/imageView_direction_tr_type"
+                    android:background="@color/colorBus"
+                    android:gravity="center_vertical"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/imageView_direction_tr_type"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/relativeLayout_stops_container"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_alignParentLeft="true"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    />
-            </RelativeLayout>
+                    android:layout_toLeftOf="@+id/imageButton_show_on_map_group"
+                    android:layout_toRightOf="@+id/relativeLayout_tr_type">
 
-            <RelativeLayout
-                android:id="@+id/relativeLayout_stops_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/relativeLayout_tr_type"
-                android:layout_toLeftOf="@+id/imageButton_show_on_map_group">
+                    <TextView
+                        android:id="@+id/textView_from_stop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:paddingTop="5dp"
+                        android:text="От някъде"
+                        android:textAlignment="center"
+                        android:textSize="20dp" />
 
-                <TextView
-                    android:id="@+id/textView_from_stop"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:textAlignment="center"
-                    android:text="От някъде"
-                    android:textSize="20dp"
-                    android:paddingTop="5dp"/>
+                    <ImageView
+                        android:id="@+id/imageView_direction_arrow"
+                        android:layout_width="10dp"
+                        android:layout_height="15dp"
+                        android:layout_below="@+id/textView_from_stop"
+                        android:layout_centerHorizontal="true"
+                        android:background="?downArrow"
+                        android:padding="5dp" />
 
-                <ImageView
-                    android:id="@+id/imageView_direction_arrow"
-                    android:layout_width="10dp"
-                    android:layout_height="15dp"
-                    android:layout_below="@+id/textView_from_stop"
-                    android:padding="5dp"
-                    android:layout_centerHorizontal="true"
-                    android:background="?downArrow" />
-
-                <TextView
-                    android:id="@+id/textView_to_stop"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:layout_below="@+id/imageView_direction_arrow"
-                    android:layout_centerHorizontal="true"
-                    android:text="До някъде"
-                    android:textSize="20dp"
-                    android:paddingBottom="5dp"/>
-            </RelativeLayout>
+                    <TextView
+                        android:id="@+id/textView_to_stop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imageView_direction_arrow"
+                        android:layout_centerHorizontal="true"
+                        android:paddingBottom="5dp"
+                        android:text="До някъде"
+                        android:textAlignment="center"
+                        android:textSize="20dp" />
+                </RelativeLayout>
+            </LinearLayout>
 
             <ImageButton
                 android:id="@+id/imageButton_show_on_map_group"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:background="?locationInSlideUp"
                 android:focusable="false"
                 android:paddingLeft="50dp"
-                android:paddingRight="5dp"
-                android:layout_alignParentRight="true"/>
+                android:paddingRight="5dp" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

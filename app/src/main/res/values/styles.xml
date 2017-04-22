@@ -3,10 +3,10 @@
     <!-- Base application theme. -->
     <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorButtonNormal">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:buttonStyle">@style/SpecialButton</item>
         <item name="viewPagerBackgroundColor">@color/viewPagerBackgroundLight</item>
         <item name="tabSelectedColor">@color/white</item>
         <item name="tabUnselectedColor">@color/lightGray</item>
@@ -68,24 +68,6 @@
 
     </style>
 
-    <!--<style name="AppTheme" parent="Theme.AppCompat.NoActionBar">-->
-        <!--&lt;!&ndash;&lt;!&ndash; Customize your theme here. &ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="colorPrimary">@color/colorPrimary</item>&ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="colorPrimaryDark">@color/colorPrimaryDark</item>&ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="colorAccent">@color/colorAccent</item>&ndash;&gt;-->
-        <!--&lt;!&ndash;<item name="android:buttonStyle">@style/SpecialButton</item>&ndash;&gt;-->
-    <!--</style>-->
-
-
-    <style name="SpecialButton" parent="android:Widget.Material.Button.Colored">
-        <item name="colorButtonNormal">#FF6600</item>
-        <item name="android:textColorPrimary">#FF0000</item>
-    </style>
-
-    <!--<style name="AppTheme.NoActionBar">-->
-        <!--<item name="windowActionBar">false</item>-->
-        <!--<item name="windowNoTitle">true</item>-->
-    <!--</style>-->
 
     <style name="Widget.Button.Toggle" parent="android:Widget">
         <item name="android:background">@drawable/toggle_bg</item>

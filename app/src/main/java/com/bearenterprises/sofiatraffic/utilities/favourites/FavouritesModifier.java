@@ -45,4 +45,14 @@ public class FavouritesModifier {
         cloudBackedEditor.remove(Integer.toString(code));
         cloudBackedEditor.commit();
     }
+
+    public static void removeAll(Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Constants.SHARED_PREFERENCES_FAVOURITES, Context.MODE_PRIVATE);
+        MainActivity activity = (MainActivity)context;
+        CloudBackedSharedPreferences cloudBackedSharedPreferences = new CloudBackedSharedPreferences(preferences, activity.getBackupManager());
+        SharedPreferences.Editor cloudBackedEditor = cloudBackedSharedPreferences.edit();
+
+        cloudBackedEditor.clear();
+        cloudBackedEditor.commit();
+    }
 }

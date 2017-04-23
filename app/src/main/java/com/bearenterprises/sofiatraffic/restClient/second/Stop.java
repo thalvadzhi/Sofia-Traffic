@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class Stop implements Serializable{
 
+    private Integer favouriteIndex; // the index of appearance in Favourites tab
     private Integer id;
     private Integer code;
     private String name;
@@ -161,4 +162,11 @@ public class Stop implements Serializable{
         }
     }
 
+    public Integer getFavouriteIndex() {
+        return favouriteIndex;
+    }
+
+    public void setFavouriteIndex(Integer favouriteIndex) {
+        this.favouriteIndex = favouriteIndex;
+    }
 }

@@ -1,5 +1,5 @@
 *
-!app/src/main
+!/app/src/main/
 !app/build.gradle
 !build.gradle
 !README.md

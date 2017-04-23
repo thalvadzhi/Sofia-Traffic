@@ -6,11 +6,11 @@
     android:id="@+id/favourites_fragment"
     >
 
-    <!-- TODO: Update blank fragment layout -->
+    
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/list_view_favourites"
         android:layout_gravity="center_horizontal|top"
         android:divider="@null"/>

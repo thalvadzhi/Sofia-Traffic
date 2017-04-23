@@ -26,4 +26,7 @@
     <attr name="whiteBlack" format="color"/>
     <attr name="downArrow" format="reference"/>
     <attr name="borderColorForMoreButton" format="reference"/>
+    <attr name="iconReorderHandle" format="reference"/>
+    <attr name="iconCopyCoordinates" format="reference"/>
+
 </resources>

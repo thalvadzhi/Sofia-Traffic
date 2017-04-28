@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
 
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 
@@ -13,7 +13,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 /**
- * Created by thalv on 08-Jul-16.
+ * Used to locate stops in {@code maxDistance} radius of {@code location}
  */
 public class StationsLocator {
     private Location location;
@@ -80,13 +80,6 @@ public class StationsLocator {
         }finally {
             dbManipulator.closeDb();
         }
-//        ArrayList<Station> everyStation;
-//        try {
-//            everyStation = ((MainActivity) this.context).getEveryStation();
-//        }catch(SQLiteDatabaseLockedException e){
-//            ((MainActivity) this.context).makeSnackbar("Информацията за спирките все още се обновява");
-//            return null;
-//        }
         return stations;
     }
 

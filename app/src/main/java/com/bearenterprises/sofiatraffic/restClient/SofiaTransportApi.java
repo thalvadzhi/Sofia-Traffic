@@ -1,8 +1,5 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
-import com.bearenterprises.sofiatraffic.restClient.second.Routes;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -17,11 +14,11 @@ import retrofit2.http.Path;
 public interface SofiaTransportApi {
     @Headers("@: userID")
     @GET("stops/{code}")
-    Call<Station> getStation(@Path("code") String code);
+    Call<Stop> getStop(@Path("code") String code);
 
     @Headers("@: userID")
     @GET("beta/stops/{code}")
-    Call<Station> getStationWithTimes(@Path("code") String code);
+    Call<Stop> getStopWithTimes(@Path("code") String code);
 
     @Headers("@: userID")
     @GET("stops/{code}/lines/{lineId}")

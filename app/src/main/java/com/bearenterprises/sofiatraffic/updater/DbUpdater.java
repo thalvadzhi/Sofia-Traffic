@@ -8,7 +8,7 @@ import android.support.design.widget.CoordinatorLayout;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.bearenterprises.sofiatraffic.R.id.coordinates;
 
 /**
  * Created by thalv on 08-Jul-16.
@@ -178,9 +175,9 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
     }
 
     private boolean shouldUpdate(long lastUpdate){
-//        return true;
-        long delta = System.currentTimeMillis() - lastUpdate;
-        return (delta > Constants.DAY_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+        return true;
+//        long delta = System.currentTimeMillis() - lastUpdate;
+//        return (delta > Constants.DAY_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
     }
 
 }

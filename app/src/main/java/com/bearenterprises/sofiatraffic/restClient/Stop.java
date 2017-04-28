@@ -1,11 +1,8 @@
 
-package com.bearenterprises.sofiatraffic.restClient.second;
+package com.bearenterprises.sofiatraffic.restClient;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
 
 public class Stop implements Serializable{
 
@@ -17,6 +14,8 @@ public class Stop implements Serializable{
     private String latitude;
     private String description;
     private String alias;
+    private ArrayList<Line> lines;
+
 
     public Stop(Integer id, Integer code, String name, String latitude, String longtitude, String description) {
         this.id = id;
@@ -126,42 +125,6 @@ public class Stop implements Serializable{
     }
 
 
-
-    public String getDirection(){
-        if(this.description == null){
-            return null;
-        }
-        String patternDirection = "ПОСОКА(.*)";
-        String dir = match(patternDirection);
-        if(dir != null){
-            return dir;
-        }
-        String patternFirstStop = "НАЧАЛНА СПИРКА(.*)";
-        String firstStop = match(patternFirstStop);
-        if(firstStop != null){
-            return firstStop;
-        }
-
-        String patternLastStop = "КРАЙНА СПИРКА(.*)";
-        String lastStop = match(patternLastStop);
-        if(lastStop != null){
-            return lastStop;
-        }
-
-        return null;
-
-    }
-
-    private String match(String pattern){
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(this.description);
-        if(m.find()){
-            return m.group();
-        }else{
-            return null;
-        }
-    }
-
     public Integer getFavouriteIndex() {
         return favouriteIndex;
     }
@@ -169,4 +132,13 @@ public class Stop implements Serializable{
     public void setFavouriteIndex(Integer favouriteIndex) {
         this.favouriteIndex = favouriteIndex;
     }
+
+    public ArrayList<Line> getLines() {
+        return lines;
+    }
+
+    public void setLines(ArrayList<Line> lines) {
+        this.lines = lines;
+    }
+
 }

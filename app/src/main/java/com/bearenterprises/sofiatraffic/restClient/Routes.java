@@ -1,5 +1,5 @@
 
-package com.bearenterprises.sofiatraffic.restClient.second;
+package com.bearenterprises.sofiatraffic.restClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;

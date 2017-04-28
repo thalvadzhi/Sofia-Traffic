@@ -16,7 +16,7 @@ import com.bearenterprises.sofiatraffic.adapters.FavouritesAdapter;
 import com.bearenterprises.sofiatraffic.callback.OnStartDragListener;
 import com.bearenterprises.sofiatraffic.callback.ReorderCallback;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
 import com.google.gson.Gson;
 
@@ -65,12 +65,14 @@ public class FavouritesFragment extends Fragment implements OnStartDragListener 
         Gson gson = new Gson();
         int idx = 0;
         for (String key : all.keySet()) {
-            Stop st = gson.fromJson(all.get(key).toString(), Stop.class);
-            if (st.getFavouriteIndex() == null) {
-                st.setFavouriteIndex(idx);
+            if (!key.equals(Constants.KEY_LAST_UPDATE)) {
+                Stop st = gson.fromJson(all.get(key).toString(), Stop.class);
+                if (st.getFavouriteIndex() == null) {
+                    st.setFavouriteIndex(idx);
+                }
+                favouriteStations.add(st);
+                idx++;
             }
-            favouriteStations.add(st);
-            idx++;
         }
         Collections.sort(favouriteStations, new StopFavouriteIndexComparator());
         adapter = new FavouritesAdapter(getContext(), favouriteStations, this);

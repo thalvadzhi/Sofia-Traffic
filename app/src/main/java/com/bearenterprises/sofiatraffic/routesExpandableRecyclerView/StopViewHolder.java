@@ -3,13 +3,12 @@ package com.bearenterprises.sofiatraffic.routesExpandableRecyclerView;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 

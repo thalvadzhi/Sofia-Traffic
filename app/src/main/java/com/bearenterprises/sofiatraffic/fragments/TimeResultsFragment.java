@@ -10,8 +10,9 @@ import android.view.ViewGroup;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
-import com.bearenterprises.sofiatraffic.adapters.ResultsAdapter;
-import com.bearenterprises.sofiatraffic.restClient.Station;
+import com.bearenterprises.sofiatraffic.adapters.TimeResultsAdapter;
+import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
@@ -21,36 +22,36 @@ import java.util.Iterator;
 
 
 public class TimeResultsFragment extends Fragment {
-    private static final String TIMES = "param2";
-    private static final String STATION = "STATION";
+    private static final String TIMES = "TIMES";
+    private static final String STOP = "STOP";
 
     private RecyclerView resultsView;
     private ArrayList<LineTimes> lineTimes;
-    private ResultsAdapter resultsAdapter;
-    private Station station;
+    private TimeResultsAdapter timeResultsAdapter;
+    private Stop stop;
 
 
     public TimeResultsFragment() {
         // Required empty public constructor
     }
 
-    public static TimeResultsFragment newInstance(ArrayList<LineTimes> vt, Station station) {
+    public static TimeResultsFragment newInstance(ArrayList<LineTimes> vt, Stop stop) {
         TimeResultsFragment fragment = new TimeResultsFragment();
         Bundle args = new Bundle();
         args.putSerializable(TIMES, vt);
-        args.putSerializable(STATION, station);
+        args.putSerializable(STOP, stop);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public void addTimeSchedule(com.bearenterprises.sofiatraffic.restClient.second.Line line, ArrayList<Time> times){
+    public void addTimeSchedule(Line line, ArrayList<Time> times){
         synchronized (lineTimes){
             int idx = 0;
             if(times != null){
                 for(LineTimes vt : lineTimes){
                     if(vt.getLine().getId().equals(line.getId())){
                         vt.setVehicleTimes(times);
-                        this.resultsAdapter.notifyItemChanged(idx);
+                        this.timeResultsAdapter.notifyItemChanged(idx);
                     }
                     idx ++;
                 }
@@ -60,7 +61,7 @@ public class TimeResultsFragment extends Fragment {
                     LineTimes vt = i.next();
                     if (vt.getLine().getId().equals(line.getId())) {
                         i.remove();
-                        this.resultsAdapter.notifyItemRemoved(idx);
+                        this.timeResultsAdapter.notifyItemRemoved(idx);
                     }
                     idx++;
                 }
@@ -74,7 +75,7 @@ public class TimeResultsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             lineTimes = (ArrayList<LineTimes>)getArguments().getSerializable(TIMES);
-            station = (Station)getArguments().getSerializable(STATION);
+            stop = (Stop)getArguments().getSerializable(STOP);
         }
     }
 
@@ -103,8 +104,8 @@ public class TimeResultsFragment extends Fragment {
                 CommunicationUtility.setEnablednessRefreshLayout(enable, (MainActivity) getActivity());
             }
         });
-        resultsAdapter = new ResultsAdapter(getContext(), lineTimes, station);
-        resultsView.setAdapter(resultsAdapter);
+        timeResultsAdapter = new TimeResultsAdapter(getContext(), lineTimes, stop);
+        resultsView.setAdapter(timeResultsAdapter);
         resultsView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return view;

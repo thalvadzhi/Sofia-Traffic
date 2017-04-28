@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.callback.OnStartDragListener;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
@@ -40,16 +40,17 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
     private ArrayList<Stop> favourites;
     private Context context;
     private OnStartDragListener onStartDragListener;
+
     public FavouritesAdapter(Context context, ArrayList<Stop> favourites, OnStartDragListener onStartDragListener){
         this.context = context;
         this.favourites = favourites;
         this.onStartDragListener = onStartDragListener;
     }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.favourites_card_new, parent, false);
-
         return new FavouritesAdapter.ViewHolder(view);
     }
 
@@ -57,6 +58,8 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
     public void onBindViewHolder(ViewHolder holder, int position) {
         Stop l = this.favourites.get(position);
         String name;
+
+        // if the user has set an Alias use it, otherwise use the normal name
         if(l.getAlias() != null && !"".equals(l.getAlias())){
             name = l.getAlias();
         }else{
@@ -78,6 +81,14 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         return this.favourites.size();
     }
 
+    /**
+     * When one moves a card, a reordering of the underlying collection is needed.
+     * This updates the collection and then every favouriteIndex, for every Stop.
+     * Finally the changes are saved to shared preferences.
+     * @param fromPosition
+     * @param toPosition
+     * @return
+     */
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
         if (fromPosition < toPosition) {
@@ -96,6 +107,9 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         return true;
     }
 
+    /**
+     * After a reordering of favourite cards their favouriteIndex must be updated.
+     */
     private void updateFavouriteIndices(){
         for(int i = 0; i < favourites.size(); i++){
             favourites.get(i).setFavouriteIndex(i);
@@ -142,6 +156,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         }
 
         public void setEditAliasAction(final int position){
+            // allows the user to edit the name of the stop
             editAlias.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -189,6 +204,8 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         }
 
         public void setOnLongClickListener(final int position){
+            // when long pressing on a favourite stop a dialog will show up
+            // which will allow the deletion of the stop
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
@@ -214,6 +231,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         }
 
         public void setOnClickListenerForButtonAtPosition(final int position){
+            //show stop on the map
             this.locationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -221,6 +239,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
                 }
             });
 
+            // copy the coordinates of a stop
             this.coordinates.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

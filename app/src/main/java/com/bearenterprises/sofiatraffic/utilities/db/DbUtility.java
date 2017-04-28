@@ -5,11 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**

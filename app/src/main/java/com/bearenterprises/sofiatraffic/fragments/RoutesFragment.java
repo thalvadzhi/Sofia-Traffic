@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
 import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.Direction;
 import com.bearenterprises.sofiatraffic.R;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 
 import java.util.ArrayList;
 import java.util.List;

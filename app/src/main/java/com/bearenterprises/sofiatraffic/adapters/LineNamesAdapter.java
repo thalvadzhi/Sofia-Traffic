@@ -9,12 +9,12 @@ import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 
 import java.util.ArrayList;
 
 /**
- * Created by thalv on 30-Nov-16.
+ * An adapter for the drop down menu showing line names.
  */
 
 public class LineNamesAdapter extends BaseAdapter {

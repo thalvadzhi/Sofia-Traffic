@@ -32,7 +32,7 @@ import com.bearenterprises.sofiatraffic.fragments.LinesFragment;
 import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.updater.DbUpdater;
 import com.bearenterprises.sofiatraffic.utilities.network.GenerateClient;
 import com.bearenterprises.sofiatraffic.utilities.registration.RegistrationUtility;

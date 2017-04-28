@@ -1,6 +1,6 @@
 package com.bearenterprises.sofiatraffic.routesExpandableRecyclerView;
 
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bignerdranch.expandablerecyclerview.model.Parent;
 
 import java.util.ArrayList;

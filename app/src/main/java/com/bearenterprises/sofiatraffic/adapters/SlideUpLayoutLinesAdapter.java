@@ -15,17 +15,15 @@ import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
- * Created by thalv on 19-Dec-16.
+ * Adapter for the slide up menu in the map tab.
  */
 
 public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayoutLinesAdapter.ViewHolder> {

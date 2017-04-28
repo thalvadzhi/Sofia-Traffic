@@ -4,8 +4,8 @@ import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
-import com.bearenterprises.sofiatraffic.restClient.Station;
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.utilities.parsing.ParseApiError;
 import com.bearenterprises.sofiatraffic.utilities.registration.RegistrationUtility;
 
@@ -36,9 +36,9 @@ public class RetrofitUtility {
 
     public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity){
         SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
-        Call<Station> station = sofiaTransportApi.getStation(code);
+        Call<Stop> stop = sofiaTransportApi.getStop(code);
         try {
-            return RetrofitUtility.handleUnauthorizedQuery(station, activity).getLines();
+            return RetrofitUtility.handleUnauthorizedQuery(stop, activity).getLines();
 
         } catch (IOException e) {
             e.printStackTrace();

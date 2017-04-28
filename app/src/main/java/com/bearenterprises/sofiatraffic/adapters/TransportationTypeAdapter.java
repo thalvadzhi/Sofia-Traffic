@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by thalv on 02-Dec-16.
+ * Adapter for the drop down menu showing transportation types
  */
 
 public class TransportationTypeAdapter extends BaseAdapter {

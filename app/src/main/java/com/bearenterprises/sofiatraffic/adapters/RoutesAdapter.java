@@ -1,6 +1,5 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -8,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bearenterprises.sofiatraffic.R;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.Direction;
 import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.DirectionViewHolder;
 import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.StopViewHolder;

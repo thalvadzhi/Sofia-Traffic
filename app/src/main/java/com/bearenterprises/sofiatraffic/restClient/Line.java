@@ -1,5 +1,5 @@
 
-package com.bearenterprises.sofiatraffic.restClient.second;
+package com.bearenterprises.sofiatraffic.restClient;
 
 import com.bearenterprises.sofiatraffic.restClient.Time;
 

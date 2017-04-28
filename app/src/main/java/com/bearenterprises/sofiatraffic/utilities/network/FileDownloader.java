@@ -59,7 +59,7 @@ public class FileDownloader {
             inStream.close();
 
             Log.i(TAG, "Download finished: " + downloadUrl);
-            Log.i(TAG, "File is stored in direcotry:" + outputFile.getAbsolutePath().toString());
+            Log.i(TAG, "File is stored in direcotry:" + outputFile.getAbsolutePath());
         } catch (Exception e) {
             Log.e(TAG, "Error while downloading " + downloadUrl, e);
             tag = null;

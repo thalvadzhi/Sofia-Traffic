@@ -2,7 +2,6 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,11 +17,11 @@ import com.bearenterprises.sofiatraffic.adapters.ChangeListener;
 import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
-import com.bearenterprises.sofiatraffic.restClient.second.Route;
+import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.restClient.Route;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
-import com.bearenterprises.sofiatraffic.restClient.second.Routes;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Routes;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
@@ -36,26 +35,16 @@ import java.util.List;
 import retrofit2.Call;
 
 public class LinesFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-    private MainActivity activity;
-    private ArrayList<Stop> mStations;
     private List<String> transportationTypes;
     private Spinner transportationType;
     private Spinner lineId;
     private LineNamesAdapter lineNamesAdapter;
-    private ArrayList<String> lineNames;
     private ArrayList<Line> lines;
     private int currentlySelectedType;
-    private Location location;
     private LoadingFragment loadingFragment;
-    private PlacesFragment placesFragment;
-    private volatile boolean canSelectLineId;
-    private ShowLineFromTimeResult cond;
-//    private ArrayList<ArrayList<Station>> routes;
-    private boolean dontActivateListener;
-    private ShouldShowLineInfoFromTimeResultsListener listener;
+    private NotifyLineInfoLoaded cond;
+    private LineInfoLoadedListener listener;
+
     public LinesFragment() {
         // Required empty public constructor
     }
@@ -68,23 +57,16 @@ public class LinesFragment extends Fragment {
 
     public List<String> getTypesOfTransportation(){
         List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей");
-//        types.addAll(Constants.TRANSPORTATION_TYPES);
         return types;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        if (savedInstanceState == null) {
-            loadingFragment = LoadingFragment.newInstance();
-//        }
-        listener = new ShouldShowLineInfoFromTimeResultsListener();
-        cond = new ShowLineFromTimeResult();
-
-        dontActivateListener = false;
-        canSelectLineId = false;
-        activity = (MainActivity) getActivity();
-        mStations = new ArrayList<>();
+        loadingFragment = LoadingFragment.newInstance();
+        listener = new LineInfoLoadedListener();
+        cond = new NotifyLineInfoLoaded();
+        
         View v = inflater.inflate(R.layout.fragment_location, container, false);
         transportationType = (Spinner) v.findViewById(R.id.transportationType);
         lineId = (Spinner) v.findViewById(R.id.lineNumber);
@@ -94,14 +76,13 @@ public class LinesFragment extends Fragment {
         transportationTypes = getTypesOfTransportation();
         final TransportationTypeAdapter transportationTypeAdapter = new TransportationTypeAdapter(getContext(), transportationTypes);
         transportationType.setAdapter(transportationTypeAdapter);
-        lineNames = new ArrayList<>();
 
         lineNamesAdapter = new LineNamesAdapter(getContext(), lines);
         lineId.setAdapter(lineNamesAdapter);
 
-        placesFragment = new PlacesFragment();
 
 
+        // after tr type is selected, start getting all the lines relative to that tr. type
         transportationType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -112,8 +93,6 @@ public class LinesFragment extends Fragment {
                 if (selectionIdx >= 1 && selectionIdx <= 3) {
                     currentlySelectedType = transportationTypes.indexOf(selection);
                     currentlySelectedType -= 1;
-                    canSelectLineId = false;
-                    cond.setBoo(false);
                     LineGetter lineGetter = new LineGetter();
                     lineGetter.execute(currentlySelectedType);
                 }else{
@@ -152,14 +131,22 @@ public class LinesFragment extends Fragment {
 
         return v;
     }
-    private class ShouldShowLineInfoFromTimeResultsListener implements ChangeListener {
+
+    /**
+     * This class is used to signal that after selecting a transportation type(bus, tram etc), the list of
+     * lines for the corresponding tr. type has been loaded. When that happens onChange is called
+     */
+    private class LineInfoLoadedListener implements ChangeListener {
         @Override
         public void onChange(String lineID) {
-
             selectLineId(lineID);
         }
     }
 
+    /**
+     * Sets the selection to the line with ID {@code lineID}
+     * @param lineID
+     */
     private void selectLineId(String lineID){
         for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).getId() == Integer.parseInt(lineID)) {
@@ -170,6 +157,12 @@ public class LinesFragment extends Fragment {
         cond.removeListener();
     }
 
+    /**
+     * This method is for external use. For example when someone clicks on the line indicator in the Time Result card
+     * this method is called to show the information in the Line tab.
+     * @param transportationTypeId
+     * @param lineId
+     */
     public void showRoute(String transportationTypeId, String lineId){
         cond.setLineID(lineId);
         cond.setListener(listener);
@@ -183,6 +176,10 @@ public class LinesFragment extends Fragment {
     }
 
 
+    /**
+     * A class to get the routes from the Ivkos API
+     * Typically there are two routes: From stop A to stop B, and from stop B to stop A
+     */
     private class RouteGetter extends AsyncTask<String, Void, Routes>{
 
         protected void onPreExecute(){
@@ -205,13 +202,20 @@ public class LinesFragment extends Fragment {
             return null;
         }
 
-
+        /**
+         * Now that the stops information has been received we can show it
+         * @param result
+         */
         protected void onPostExecute(Routes result) {
             RouteShower routeShower = new RouteShower();
             routeShower.execute(result);
         }
     }
 
+    /**
+     * This class is used to show the already received information from the ivkos API.
+     * It also polls the database in order to complete the data with location and description information.
+     */
     private class RouteShower extends AsyncTask<Routes, Void, Void>{
 
         @Override
@@ -281,8 +285,9 @@ public class LinesFragment extends Fragment {
 
     }
 
-
-
+    /**
+     * This class is used to get all the lines that are of some transportation lines. For e.g. get all bus or tram lines.
+     */
     private class LineGetter extends AsyncTask<Integer, Integer, List<Line>>{
 
         @Override
@@ -305,8 +310,10 @@ public class LinesFragment extends Fragment {
                 lineNamesAdapter.notifyDataSetChanged();
 
                 lineId.setEnabled(true);
+
                 synchronized (cond){
-                    cond.setBoo(true);
+                    //now that lines have been loaded we can notify the listener
+                    cond.notifyLinesLoaded();
                 }
 
             }else{
@@ -315,8 +322,12 @@ public class LinesFragment extends Fragment {
         }
     }
 
-    public class ShowLineFromTimeResult {
-        private boolean boo = false;
+    /**
+     * This class is used to notify that the lines have been loaded so that the wanted one can be selected.
+     * It is used when a line must be shown form outside the lines tab. For e.g. if someone presses the line
+     * indicator on a result card.
+     */
+    public class NotifyLineInfoLoaded {
         private ChangeListener listener;
         private String lineID;
 
@@ -325,9 +336,12 @@ public class LinesFragment extends Fragment {
             this.lineID = lineID;
         }
 
-        public void setBoo(boolean boo) {
-            this.boo = boo;
-            if (listener != null && boo == true){
+        /**
+         * Every time a request for showing line info from outside the Lines tab is made the listener
+         * is set. After the request has been completed the listener is unset.
+         */
+        public void notifyLinesLoaded(){
+            if (listener != null){
                 listener.onChange(lineID);
             }
         }

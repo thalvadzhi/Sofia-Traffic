@@ -2,7 +2,7 @@ package com.bearenterprises.sofiatraffic.utilities.parsing;
 
 import android.content.Context;
 
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

@@ -1,7 +1,7 @@
 package com.bearenterprises.sofiatraffic.stations;
 
 import com.bearenterprises.sofiatraffic.restClient.Time;
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * Created by thalv on 02-Jul-16.
  */
 public class LineTimes implements Serializable{
-    private com.bearenterprises.sofiatraffic.restClient.second.Line line;
+    private Line line;
     private String type;
     private String times;
     private ArrayList<Time> vehicleTimes;
@@ -21,12 +21,12 @@ public class LineTimes implements Serializable{
         this.vehicleTimes = vehicleTimes;
     }
 
-    public LineTimes(com.bearenterprises.sofiatraffic.restClient.second.Line line, String type) {
+    public LineTimes(Line line, String type) {
         this.line = line;
         this.type = type;
     }
 
-    public com.bearenterprises.sofiatraffic.restClient.second.Line getLine() {
+    public Line getLine() {
         return line;
     }
 
@@ -44,7 +44,7 @@ public class LineTimes implements Serializable{
         return generateTimes();
     }
 
-    public void setLine(com.bearenterprises.sofiatraffic.restClient.second.Line line) {
+    public void setLine(Line line) {
         this.line = line;
     }
 

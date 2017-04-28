@@ -7,10 +7,9 @@ import com.bearenterprises.sofiatraffic.fragments.LinesFragment;
 import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimeResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
-import com.bearenterprises.sofiatraffic.restClient.Station;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.Time;
-import com.bearenterprises.sofiatraffic.restClient.second.Line;
-import com.bearenterprises.sofiatraffic.restClient.second.Stop;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,7 +115,7 @@ public class CommunicationUtility {
         f.removeFavourite(code);
     }
 
-    public static void updateLineInfoSlow(Station station, ArrayList<Line> lines, MainActivity mainActivity){
+    public static void updateLineInfoSlow(Stop station, ArrayList<Line> lines, MainActivity mainActivity){
         if (mainActivity == null){
             return;
         }

@@ -125,4 +125,12 @@ public class CommunicationUtility {
         }
         f.updateLineInfoSlowForSelectLines(station, lines);
     }
+
+    public static void nextSwitch(MainActivity activity){
+        activity.getTimesSearchFragment().nextInCodeName();
+    }
+
+    public static void checkCodeNameSwitch(int id, MainActivity activity){
+        activity.getTimesSearchFragment().checkCodeNameSwitch(id);
+    }
 }

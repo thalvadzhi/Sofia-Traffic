@@ -69,7 +69,6 @@ public class NameResultAdapter extends RecyclerView.Adapter<NameResultAdapter.Vi
                     AnimatorSet animSet = new AnimatorSet();
                     animSet.play(tr);
                     animSet.setInterpolator(new DecelerateInterpolator(2));
-
                     animSet.setDuration(300);
                     animSet.start();
 
@@ -100,6 +99,7 @@ public class NameResultAdapter extends RecyclerView.Adapter<NameResultAdapter.Vi
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    CommunicationUtility.checkCodeNameSwitch(R.id.toggleStateCode, (MainActivity)context);
                     CommunicationUtility.showTimes(code.getText().toString(), (MainActivity)context);
                 }
             });

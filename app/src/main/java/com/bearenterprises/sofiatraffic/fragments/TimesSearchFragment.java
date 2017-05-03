@@ -3,6 +3,7 @@ package com.bearenterprises.sofiatraffic.fragments;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.design.widget.CoordinatorLayout;
@@ -42,6 +43,7 @@ import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import info.hoang8f.android.segmented.SegmentedGroup;
 import retrofit2.Call;
@@ -190,6 +192,17 @@ public class TimesSearchFragment extends Fragment {
         return rootView;
     }
 
+    public void nextInCodeName(){
+        if (codeNameSwitch.getCheckedRadioButtonId() == R.id.toggleStateCode){
+            codeNameSwitch.check(R.id.toggleStateName);
+        }else{
+            codeNameSwitch.check(R.id.toggleStateCode);
+        }
+    }
+
+    public void checkCodeNameSwitch(int id){
+        codeNameSwitch.check(id);
+    }
     private void setSearchMethod() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         String searchMethod = sharedPref.getString(getResources().getString(R.string.key_choose_search_method), getResources().getString(R.string.search_method_code_value));
@@ -256,18 +269,31 @@ public class TimesSearchFragment extends Fragment {
             return stops;
         }
 
+        Cursor c;
         DbManipulator manipulator = new DbManipulator(getContext());
-        String sqlStations = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
-        sqlStations += " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME + " LIKE ? ";
-        if (distinct) {
-            sqlStations += "GROUP BY " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME;
+        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            //for some reason LIKE is case sensitive on older than LOLLIPOP software
+            //so we have to get everything from the DB and manually find the stops
+            String sqlStations = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
+            c = manipulator.readRawQuery(sqlStations, null);
+        }else{
+            String sqlStations = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
+            sqlStations += " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME + " LIKE ?";
+            if (distinct) {
+                sqlStations += "GROUP BY " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME;
+            }
+            c = manipulator.readRawQuery(sqlStations, new String[]{"%"+queryString+"%"});
         }
         try {
-            Cursor c = manipulator.readRawQuery(sqlStations, new String[]{"%" + queryString + "%"});
             if (c.moveToFirst()) {
                 do {
                     StopBuilder builder = new StopBuilder();
                     String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
+                    if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                        if(!stationName.toLowerCase(new Locale("bg")).contains(queryString.toLowerCase(new Locale("bg")))){
+                            continue;
+                        }
+                    }
                     String code = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
                     String lat = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
                     String lon = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
@@ -276,7 +302,22 @@ public class TimesSearchFragment extends Fragment {
                             .setCode(Integer.parseInt(code))
                             .setLatitude(lat)
                             .setLongtitude(lon);
-                    stops.add(builder.build());
+
+                    Stop stop = builder.build();
+                    if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && distinct) {
+                        boolean shouldAdd = true;
+                        for(Stop st : stops){
+                            if(st.getName().equals(stop.getName())){
+                               shouldAdd = false;
+                            }
+                        }
+                        if(shouldAdd){
+                            stops.add(stop);
+                        }
+                    }else{
+                        stops.add(stop);
+                    }
+
                 } while (c.moveToNext());
             }
         } finally {

@@ -27,4 +27,13 @@
         android:summary="@string/query_method_summary"
         />
 
+    <ListPreference
+        android:key="@string/key_choose_search_method"
+        android:title="@string/search_method_title"
+        android:entries="@array/choose_search_method_human_readable"
+        android:entryValues="@array/choose_search_method_values"
+        android:defaultValue="@string/search_method_code_value"
+        android:summary="@string/search_method_summary"
+        />
+
 </PreferenceScreen>

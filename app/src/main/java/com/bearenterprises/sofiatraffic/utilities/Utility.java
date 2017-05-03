@@ -43,6 +43,14 @@ public class Utility {
         }
     }
 
+    public static void changeFragmentSlideIn(int id, Fragment fragment, MainActivity activity){
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+                .replace(R.id.station_name_fragment, fragment)
+                .commitAllowingStateLoss();
+
+    }
     public static void changeFragment(int id, Fragment fragment, AppCompatActivity activity){
        activity.getSupportFragmentManager().
                 beginTransaction().

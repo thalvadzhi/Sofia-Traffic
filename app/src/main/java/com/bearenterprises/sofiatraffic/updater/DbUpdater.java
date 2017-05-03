@@ -175,9 +175,9 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
     }
 
     private boolean shouldUpdate(long lastUpdate){
-        return true;
-//        long delta = System.currentTimeMillis() - lastUpdate;
-//        return (delta > Constants.DAY_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+//        return true;
+        long delta = System.currentTimeMillis() - lastUpdate;
+        return (delta > Constants.DAY_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
     }
 
 }

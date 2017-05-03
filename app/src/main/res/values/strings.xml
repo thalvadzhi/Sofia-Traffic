@@ -35,7 +35,19 @@
     <string name="choose_query_method">Взимане на времена</string>
     <string name="query_method_summary">Дали да се използва бързият или бавният начин за взимане на времената</string>
 
+    <string name="search_method_summary">По подразбиране да се търси по код или по име на спирката</string>
+    <string name="key_choose_search_method">choose_search_method</string>
+    <string name="search_method_title">Търсене по код или по име на спирка</string>
+
+    <string name="search_method_code">Код</string>
+    <string name="search_method_name">Име</string>
+
+    <string name="search_method_code_value">code</string>
+    <string name="search_method_name_value">name</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="more_button">Още</string>
+    <string name="stop_name">Име на спирката</string>
+    <string name="show_all_on_map">Всички на картата</string>
 </resources>

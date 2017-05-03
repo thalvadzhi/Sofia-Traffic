@@ -1,76 +1,131 @@
-<android.support.v4.widget.SwipeRefreshLayout android:layout_height="match_parent"
-    android:layout_width="match_parent"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/swiperefresh"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:layout_centerHorizontal="true"
+    android:layout_height="match_parent">
 
-    tools:context="com.bearenterprises.sofiatraffic.activities.MainActivity$PlaceholderFragment">
-
-    <android.support.v7.widget.CardView
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        app:cardElevation="3dp"
-        android:id="@+id/cv2">
+        android:gravity="center_horizontal"
+
+        tools:context="com.bearenterprises.sofiatraffic.activities.MainActivity$PlaceholderFragment">
+
         <RelativeLayout
-            android:padding="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/segmented_group_and_search_bar_container"
             android:layout_centerHorizontal="true">
-                <EditText
+
+            <info.hoang8f.android.segmented.SegmentedGroup xmlns:segmentedgroup="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/segmentedGroupCodeNameSwitch"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical"
+                segmentedgroup:sc_border_width="2dp"
+                segmentedgroup:sc_corner_radius="3dp"
+                segmentedgroup:sc_tint_color="?colorAccent">
+
+                <RadioButton
+                    android:id="@+id/toggleStateCode"
+                    style="@style/RadioButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:ems="10"
-                    android:digits="0123456789"
-                    android:hint="@string/station_code"
-                    android:id="@+id/station_code"
-                    android:width="150dp"  />
+                    android:layout_height="30dp"
+                    android:text="Код" />
 
-                <Button
+                <RadioButton
+                    android:id="@+id/toggleStateName"
+                    style="@style/RadioButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:textColor="#FFFFFF"
-                    android:theme="@style/LightTheme"
-                    android:text="@string/button_search"
-                    android:id="@+id/button_search"
-                    android:layout_toEndOf="@+id/station_code"
-                    android:layout_alignParentTop="true"
-                    android:layout_alignParentBottom="true" />
+                    android:layout_height="30dp"
+                    android:text="Име" />
+            </info.hoang8f.android.segmented.SegmentedGroup>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cv2"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/segmentedGroupCodeNameSwitch"
+                app:cardElevation="3dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
+                    android:padding="5dp">
+
+                    <ViewSwitcher
+                        android:id="@+id/switcher_code_name_entry_box"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/station_code"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:width="170dp"
+                            android:digits="0123456789"
+                            android:ems="10"
+                            android:hint="@string/station_code"
+                            android:inputType="phone" />
 
 
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autocomplete_text_view_station_name"
+                            android:layout_width="170dp"
+                            android:layout_height="wrap_content"
+                            android:width="170dp"
+                            android:hint="@string/stop_name"
+                            android:maxLines="1"
+                            android:inputType="text"
+                            android:gravity="left|center_vertical"
+                            android:scrollHorizontally="true"
+                            />
+                    </ViewSwitcher>
+
+                    <Button
+                        android:id="@+id/button_search"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_toEndOf="@+id/switcher_code_name_entry_box"
+                        android:text="@string/button_search"
+                        android:textColor="#FFFFFF"
+                         />
+
+
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:id="@+id/station_name_fragment"
-        android:layout_below="@+id/cv2"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        />
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
+        <FrameLayout
+            android:id="@+id/station_name_fragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/segmented_group_and_search_bar_container"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:padding="5dp" />
 
-        android:id="@+id/result_container"
-        android:layout_below="@+id/station_name_fragment"/>
+        <FrameLayout
+            android:id="@+id/result_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/station_name_fragment"
+
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal" />
 
 
-</RelativeLayout>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -32,4 +32,14 @@
         <item>@string/query_method_fast</item>
         <item>@string/query_method_slow</item>
     </string-array>
+
+    <string-array name="choose_search_method_values">
+        <item>@string/search_method_code_value</item>
+        <item>@string/search_method_name_value</item>
+    </string-array>
+
+    <string-array name="choose_search_method_human_readable">
+        <item>@string/search_method_code</item>
+        <item>@string/search_method_name</item>
+    </string-array>
 </resources>

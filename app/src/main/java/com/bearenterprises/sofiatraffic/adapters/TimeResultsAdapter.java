@@ -1,6 +1,8 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,6 +53,36 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
                 .inflate(R.layout.results_card_view, parent, false);
         return new TimeResultsAdapter.ViewHolder(view);
     }
+
+    int lastPosition = -1;
+    @Override
+    public void onViewAttachedToWindow(final TimeResultsAdapter.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        final long delayTime = 0;
+        holder.itemView.setVisibility(View.INVISIBLE);
+
+        if (holder.getLayoutPosition() > lastPosition) {
+            holder.itemView.getHandler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    holder.itemView.setVisibility(View.VISIBLE);
+                    ObjectAnimator tr = ObjectAnimator.ofFloat(holder.itemView, "translationY", 300, 0);
+                    AnimatorSet animSet = new AnimatorSet();
+                    animSet.play(tr);
+                    animSet.setInterpolator(new DecelerateInterpolator(2));
+
+                    animSet.setDuration(300);
+                    animSet.start();
+
+                }
+            }, delayTime);
+
+            lastPosition = holder.getLayoutPosition();
+        } else {
+            holder.itemView.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {

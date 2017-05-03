@@ -5,4 +5,5 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="code_name_switch_rounded_edges">2dp</dimen>
 </resources>

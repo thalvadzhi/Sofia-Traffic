@@ -1,0 +1,31 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:padding="5dp"
+    tools:context="com.bearenterprises.sofiatraffic.fragments.ShowAllOnMapFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:id="@+id/show_all_name_results_on_map"
+        android:textSize="25dp"
+        android:text="@string/show_all_on_map"
+        android:textColor="?whiteBlack"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <ImageView
+        android:layout_marginLeft="5dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="?locationSelector"
+        android:id="@+id/show_all_name_results_on_map_button"
+        android:layout_toEndOf="@+id/show_all_name_results_on_map"
+        android:layout_centerVertical="true"
+        />
+
+</RelativeLayout>

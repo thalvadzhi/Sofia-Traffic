@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 .build();
     }
 
+
     private void setFavouritePage(){
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         String startupScreen = sharedPref.getString(getResources().getString(R.string.key_choose_startup_screen), getResources().getString(R.string.default_startup_screen));

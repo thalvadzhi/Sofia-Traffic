@@ -9,9 +9,12 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.restClient.StopBuilder;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by thalv on 01-Jul-16.

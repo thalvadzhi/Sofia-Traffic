@@ -38,8 +38,12 @@ public class RetrofitUtility {
         SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
         Call<Stop> stop = sofiaTransportApi.getStop(code);
         try {
-            return RetrofitUtility.handleUnauthorizedQuery(stop, activity).getLines();
-
+            Stop stopLines = RetrofitUtility.handleUnauthorizedQuery(stop, activity);
+            if(stopLines != null){
+                return stopLines.getLines();
+            }else{
+                return null;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -44,6 +44,7 @@ public class LinesFragment extends Fragment {
     private LoadingFragment loadingFragment;
     private NotifyLineInfoLoaded cond;
     private LineInfoLoadedListener listener;
+    private Integer currentStopCode;
 
     public LinesFragment() {
         // Required empty public constructor
@@ -80,7 +81,7 @@ public class LinesFragment extends Fragment {
         lineNamesAdapter = new LineNamesAdapter(getContext(), lines);
         lineId.setAdapter(lineNamesAdapter);
 
-
+        currentStopCode = null;
 
         // after tr type is selected, start getting all the lines relative to that tr. type
         transportationType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -147,14 +148,17 @@ public class LinesFragment extends Fragment {
      * Sets the selection to the line with ID {@code lineID}
      * @param lineID
      */
-    private void selectLineId(String lineID){
+    private int selectLineId(String lineID){
+        int pos = 0;
         for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).getId() == Integer.parseInt(lineID)) {
                 lineId.setSelection(i + 1);
+                pos = i + 1;
                 break;
             }
         }
         cond.removeListener();
+        return pos;
     }
 
     /**
@@ -163,13 +167,20 @@ public class LinesFragment extends Fragment {
      * @param transportationTypeId
      * @param lineId
      */
-    public void showRoute(String transportationTypeId, String lineId){
+    public void showRoute(String transportationTypeId, String lineId, Integer stopCode){
+        currentStopCode = stopCode;
         cond.setLineID(lineId);
         cond.setListener(listener);
         int currentPosition = transportationType.getSelectedItemPosition();
         int targetPoisiton = Integer.parseInt(transportationTypeId) + 1;
+        int currentLineIdPosition = this.lineId.getSelectedItemPosition();
         if(currentPosition == targetPoisiton){
-           selectLineId(lineId);
+            int pos = selectLineId(lineId);
+            if(currentLineIdPosition == pos){
+                RoutesFragment f =((RoutesFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.location_container));
+                f.expandGroup(stopCode);
+                f.scrollToChild(stopCode);
+            }
         }else{
             transportationType.setSelection(targetPoisiton);
         }
@@ -273,8 +284,13 @@ public class LinesFragment extends Fragment {
             }
 
             if (stations.size() != 0){
-                RoutesFragment f = RoutesFragment.newInstance(stations, typeString);
+                int stCode = -1;
+                if(currentStopCode != null){
+                    stCode = currentStopCode.intValue();
+                }
+                RoutesFragment f = RoutesFragment.newInstance(stations, typeString, stCode);
                 Utility.changeFragment(R.id.location_container, f, (MainActivity)getActivity());
+                currentStopCode = null;
             }else{
                 Utility.detachFragment(loadingFragment, (MainActivity) getActivity());
             }
@@ -354,6 +370,11 @@ public class LinesFragment extends Fragment {
             this.listener = listener;
         }
 
+    }
+
+    public void onResume(){
+        super.onResume();
+        ((MainActivity)getActivity()).hideSoftKeyboad();
     }
 
 

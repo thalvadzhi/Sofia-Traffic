@@ -131,7 +131,8 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
                 @Override
                 public void onClick(View view) {
                     Line l = lines.get(position);
-                    CommunicationUtility.showRoute(Integer.toString(l.getType()), Integer.toString(l.getId()), (MainActivity)context);
+
+                    CommunicationUtility.showRoute(Integer.toString(l.getType()), Integer.toString(l.getId()), Integer.parseInt(stopCode),(MainActivity)context);
                 }
             });
         }

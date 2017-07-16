@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.bearenterprises.sofiatraffic.R;
@@ -398,5 +399,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 return mapSearchFragment;
             }
         }
+    }
+
+    public void onResume(){
+        super.onResume();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
     }
 }

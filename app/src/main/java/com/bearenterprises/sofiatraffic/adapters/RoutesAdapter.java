@@ -22,12 +22,17 @@ import java.util.List;
 public class RoutesAdapter extends ExpandableRecyclerAdapter<Direction, Stop, DirectionViewHolder, StopViewHolder> {
     private Context context;
     private LayoutInflater mInflater;
-
+    private int highlightedPositionParent = -1, highlightedPositionChild =-1;
     public RoutesAdapter(@NonNull List<Direction> parentList, Context context) {
         super(parentList);
         this.context = context;
         mInflater = LayoutInflater.from(context);
 
+    }
+
+    public void setHighlightedPosition(int posParent, int posChild){
+        this.highlightedPositionChild = posChild;
+        this.highlightedPositionParent = posParent;
     }
 
     @NonNull
@@ -51,6 +56,9 @@ public class RoutesAdapter extends ExpandableRecyclerAdapter<Direction, Stop, Di
 
     @Override
     public void onBindChildViewHolder(@NonNull StopViewHolder childViewHolder, int parentPosition, int childPosition, @NonNull Stop child) {
-        childViewHolder.bind(child);
+        boolean highlighted = parentPosition == highlightedPositionParent && childPosition == highlightedPositionChild;
+        childViewHolder.bind(child, highlighted);
+
     }
+
 }

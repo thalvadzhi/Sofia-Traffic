@@ -347,6 +347,7 @@ public class TimesSearchFragment extends Fragment {
         protected Stop doInBackground(Void... params) {
             sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Stop stop = null;
+            queryMethod = Constants.QUERY_METHOD_FAST;
             try {
                 queryMethod = ((MainActivity) getActivity()).getQueryMethod();
                 if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
@@ -369,11 +370,20 @@ public class TimesSearchFragment extends Fragment {
                 }
 
             }
-
-
+//
+//            stop = new Stop(1503, "CBA", "GYZ");
+//            ArrayList<Line> lines = new ArrayList<>();
+//            lines.add(new Line(1, 66, "1"));
+//            stop.setLines(lines);
+//            Time t = new Time("10:10", false, false);
+//            ArrayList<Time> vt = new ArrayList<>();
+//            vt.add(t);
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
             for (Line line : stop.getLines()) {
-                lineTimes.add(new LineTimes(line, Integer.toString(line.getType())));
+                LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));
+//                lt.setVehicleTimes(vt);
+                lineTimes.add(lt);
+
             }
             timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, stop);
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());

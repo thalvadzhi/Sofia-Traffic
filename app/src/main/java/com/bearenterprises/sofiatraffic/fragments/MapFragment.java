@@ -264,7 +264,10 @@ public class MapFragment extends Fragment {
     public void onResume() {
         mapView.onResume();
         super.onResume();
+        ((MainActivity)getActivity()).hideSoftKeyboad();
     }
+
+
 
     @Override
     public void onPause() {

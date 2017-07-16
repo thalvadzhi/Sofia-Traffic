@@ -45,25 +45,27 @@ public class TimeResultsFragment extends Fragment {
     }
 
     public void addTimeSchedule(Line line, ArrayList<Time> times){
-        synchronized (lineTimes){
-            int idx = 0;
-            if(times != null){
-                for(LineTimes vt : lineTimes){
-                    if(vt.getLine().getId().equals(line.getId())){
-                        vt.setVehicleTimes(times);
-                        this.timeResultsAdapter.notifyItemChanged(idx);
+        if(lineTimes != null){
+            synchronized (lineTimes){
+                int idx = 0;
+                if(times != null){
+                    for(LineTimes vt : lineTimes){
+                        if(vt.getLine().getId().equals(line.getId())){
+                            vt.setVehicleTimes(times);
+                            this.timeResultsAdapter.notifyItemChanged(idx);
+                        }
+                        idx ++;
                     }
-                    idx ++;
-                }
-            }else {
-                Iterator<LineTimes> i = lineTimes.iterator();
-                while (i.hasNext()) {
-                    LineTimes vt = i.next();
-                    if (vt.getLine().getId().equals(line.getId())) {
-                        i.remove();
-                        this.timeResultsAdapter.notifyItemRemoved(idx);
+                }else {
+                    Iterator<LineTimes> i = lineTimes.iterator();
+                    while (i.hasNext()) {
+                        LineTimes vt = i.next();
+                        if (vt.getLine().getId().equals(line.getId())) {
+                            i.remove();
+                            this.timeResultsAdapter.notifyItemRemoved(idx);
+                        }
+                        idx++;
                     }
-                    idx++;
                 }
             }
         }

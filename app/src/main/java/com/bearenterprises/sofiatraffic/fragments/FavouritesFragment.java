@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.adapters.FavouritesAdapter;
 import com.bearenterprises.sofiatraffic.callback.OnStartDragListener;
 import com.bearenterprises.sofiatraffic.callback.ReorderCallback;
@@ -114,5 +115,10 @@ public class FavouritesFragment extends Fragment implements OnStartDragListener 
     @Override
     public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
         touchHelper.startDrag(viewHolder);
+    }
+
+    public void onResume(){
+        super.onResume();
+        ((MainActivity)getActivity()).hideSoftKeyboad();
     }
 }

@@ -173,7 +173,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             @Override
             public void onClick(View view) {
                 LineTimes lineTimes = times.get(position);
-                CommunicationUtility.showRoute(Integer.toString(lineTimes.getLine().getType()), Integer.toString(lineTimes.getLine().getId()), (MainActivity)context);
+                CommunicationUtility.showRoute(Integer.toString(lineTimes.getLine().getType()), Integer.toString(lineTimes.getLine().getId()), stop.getCode() ,(MainActivity)context);
             }
         }
 

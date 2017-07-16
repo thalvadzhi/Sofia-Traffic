@@ -81,7 +81,7 @@ public class CommunicationUtility {
         f.hideSlideUpPanel();
     }
 
-    public static void showRoute(String trId, String lineId, MainActivity mainActivity){
+    public static void showRoute(String trId, String lineId, Integer stopCode, MainActivity mainActivity){
         if (mainActivity == null){
             return;
         }
@@ -90,7 +90,7 @@ public class CommunicationUtility {
         if (f == null){
             return;
         }
-        f.showRoute(trId, lineId);
+        f.showRoute(trId, lineId, stopCode);
     }
 
     public static void addFavourite(Stop st, MainActivity mainActivity){

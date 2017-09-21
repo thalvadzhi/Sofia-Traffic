@@ -235,7 +235,9 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
             this.locationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    CommunicationUtility.showOnMap(favourites.get(position), (MainActivity)context);
+                    if(position >= 0 && position < favourites.size()){
+                        CommunicationUtility.showOnMap(favourites.get(position), (MainActivity)context);
+                    }
                 }
             });
 

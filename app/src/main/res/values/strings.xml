@@ -23,7 +23,7 @@
     <string name="query_method_fast_value">fast</string>
     <string name="query_method_slow">Бавно (повече времена)</string>
     <string name="query_method_fast">Бързо (по-малко времена, с опция за допълнителни)</string>
-    <string name="query_method_default">@string/query_method_fast_value</string>
+    <string name="query_method_default">@string/query_method_slow_value</string>
 
 
     <string name="summary_startup_screen">Кой да бъде началният екран(Любими, Карта и тн.)</string>

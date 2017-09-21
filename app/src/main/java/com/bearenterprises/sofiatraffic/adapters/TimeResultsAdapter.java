@@ -172,8 +172,10 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             }
             @Override
             public void onClick(View view) {
-                LineTimes lineTimes = times.get(position);
-                CommunicationUtility.showRoute(Integer.toString(lineTimes.getLine().getType()), Integer.toString(lineTimes.getLine().getId()), stop.getCode() ,(MainActivity)context);
+                if(position >=0 && position < times.size()){
+                    LineTimes lineTimes = times.get(position);
+                    CommunicationUtility.showRoute(Integer.toString(lineTimes.getLine().getType()), Integer.toString(lineTimes.getLine().getId()), stop.getCode() ,(MainActivity)context);
+                }
             }
         }
 
@@ -191,8 +193,10 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             public void onClick(View view) {
                 moreButton.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
-                Line line = times.get(position).getLine();
-                CommunicationUtility.updateLineInfoSlow(stop, new ArrayList<>(Arrays.asList(line)), (MainActivity)context);
+                if(position < times.size() && position >= 0){
+                    Line line = times.get(position).getLine();
+                    CommunicationUtility.updateLineInfoSlow(stop, new ArrayList<>(Arrays.asList(line)), (MainActivity)context);
+                }
             }
         }
 

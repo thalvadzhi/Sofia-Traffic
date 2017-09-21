@@ -178,6 +178,9 @@ public class LinesFragment extends Fragment {
             int pos = selectLineId(lineId);
             if(currentLineIdPosition == pos){
                 RoutesFragment f =((RoutesFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.location_container));
+                if(f == null){
+                    return;
+                }
                 f.expandGroup(stopCode);
                 f.scrollToChild(stopCode);
             }

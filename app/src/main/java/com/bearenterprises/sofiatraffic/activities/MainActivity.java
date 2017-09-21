@@ -20,6 +20,7 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
@@ -189,8 +190,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     private void setQueryMethod(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        queryMethod = sharedPreferences.getString(getResources().getString(R.string.key_choose_query_method), getResources().getString(R.string.query_method_default));
+
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        queryMethod = sharedPreferences.getString(getResources().getString(R.string.key_choose_query_method), getResources().getString(R.string.query_method_default));
+        queryMethod = getResources().getString(R.string.query_method_default);
     }
 
     public String getQueryMethod(){
@@ -223,15 +226,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     public void showLoadingStopsInfoDialog(){
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("Информацията за спирките се обновява. Моля изчакайте.");
-        dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+        try {
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setMessage("Информацията за спирките се обновява. Моля изчакайте.");
+            dialog.setIndeterminate(true);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        }catch(WindowManager.BadTokenException e){
+            Log.d("Dialog exception", "Exception occurred when displaying dialog", e);
+        }
     }
 
     public void dismissLoadingStopsInfoDialog(){
-        dialog.dismiss();
+        try{
+            dialog.dismiss();
+        }catch (IllegalArgumentException e){
+            Log.d("Dialog exception", "Exception occurred when dismissing dialog", e);
+        }
     }
 
     public void setPage (int index){

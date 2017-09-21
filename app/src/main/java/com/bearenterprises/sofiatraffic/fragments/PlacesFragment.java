@@ -50,6 +50,9 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
                 loc.setLongitude(latLng.longitude);
                 StationsLocator locator = new StationsLocator(loc, 10, 1000, getContext());
                 ArrayList<Stop> closestStations = locator.getClosestStations();
+                if(closestStations == null){
+                    return;
+                }
                 closestStations.add(new Stop(-1, (String)place.getName(), Double.toString(latLng.latitude), Double.toString(latLng.longitude)));
                 if(closestStations.size() != 0){
                     CommunicationUtility.showOnMap(closestStations, (MainActivity)getActivity());

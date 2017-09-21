@@ -349,7 +349,11 @@ public class TimesSearchFragment extends Fragment {
             Stop stop = null;
             queryMethod = Constants.QUERY_METHOD_FAST;
             try {
-                queryMethod = ((MainActivity) getActivity()).getQueryMethod();
+                MainActivity ma = ((MainActivity) getActivity());
+                if (ma == null){
+                    return null;
+                }
+                queryMethod = ma.getQueryMethod();
                 if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
                     stop = getStop(code, sofiaTransportApi);
                 } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {

@@ -27,6 +27,9 @@ public class Utility {
     }
 
     public static void makeSnackbar(String message, MainActivity mainActivity){
+        if (message == null || mainActivity == null){
+            return;
+        }
         Snackbar
                 .make(mainActivity.getCoordinatorLayout(), message, Snackbar.LENGTH_LONG)
                 .show();
@@ -44,6 +47,9 @@ public class Utility {
     }
 
     public static void changeFragmentSlideIn(int id, Fragment fragment, MainActivity activity){
+        if(fragment == null || activity == null){
+            return;
+        }
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -52,6 +58,9 @@ public class Utility {
 
     }
     public static void changeFragment(int id, Fragment fragment, AppCompatActivity activity){
+        if(fragment == null || activity == null){
+            return;
+        }
        activity.getSupportFragmentManager().
                 beginTransaction().
                 replace(id, fragment).
@@ -60,6 +69,9 @@ public class Utility {
 
 
     public static void detachFragment(Fragment fragment, AppCompatActivity activity){
+        if(fragment == null || activity == null){
+            return;
+        }
         activity.getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
     }
 }

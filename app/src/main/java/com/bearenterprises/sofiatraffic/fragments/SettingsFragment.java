@@ -25,14 +25,15 @@ public class SettingsFragment extends PreferenceFragment {
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings);
-        Preference preferenceQueryMethod = findPreference(getString(R.string.key_choose_query_method));
-        preferenceQueryMethod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                MainActivity.setQueryMethod((String)newValue);
-                return true;
-            }
-        });
+//        SUMC has removed the fast method
+//        Preference preferenceQueryMethod = findPreference(getString(R.string.key_choose_query_method));
+//        preferenceQueryMethod.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//            @Override
+//            public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                MainActivity.setQueryMethod((String)newValue);
+//                return true;
+//            }
+//        });
         Preference preference = findPreference(getString(R.string.key_choose_theme));
         preference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override

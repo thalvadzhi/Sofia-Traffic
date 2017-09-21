@@ -128,6 +128,9 @@ public class RoutesFragment extends Fragment {
             }
         }
         LinearLayoutManager lm = (LinearLayoutManager)routesRecyclerView.getLayoutManager();
+        if(lm == null || childPosition == null || groupPosition == null){
+            return;
+        }
         lm.scrollToPositionWithOffset(childPosition + 1 + groupPosition, 0);
         adapter.setHighlightedPosition(groupPosition, childPosition);
         adapter.notifyChildChanged(groupPosition, childPosition);

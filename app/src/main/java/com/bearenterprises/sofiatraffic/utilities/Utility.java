@@ -2,6 +2,12 @@ package com.bearenterprises.sofiatraffic.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.Paint;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -73,5 +79,35 @@ public class Utility {
             return;
         }
         activity.getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+    }
+
+    public static Bitmap replaceColor(Bitmap src, int[] colorsToReplace, int colorThatWillReplace) {
+        int width = src.getWidth();
+        int height = src.getHeight();
+        int[] pixels = new int[width * height];
+        // get pixel array from source
+        src.getPixels(pixels, 0, width, 0, 0, width, height);
+
+        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
+
+        int A, R, G, B;
+        int pixel;
+
+        // iteration through pixels
+        for (int y = 0; y < height; ++y) {
+            for (int x = 0; x < width; ++x) {
+                // get current index in 2D-matrix
+                int index = y * width + x;
+                pixel = pixels[index];
+                for(int i = 0; i < colorsToReplace.length; i++){
+                    if(pixel != Color.parseColor("#FFFFFF") && pixel != 0){
+                        pixels[index] = colorThatWillReplace;
+                    }
+
+                }
+            }
+        }
+        bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bmOut;
     }
 }

@@ -4,10 +4,19 @@ package com.bearenterprises.sofiatraffic.adapters;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.AlignmentSpan;
+import android.text.style.CharacterStyle;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +92,29 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
         }
     }
 
+    /**
+     *
+     * @param times either time as in HH:mm or remaining time
+     * @return the first time in bigger font size
+     */
+    private CharSequence getFirstTimeBiggerFont(ArrayList<String> times){
+        if(times == null || times.size() == 0){
+            return new SpannableString("");
+        }
+
+        String first = times.get(0);
+        String joined = TextUtils.join("  ", times.subList(1, times.size()));
+        String result = null;
+        if(times.size() == 1){
+            result = first;
+        }else{
+            result = first + "\n" + joined;
+        }
+        SpannableString formatted = new SpannableString(result);
+        formatted.setSpan(new RelativeSizeSpan(1.3f), 0, first.length(), 0);
+        formatted.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0 , first.length(), 0);
+        return formatted;
+    }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -101,7 +133,20 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             }
             holder.progressBar.setVisibility(View.GONE);
             holder.vTimes.setVisibility(View.VISIBLE);
-            holder.vTimes.setText(vt.getTimes());
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            String time_mode = sharedPreferences.getString(context.getResources().getString(R.string.key_time_mode), context.getResources().getString(R.string.time_mode_default));
+            if(time_mode.equals(context.getResources().getString(R.string.time_mode_time_value))){
+                if(vt.getTimesList() != null){
+                    CharSequence ss = getFirstTimeBiggerFont(vt.getTimesList());
+                    holder.vTimes.setText(ss);
+                }
+
+            }else{
+                if(vt.getRemainingTimesList() != null){
+                    CharSequence ss = getFirstTimeBiggerFont(vt.getRemainingTimesList());
+                    holder.vTimes.setText(ss);
+                }
+            }
         }
 
 
@@ -133,7 +178,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             case "2": holder.imageView.setBackgroundColor(colorTrolley);
                 holder.bg.setBackgroundColor(colorTrolley);
                 holder.stopName.setBackgroundColor(colorTrolley);
-                Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_smaller_white);
+                Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_white);
                 holder.imageView.setImageBitmap(image3);break;
         }
     }
@@ -153,13 +198,13 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
         private TextView dir;
         public ViewHolder(View itemView) {
             super(itemView);
-            this.stopName = (TextView) itemView.findViewById(R.id.textView_card_line_name);
-            this.vTimes = (TextView) itemView.findViewById(R.id.textView_card_times);
-            this.imageView = (ImageView) itemView.findViewById(R.id.imageView_transportation_type);
+            this.stopName =  itemView.findViewById(R.id.textView_card_line_name);
+            this.vTimes = itemView.findViewById(R.id.textView_card_times);
+            this.imageView = itemView.findViewById(R.id.imageView_transportation_type);
             this.bg = itemView.findViewById(R.id.background);
-            this.progressBar = (ProgressBar)itemView.findViewById(R.id.progressBarSingleLine);
-            this.moreButton = (TextView)itemView.findViewById(R.id.more_button);
-            this.dir = (TextView) itemView.findViewById(R.id.dir_alt);
+            this.progressBar = itemView.findViewById(R.id.progressBarSingleLine);
+            this.moreButton = itemView.findViewById(R.id.more_button);
+            this.dir =  itemView.findViewById(R.id.dir_alt);
         }
 
         /**

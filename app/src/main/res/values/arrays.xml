@@ -42,4 +42,14 @@
         <item>@string/search_method_code</item>
         <item>@string/search_method_name</item>
     </string-array>
+
+    <string-array name="choose_time_mode_values">
+        <item>@string/time_mode_time_value</item>
+        <item>@string/time_mode_remaining_time_value</item>
+    </string-array>
+
+    <string-array name="choose_time_mode_human_readable">
+        <item>@string/time_mode_time</item>
+        <item>@string/time_mode_remaining_time</item>
+    </string-array>
 </resources>

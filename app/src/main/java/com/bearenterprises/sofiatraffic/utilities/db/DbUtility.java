@@ -25,6 +25,25 @@ public class DbUtility {
 
     }
 
+    public static void addLineTypes(Stop s, String lineTypes){
+        String[] split = lineTypes.split(",");
+        for(int i = 0; i < split.length; i++){
+            s.addLineType(Integer.parseInt(split[i]));
+        }
+    }
+
+    public static void addLineTypes(Stop s, MainActivity mainActivity){
+        ArrayList<Stop> stationByCode = getStationByCode(Integer.toString(s.getCode()), mainActivity);
+        if(stationByCode != null && stationByCode.size() > 0){
+            s.setLineTypes(stationByCode.get(0).getLineTypes());
+        }
+    }
+
+    public static void addLineTypes(ArrayList<Stop> stops, MainActivity activity){
+        for(Stop s : stops){
+            addLineTypes(s, activity);
+        }
+    }
     public static Description getDescription(String trType, String lineName, String stopCode, Context context){
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_DESCRIPTIONS + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_TR_TYPE + "=? AND " + DbHelper.FeedEntry.COLUMN_NAME_LINE_NAME + "=? AND " + DbHelper.FeedEntry.COLUMN_NAME_STOP_CODE + "=?";
         String[] args = new String[]{trType, lineName, stopCode};
@@ -89,8 +108,10 @@ public class DbUtility {
             String lat = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
             String lon = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
             String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
-
-            stations.add(new Stop(Integer.parseInt(stationCode), stationName, lat, lon, description));
+            String lineTypes = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LINE_TYPES));
+            Stop s = new Stop(Integer.parseInt(stationCode), stationName, lat, lon, description);
+            addLineTypes(s, lineTypes);
+            stations.add(s);
         }finally {
             if(manipulator != null){
                 manipulator.closeDb();

@@ -29,7 +29,10 @@ public class DbManipulator {
         try {
             db = dbHelper.getWritableDatabase();
         }catch (SQLiteException e){
+
             Utility.makeSnackbar("Информацията за спирките все още се обновява", (MainActivity)context);
+        }catch (NullPointerException e){
+            Log.d("DbManipulator", "DbManipulator init", e);
         }
     }
 

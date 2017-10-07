@@ -17,7 +17,10 @@ public class Constants {
     public static final String DISMISS_DIALOG = "dismiss dialog";
     public static final String DESCRIPTIONS_FILE_NAME = "descriptions.txt";
     public static final String DESCRIPTIONS_FILE_NAME_NEW = "new_descriptions.txt";
-
+    public static final String HASH_COORDS_NEW = "hash_coords_new.txt";
+    public static final String HASH_DESCS_NEW = "hash_descs_new.txt";
+    public static final String HASH_COORDS = "hash_coords.txt";
+    public static final String HASH_DESCS = "hash_descs.txt";
 
     public static final String SECTION_SEARCH = "ТЪРСЕНЕ";
     public static final String SECTION_FAVOURITES = "ЛЮБИМИ";
@@ -45,9 +48,15 @@ public class Constants {
     public static final String REST_QUERY_LINES = "https://api.sofiatransport.com/v2/stops/%s";
     public static final String REST_QUERY_TIMES = "https://api.sofiatransport.com/v2/stops/%s/%s";
     public static final List<String> TRANSPORTATION_TYPES = Arrays.asList("Трамвай", "Автобус", "Тролей");
-    public static final int TRAM_POSITION = 0;
-    public static final int BUS_POSITION = 1;
-    public static final int TROLLEY_POSITION = 2;
+    public static final int TRAM_ID = 0;
+    public static final int TRAM_ID_INTERACTIVE_CARD = 1;
+
+    public static final int BUS_ID = 1;
+    public static final int BUS_ID_INTERACTIVE_CARD = 0;
+
+    public static final int TROLLEY_ID = 2;
+    public static final int TROLLEY_ID_INTERACTIVE_CARD = 2;
+
     public static final String IVKOS_API_BASE_URL = "https://api.sofiatransport.com/v3/";
     public static final String SHARED_PREFERENCES_REGISTRATION = "registration";
     public static final String REGISTRATION = "reg";
@@ -59,7 +68,10 @@ public class Constants {
 
 
 
+
     public static final String COORDINATES_DOWNLOAD_URL_JSON = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/coordinates.json";
     public static final String DESCRIPTIONS_DOWNLOAD_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/descriptions.txt";
+    public static final String COORDINATES_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/hash.txt";
+    public static final String DESCRIPTIONS_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/hash.txt";
 
 }

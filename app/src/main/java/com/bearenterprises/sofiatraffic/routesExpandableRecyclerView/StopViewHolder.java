@@ -18,6 +18,7 @@ import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 
 /**
@@ -72,6 +73,7 @@ public class StopViewHolder extends ChildViewHolder {
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DbUtility.addLineTypes(stop, (MainActivity)context);
                 CommunicationUtility.showOnMap(stop, (MainActivity)context);
             }
         });

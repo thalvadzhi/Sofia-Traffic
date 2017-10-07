@@ -17,6 +17,7 @@ public class Stop implements Serializable{
     private String description;
     private String alias;
     private ArrayList<Line> lines;
+    private ArrayList<Integer> lineTypes;
 
     public Stop(){
     }
@@ -28,6 +29,7 @@ public class Stop implements Serializable{
         this.longtitude = longtitude;
         this.latitude = latitude;
         this.description = description;
+        this.lineTypes = new ArrayList<>();
     }
 
     public Stop(Integer code, String name, String latitude, String longtitude, String description) {
@@ -36,6 +38,8 @@ public class Stop implements Serializable{
         this.longtitude = longtitude;
         this.latitude = latitude;
         this.description = description;
+        this.lineTypes = new ArrayList<>();
+
     }
 
 
@@ -44,6 +48,8 @@ public class Stop implements Serializable{
         this.code = code;
         this.name = name;
         this.description = description;
+        this.lineTypes = new ArrayList<>();
+
     }
 
     public Stop(Integer code, String name,  String latitude, String longtitude) {
@@ -51,6 +57,17 @@ public class Stop implements Serializable{
         this.code = code;
         this.longtitude = longtitude;
         this.latitude = latitude;
+        this.lineTypes = new ArrayList<>();
+
+    }
+
+    public ArrayList<Integer> getLineTypes() {
+        return lineTypes;
+    }
+
+    public void addLineType(Integer lineType){
+        this.lineTypes.add(lineType);
+
     }
 
     public String getAlias() {
@@ -155,5 +172,9 @@ public class Stop implements Serializable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setLineTypes(ArrayList<Integer> lineTypes) {
+        this.lineTypes = lineTypes;
     }
 }

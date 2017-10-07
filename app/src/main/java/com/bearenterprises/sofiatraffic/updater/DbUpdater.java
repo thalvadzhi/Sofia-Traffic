@@ -45,7 +45,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
         long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
 
-
+//if(true){
         if (shouldUpdate(lastUpdate)){
             //means it's time to update
 
@@ -88,7 +88,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         returns false otherwise
      */
     private boolean handleFileDownloading(String fileName) throws IOException {
-        String newFile = null, downloadUrl = null;
+        String newFile = null, downloadUrl = null, hash = null;
         switch (fileName){
             case Constants.JSON_COORDINATE_FILE:
                 newFile = Constants.JSON_COORDINATE_FILE_NEW;
@@ -117,12 +117,56 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         return true;
 
     }
+    private boolean handleFileDownloadingWithHash(String fileName) throws IOException {
+        String newFile = null, downloadUrl = null, hashUrl = null, hashFileName =null, hashNewFileName=null;
+        switch (fileName){
+            case Constants.JSON_COORDINATE_FILE:
+                newFile = Constants.JSON_COORDINATE_FILE_NEW;
+                downloadUrl = Constants.COORDINATES_DOWNLOAD_URL_JSON;
+                hashUrl = Constants.COORDINATES_HASH_URL;
+                hashFileName = Constants.HASH_COORDS;
+                hashNewFileName = Constants.HASH_COORDS_NEW;
+                break;
+            case Constants.DESCRIPTIONS_FILE_NAME:
+                newFile = Constants.DESCRIPTIONS_FILE_NAME_NEW;
+                downloadUrl = Constants.DESCRIPTIONS_DOWNLOAD_URL;
+                hashUrl = Constants.DESCRIPTIONS_HASH_URL;
+                hashFileName = Constants.HASH_DESCS;
+                hashNewFileName = Constants.HASH_DESCS_NEW;
+                break;
+        }
+        File hashFile = new File(context.getFilesDir() + File.separator + hashFileName);
+        File targetFile = new File(context.getFilesDir() + File.separator + fileName);
+        if(hashFile.exists()){
+            File newHashFile = new File(context.getFilesDir() + File.separator + hashNewFileName);
+            FileDownloader downloader = new FileDownloader(this.context, hashUrl, newHashFile);
+            downloader.download();
+            if(FileUtils.contentEquals(hashFile, newHashFile)){
+                newHashFile.delete();
+                return false;
+            }else{
+                targetFile.delete();
+                targetFile = new File(context.getFilesDir() + File.separator + fileName);
+                FileDownloader downloaderTarget = new FileDownloader(this.context, downloadUrl, targetFile);
+                downloaderTarget.download();
+                hashFile.delete();
+                newHashFile.renameTo(new File(context.getFilesDir() + File.separator + hashFileName));
+            }
+        }else{
+            FileDownloader downloader = new FileDownloader(this.context, hashUrl, hashFile);
+            downloader.download();
 
+            FileDownloader downloaderTargetFile = new FileDownloader(this.context, downloadUrl, targetFile);
+            downloaderTargetFile.download();
+        }
+        return true;
+
+    }
     public boolean update() throws Exception{
         boolean updatedCoordinates, updatedDescriptions ;
         try{
-            updatedCoordinates = handleFileDownloading(Constants.JSON_COORDINATE_FILE);
-            updatedDescriptions = handleFileDownloading(Constants.DESCRIPTIONS_FILE_NAME);
+            updatedCoordinates = handleFileDownloadingWithHash(Constants.JSON_COORDINATE_FILE);
+            updatedDescriptions = handleFileDownloadingWithHash(Constants.DESCRIPTIONS_FILE_NAME);
         }catch (IOException e){
             Utility.makeSnackbar("Настъпи грешка при изтеглянето", (MainActivity) context);
             return false;
@@ -150,7 +194,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             v.put(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME, station.getName());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongtitude());
-
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_TYPES, lineTypesToString(station));
             stationInformation.add(v);
         }
 
@@ -171,6 +215,20 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         manipulator.closeDb();
 
         return true;
+
+    }
+
+    private String lineTypesToString(Stop s){
+        ArrayList<Integer> lineTypes = s.getLineTypes();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lineTypes.size(); i++){
+            if(i == lineTypes.size() - 1){
+                sb.append(lineTypes.get(i));
+            }else{
+                sb.append(lineTypes.get(i) + ",");
+            }
+        }
+        return sb.toString();
 
     }
 

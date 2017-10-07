@@ -126,12 +126,12 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
         private ImageButton reorderHandle;
         public ViewHolder(View itemView) {
             super(itemView);
-            this.stopName = (TextView) itemView.findViewById(R.id.textView_favourites_stop_name);
-            this.locationButton = (Button) itemView.findViewById(R.id.button_favourites_location);
-            this.textViewCode = (TextView) itemView.findViewById(R.id.textView_favourites_code);
-            this.editAlias = (ImageButton) itemView.findViewById(R.id.imageButton_edit_alias);
-            this.coordinates = (ImageButton) itemView.findViewById(R.id.imageButton_copy_coordinates);
-            this.reorderHandle = (ImageButton) itemView.findViewById(R.id.imageButton_order_handle);
+            this.stopName = itemView.findViewById(R.id.textView_favourites_stop_name);
+            this.locationButton = itemView.findViewById(R.id.button_favourites_location);
+            this.textViewCode = itemView.findViewById(R.id.textView_favourites_code);
+            this.editAlias = itemView.findViewById(R.id.imageButton_edit_alias);
+            this.coordinates = itemView.findViewById(R.id.imageButton_copy_coordinates);
+            this.reorderHandle = itemView.findViewById(R.id.imageButton_order_handle);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -215,7 +215,9 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
                             .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    CommunicationUtility.removeFavourite(favourites.get(position).getCode(), (MainActivity)context);
+                                    if(position >= 0 && position < favourites.size()) {
+                                        CommunicationUtility.removeFavourite(favourites.get(position).getCode(), (MainActivity) context);
+                                    }
                                 }
                             })
                             .setNegativeButton("Не", new DialogInterface.OnClickListener() {

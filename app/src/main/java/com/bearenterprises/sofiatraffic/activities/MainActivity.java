@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
             @Override
             public void onPageSelected(int position) {
-
                 if(position != Constants.SECTION_SEARCH_IDX) {
                     hideSoftKeyboad();
                 }
@@ -414,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     public void onResume(){
         super.onResume();
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+//        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
     }
 }

@@ -20,6 +20,7 @@ import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 
 import java.util.List;
 
@@ -109,6 +110,7 @@ public class NameResultAdapter extends RecyclerView.Adapter<NameResultAdapter.Vi
             location.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    DbUtility.addLineTypes(stops.get(position), (MainActivity)context);
                     CommunicationUtility.showOnMap(stops.get(position), (MainActivity)context);
                 }
             });

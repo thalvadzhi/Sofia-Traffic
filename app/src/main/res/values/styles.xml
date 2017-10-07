@@ -28,7 +28,7 @@
         <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley</item>
         <item name="iconBus">@drawable/bus</item>
         <item name="iconTram">@drawable/tram</item>
-        <item name="iconTrolley">@drawable/trolley_smaller</item>
+        <item name="iconTrolley">@drawable/trolley</item>
         <item name="moreButtonBorder">@color/darkGrey</item>
         <item name="whiteBlack">@color/black</item>
         <item name="downArrow">@drawable/down_arrow_black</item>
@@ -63,7 +63,7 @@
         <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley_darker</item>
         <item name="iconBus">@drawable/bus_white</item>
         <item name="iconTram">@drawable/tram_white</item>
-        <item name="iconTrolley">@drawable/trolley_smaller_white</item>
+        <item name="iconTrolley">@drawable/trolley_white</item>
         <item name="moreButtonBorder">@color/grey</item>
         <item name="downArrow">@drawable/down_arrow_white</item>
         <item name="borderColorForMoreButton">@drawable/border_white</item>

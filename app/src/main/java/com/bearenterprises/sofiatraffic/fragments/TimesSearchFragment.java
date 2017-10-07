@@ -1,5 +1,6 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -13,11 +14,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -83,6 +86,10 @@ public class TimesSearchFragment extends Fragment {
         }
     }
 
+    public EditText getT() {
+        return t;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -139,12 +146,15 @@ public class TimesSearchFragment extends Fragment {
                 refreshLayout.setRefreshing(false);
             }
         });
-        t = (EditText) rootView.findViewById(R.id.station_code);
+        t = rootView.findViewById(R.id.station_code);
+
         t.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                    imm.showSoftInput(getT(), 0);
                 }
             }
         });
@@ -213,7 +223,12 @@ public class TimesSearchFragment extends Fragment {
             searchBoxesContainer.showNext();
         }
     }
-
+    public void clearEditTextFocus(){
+        if(t != null){
+            t.clearFocus();
+            Log.i("neshto", t.hasFocus()+"");
+        }
+    }
     public void showNameSearchResults(String query) {
         ((MainActivity) getActivity()).hideSoftKeyboad();
         List<Stop> stops = readByQueryString(query, false);
@@ -347,7 +362,7 @@ public class TimesSearchFragment extends Fragment {
         protected Stop doInBackground(Void... params) {
             sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Stop stop = null;
-            queryMethod = Constants.QUERY_METHOD_FAST;
+            queryMethod = Constants.QUERY_METHOD_SLOW;
             try {
                 MainActivity ma = ((MainActivity) getActivity());
                 if (ma == null){
@@ -379,9 +394,26 @@ public class TimesSearchFragment extends Fragment {
 //            ArrayList<Line> lines = new ArrayList<>();
 //            lines.add(new Line(1, 66, "1"));
 //            stop.setLines(lines);
-//            Time t = new Time("10:10", false, false);
+//            Time t = new Time("1:00", false, false);
+//            Time t1 = new Time("1:10", false, false);
+//            Time t2 = new Time("1:20", false, false);
+//            Time t3 = new Time("2:50", false, false);
+//            Time t4 = new Time("2:50", false, false);
+//            Time t5 = new Time("2:50", false, false);
+//            Time t6 = new Time("2:50", false, false);
+//            Time t7 = new Time("2:50", false, false);
+
 //            ArrayList<Time> vt = new ArrayList<>();
 //            vt.add(t);
+//            vt.add(t1);
+//            vt.add(t2);
+//            vt.add(t3);
+//            vt.add(t4);
+//            vt.add(t5);
+//            vt.add(t6);
+//            vt.add(t7);
+
+
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
             for (Line line : stop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));

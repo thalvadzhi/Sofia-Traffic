@@ -1,6 +1,7 @@
 package com.bearenterprises.sofiatraffic.utilities.parsing;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.google.common.base.Charsets;
@@ -39,10 +40,17 @@ public class JSONParser {
             for(int i = 0; i < jsonArray.length();i++){
                 JSONObject stop = jsonArray.getJSONObject(i);
                 JSONArray coord = stop.getJSONArray("coordinates");
-                stations.add(new Stop(Integer.parseInt(stop.getString("stopCode")),stop.getString("stopName"), coord.getString(0), coord.getString(1)));
+                JSONArray lineTypes = stop.getJSONArray("lineTypes");
+                Stop s = new Stop(Integer.parseInt(stop.getString("stopCode")),stop.getString("stopName"), coord.getString(0), coord.getString(1));
+                for (int j = 0; j < lineTypes.length(); j++){
+                    s.addLineType(lineTypes.getInt(j));
+                }
+                stations.add(s);
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.d("jsonexception", "jsonexception", e);
+        } catch (Exception e){
+            Log.d("exception", "exception", e);
         }
         return stations;
     }

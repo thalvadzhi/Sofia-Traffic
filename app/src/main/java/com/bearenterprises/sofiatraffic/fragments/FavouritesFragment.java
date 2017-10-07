@@ -18,6 +18,7 @@ import com.bearenterprises.sofiatraffic.callback.OnStartDragListener;
 import com.bearenterprises.sofiatraffic.callback.ReorderCallback;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bearenterprises.sofiatraffic.utilities.favourites.FavouritesModifier;
 import com.google.gson.Gson;
 
@@ -70,6 +71,12 @@ public class FavouritesFragment extends Fragment implements OnStartDragListener 
                 Stop st = gson.fromJson(all.get(key).toString(), Stop.class);
                 if (st.getFavouriteIndex() == null) {
                     st.setFavouriteIndex(idx);
+                }
+                if(st.getLineTypes() == null){
+                    ArrayList<Stop> stationByCode = DbUtility.getStationByCode(Integer.toString(st.getCode()), (MainActivity) getActivity());
+                    if(stationByCode != null && stationByCode.size() > 0){
+                        st.setLineTypes(stationByCode.get(0).getLineTypes());
+                    }
                 }
                 favouriteStations.add(st);
                 idx++;

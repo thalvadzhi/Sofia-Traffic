@@ -17,6 +17,7 @@ import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 
 /**
@@ -47,6 +48,7 @@ public class DirectionViewHolder extends ParentViewHolder {
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DbUtility.addLineTypes(direction.getStops(), (MainActivity) context);
                 CommunicationUtility.showOnMap(direction.getStops(), (MainActivity)context);
             }
         });
@@ -76,7 +78,7 @@ public class DirectionViewHolder extends ParentViewHolder {
                 trType.setImageBitmap(image2);break;
             case "trolley":
                 background.setBackgroundColor(colorTrolley);
-                Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_smaller_white);
+                Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_white);
                 trType.setImageBitmap(image3);break;
         }
 

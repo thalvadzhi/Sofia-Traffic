@@ -37,4 +37,13 @@
         android:summary="@string/search_method_summary"
         />
 
+    <ListPreference
+        android:key="@string/key_time_mode"
+        android:title="@string/time_mode_title"
+        android:entries="@array/choose_time_mode_human_readable"
+        android:entryValues="@array/choose_time_mode_values"
+        android:defaultValue="@string/time_mode_default"
+        android:summary="@string/time_mode_summary"
+        />
+
 </PreferenceScreen>

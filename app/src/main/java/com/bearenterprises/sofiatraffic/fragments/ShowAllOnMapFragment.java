@@ -14,6 +14,7 @@ import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class ShowAllOnMapFragment extends Fragment {
             showOnMapButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    DbUtility.addLineTypes(stops, (MainActivity)getActivity());
                     CommunicationUtility.showOnMap(stops, (MainActivity)getActivity());
                 }
             });

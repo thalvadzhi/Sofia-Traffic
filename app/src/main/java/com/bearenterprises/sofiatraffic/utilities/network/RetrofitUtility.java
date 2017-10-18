@@ -36,7 +36,7 @@ public class RetrofitUtility {
 
     public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity){
         SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
-        Call<Stop> stop = sofiaTransportApi.getStop(code);
+        Call<Stop> stop = sofiaTransportApi.getScheduleStop(code);
         try {
             Stop stopLines = RetrofitUtility.handleUnauthorizedQuery(stop, activity);
             if(stopLines != null){

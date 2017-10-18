@@ -84,4 +84,13 @@
         <item name="android:textOff"></item>
     </style>
 
+    <style name="ToolTipLayoutStyle" parent="ToolTipLayoutDefaultStyle">
+        <item name="android:textAppearance">@style/ToolTipTextStyle</item>
+    </style>
+
+    <style name="ToolTipTextStyle">
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
 </resources>

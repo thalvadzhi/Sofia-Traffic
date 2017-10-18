@@ -8,6 +8,7 @@ import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimeResultsFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.restClient.StopInformationGetter;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 
@@ -39,6 +40,20 @@ public class CommunicationUtility {
         fragment.addTimeSchedule(line, (ArrayList<Time>) times);
     }
 
+    public static void addTimesWithDirection(TimeResultsFragment fragment, Line line, StopInformationGetter.TimesWithDirection timesWithDirection){
+        if (fragment == null){
+            return;
+        }
+        fragment.addTimeScheduleWithDirection(line, timesWithDirection);
+    }
+
+    public static void removeLine(TimeResultsFragment fragment, Line line){
+        if (fragment == null){
+            return;
+        }
+        fragment.removeLine(line);
+    }
+
     public static void showTimes(String code, MainActivity mainActivity) {
         if (mainActivity == null){
             return;
@@ -51,7 +66,7 @@ public class CommunicationUtility {
         f.showStationTimes(code);
     }
 
-    public static void showOnMap(ArrayList<Stop> stations, MainActivity mainActivity){
+    public static<T extends Stop> void showOnMap(ArrayList<T> stations, MainActivity mainActivity){
         if (mainActivity == null){
             return;
         }
@@ -64,7 +79,7 @@ public class CommunicationUtility {
         f.getMapFragment().showOnMap(stations);
     }
 
-    public static void showOnMap(Stop st, MainActivity mainActivity){
+    public static<T extends Stop> void showOnMap(T st, MainActivity mainActivity){
         ArrayList<Stop> stations = new ArrayList<>();
         stations.add(st);
         CommunicationUtility.showOnMap(stations, mainActivity);
@@ -81,7 +96,7 @@ public class CommunicationUtility {
         f.hideSlideUpPanel();
     }
 
-    public static void showRoute(String trId, String lineId, Integer stopCode, MainActivity mainActivity){
+    public static void showRoute(Line line, Integer stopCode, MainActivity mainActivity){
         if (mainActivity == null){
             return;
         }
@@ -90,7 +105,7 @@ public class CommunicationUtility {
         if (f == null){
             return;
         }
-        f.showRoute(trId, lineId, stopCode);
+        f.showRoute(line, stopCode);
     }
 
     public static void addFavourite(Stop st, MainActivity mainActivity){

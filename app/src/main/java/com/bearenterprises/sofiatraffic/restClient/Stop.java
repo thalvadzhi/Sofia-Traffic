@@ -3,6 +3,7 @@ package com.bearenterprises.sofiatraffic.restClient;
 
 import android.os.Parcelable;
 
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -20,6 +21,12 @@ public class Stop implements Serializable{
     private ArrayList<Integer> lineTypes;
 
     public Stop(){
+    }
+
+    public Stop(Integer id, Integer code, String name) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
     }
 
     public Stop(Integer id, Integer code, String name, String latitude, String longtitude, String description) {

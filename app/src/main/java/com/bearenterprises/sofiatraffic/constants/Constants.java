@@ -22,6 +22,8 @@ public class Constants {
     public static final String HASH_COORDS = "hash_coords.txt";
     public static final String HASH_DESCS = "hash_descs.txt";
 
+    public static final int NO_SUCH_LINE = -200;
+
     public static final String SECTION_SEARCH = "ТЪРСЕНЕ";
     public static final String SECTION_FAVOURITES = "ЛЮБИМИ";
     public static final String SECTION_LINES = "ЛИНИИ";
@@ -57,6 +59,10 @@ public class Constants {
     public static final int TROLLEY_ID = 2;
     public static final int TROLLEY_ID_INTERACTIVE_CARD = 2;
 
+
+    public static final String VIRTUAL_TABLES_API = "virtual_table_api";
+    public static final String SCHEDULES_API = "schedules_api";
+
     public static final String IVKOS_API_BASE_URL = "https://api.sofiatransport.com/v3/";
     public static final String SHARED_PREFERENCES_REGISTRATION = "registration";
     public static final String REGISTRATION = "reg";
@@ -65,6 +71,9 @@ public class Constants {
     public static final String QUERY_METHOD_SLOW = "slow";
     public static final String QUERY_METHOD_FAST = "fast";
 
+    public static final String WORKDAY = "WORKDAY";
+    public static final String PRE_NON_WORKING_DAY = "PRE_NON_WORKING_DAY";
+    public static final String NON_WORKING_DAY = "NON_WORKING_DAY";
 
 
 

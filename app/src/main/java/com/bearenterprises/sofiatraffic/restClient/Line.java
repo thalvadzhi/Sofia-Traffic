@@ -102,4 +102,32 @@ public class Line implements Serializable {
         this.additionalProperties.put(name, value);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o){
+            return true;
+        }
+
+        Line line = (Line) o;
+
+        //in the two apis there are lines of the type 20-TM and 20TM which are the same
+        //also in the e.g. above one TM is in cyrillic while the other is in latin script
+
+        String lineAName = line.getName().replaceAll("-", "").replaceAll("TM", "ТМ");
+        String lineBName = getName().replaceAll("-", "").replaceAll("TM", "ТМ");
+
+
+        if (getType() != null ? !getType().equals(line.getType()) : line.getType() != null){
+            return false;
+        }
+        return lineBName != null ? lineBName.equals(lineAName) : lineAName == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getType() != null ? getType().hashCode() : 0;
+        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
+        return result;
+    }
 }

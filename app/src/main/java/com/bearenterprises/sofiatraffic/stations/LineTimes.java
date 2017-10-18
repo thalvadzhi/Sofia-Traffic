@@ -21,6 +21,25 @@ public class LineTimes implements Serializable{
     private Line line;
     private String type;
     private String times;
+    private String routeName;
+    private boolean isSchedule;
+
+    public boolean isSchedule() {
+        return isSchedule;
+    }
+
+    public void setSchedule(boolean schedule) {
+        isSchedule = schedule;
+    }
+
+    public String getRouteName() {
+        return routeName;
+    }
+
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
+    }
+
     private ArrayList<Time> vehicleTimes;
 
     public LineTimes(Line line, String type, String times, ArrayList<Time> vehicleTimes) {
@@ -141,7 +160,11 @@ public class LineTimes implements Serializable{
                 times.add(""+diffMinutes+"м");
             }
         }
-        return times;
+        if(times.size() < 10){
+            return times;
+        }else{
+            return new ArrayList<>(times.subList(0, 10));
+        }
     }
     public String getRemainingTimes(){
         if (vehicleTimes == null){
@@ -160,7 +183,11 @@ public class LineTimes implements Serializable{
         for(Time t : vehicleTimes){
             times.add(t.getTime());
         }
-        return times;
+        if(times.size() < 10){
+            return times;
+        }else{
+            return new ArrayList<>(times.subList(0, 10));
+        }
     }
     private String generateTimes(){
         if (vehicleTimes == null){

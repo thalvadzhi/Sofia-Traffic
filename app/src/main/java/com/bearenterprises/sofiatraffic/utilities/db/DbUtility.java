@@ -25,21 +25,21 @@ public class DbUtility {
 
     }
 
-    public static void addLineTypes(Stop s, String lineTypes){
+    public static <T extends Stop> void addLineTypes(T s, String lineTypes){
         String[] split = lineTypes.split(",");
         for(int i = 0; i < split.length; i++){
             s.addLineType(Integer.parseInt(split[i]));
         }
     }
 
-    public static void addLineTypes(Stop s, MainActivity mainActivity){
+    public static<T extends Stop> void addLineTypes(T s, MainActivity mainActivity){
         ArrayList<Stop> stationByCode = getStationByCode(Integer.toString(s.getCode()), mainActivity);
         if(stationByCode != null && stationByCode.size() > 0){
             s.setLineTypes(stationByCode.get(0).getLineTypes());
         }
     }
 
-    public static void addLineTypes(ArrayList<Stop> stops, MainActivity activity){
+    public static <T extends Stop>void addLineTypes(ArrayList<T> stops, MainActivity activity){
         for(Stop s : stops){
             addLineTypes(s, activity);
         }

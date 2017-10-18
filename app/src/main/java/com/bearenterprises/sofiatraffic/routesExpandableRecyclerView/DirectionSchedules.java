@@ -2,7 +2,6 @@ package com.bearenterprises.sofiatraffic.routesExpandableRecyclerView;
 
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bignerdranch.expandablerecyclerview.model.Parent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +9,9 @@ import java.util.List;
  * Created by thalvadzhiev on 4/13/17.
  */
 
-public class Direction implements Parent<Stop> {
+public class DirectionSchedules implements Parent<Stop> {
     private Stop from, to;
     private ArrayList<Stop> stops;
-    private ArrayList<Stop> scheduleStops;
     private String transportationType;
 
     public String getTransportationType() {
@@ -29,16 +27,7 @@ public class Direction implements Parent<Stop> {
         return to;
     }
 
-
-
-
-    public Direction(String transportationType, ArrayList<Stop> scheduleStops) {
-        this.scheduleStops = scheduleStops;
-        this.transportationType = transportationType;
-        determineFromAndTo(this.scheduleStops);
-    }
-
-    public Direction(ArrayList<Stop> stops, String trType) {
+    public DirectionSchedules(ArrayList<Stop> stops, String trType) {
         this.stops = stops;
         this.transportationType = trType;
         determineFromAndTo(this.stops);

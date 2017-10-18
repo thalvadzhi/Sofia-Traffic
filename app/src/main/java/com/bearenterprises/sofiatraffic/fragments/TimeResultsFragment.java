@@ -11,13 +11,18 @@ import android.view.ViewGroup;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.adapters.TimeResultsAdapter;
+import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.restClient.StopInformationGetter;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 
 
@@ -45,32 +50,43 @@ public class TimeResultsFragment extends Fragment {
     }
 
     public void addTimeSchedule(Line line, ArrayList<Time> times){
-        if(lineTimes != null){
+        int indexOfLine = getIndexOfLine(line);
+        if(indexOfLine != Constants.NO_SUCH_LINE){
             synchronized (lineTimes){
-                int idx = 0;
-                if(times != null){
-                    for(LineTimes vt : lineTimes){
-                        if(vt.getLine().getId().equals(line.getId())){
-                            vt.setVehicleTimes(times);
-                            this.timeResultsAdapter.notifyItemChanged(idx);
-                        }
-                        idx ++;
-                    }
-                }else {
-                    Iterator<LineTimes> i = lineTimes.iterator();
-                    while (i.hasNext()) {
-                        LineTimes vt = i.next();
-                        if (vt.getLine().getId().equals(line.getId())) {
-                            i.remove();
-                            this.timeResultsAdapter.notifyItemRemoved(idx);
-                        }
-                        idx++;
-                    }
-                }
+                LineTimes vt = lineTimes.get(indexOfLine);
+                vt.setVehicleTimes(times);
+                this.timeResultsAdapter.notifyItemChanged(indexOfLine);
             }
         }
 
     }
+
+    public void removeLine(Line line){
+        int indexOfLine = getIndexOfLine(line);
+        if(indexOfLine != Constants.NO_SUCH_LINE){
+            lineTimes.remove(indexOfLine);
+            this.timeResultsAdapter.notifyItemRemoved(indexOfLine);
+        }
+    }
+
+    private int getIndexOfLine(Line line){
+        if(lineTimes != null){
+            synchronized (lineTimes){
+                int idx = 0;
+                    for(LineTimes vt : lineTimes){
+                        Line lineOriginal = vt.getLine();
+                        if(lineOriginal.equals(line)){
+                            return idx;
+                        }
+                        idx ++;
+                    }
+                }
+            }
+        return Constants.NO_SUCH_LINE;
+    }
+
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +101,19 @@ public class TimeResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_results, container, false);
-        resultsView = (RecyclerView) view.findViewById(R.id.station_times);
+        resultsView = view.findViewById(R.id.station_times);
+        Collections.sort(lineTimes, new Comparator<LineTimes>() {
+            @Override
+            public int compare(LineTimes lineTimes, LineTimes t1) {
+                Line l1 = lineTimes.getLine();
+                Line l2 = t1.getLine();
+                if(l1.getType() != l2.getType()){
+                    return l1.getType() - l2.getType();
+                }else{
+                    return Utility.compareLineNames(l1, l2);
+                }
+            }
+        });
         resultsView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -113,4 +141,16 @@ public class TimeResultsFragment extends Fragment {
         return view;
     }
 
+    public void addTimeScheduleWithDirection(Line line, StopInformationGetter.TimesWithDirection timesWithDirection) {
+        int indexOfLine = getIndexOfLine(line);
+        if(indexOfLine != Constants.NO_SUCH_LINE){
+            synchronized (lineTimes){
+                LineTimes vt = lineTimes.get(indexOfLine);
+                vt.setSchedule(true);
+                vt.setVehicleTimes(timesWithDirection.getTimes());
+                vt.setRouteName(timesWithDirection.getDirection());
+                this.timeResultsAdapter.notifyItemChanged(indexOfLine);
+            }
+        }
+    }
 }

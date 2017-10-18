@@ -88,6 +88,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MapsInitializer.initialize(getContext().getApplicationContext());
         if (getArguments() != null) {
             mStations = (ArrayList<Stop>) getArguments().getSerializable(STATIONS);
             location = getArguments().getParcelable(LOCATION);
@@ -170,7 +171,7 @@ public class MapFragment extends Fragment {
                 if(stop != null){
                     ((MainActivity)getActivity()).showSlideUpPanelWithInfo(stop);
                 }
-                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 500, null);
                 return true;
             }
         });
@@ -234,7 +235,7 @@ public class MapFragment extends Fragment {
         return closestStations;
     }
 
-    public void showOnMap(ArrayList<Stop> stations){
+    public <T extends Stop>void showOnMap(ArrayList<T> stations){
         if(map != null && stations != null){
             previousMarker = null;
             map.clear();
@@ -255,7 +256,7 @@ public class MapFragment extends Fragment {
         return CameraUpdateFactory.newLatLngBounds(bounds, padding);
     }
 
-    private void setMarkers(ArrayList<Stop> closestStations, ArrayList<Marker> markers) {
+    private<T extends Stop> void setMarkers(ArrayList<T> closestStations, ArrayList<Marker> markers) {
         for(Stop station : closestStations){
             String latitude = station.getLatitude();
             String longtitude = station.getLongtitude();
@@ -303,13 +304,17 @@ public class MapFragment extends Fragment {
     }
 
     private void initPinBitmapDescriptors(){
-        pinBusDescriptor = BitmapDescriptorFactory.fromBitmap(pinBus);
-        pinTramDescriptor = BitmapDescriptorFactory.fromBitmap(pinTram);
-        pinTrolleyDescriptor = BitmapDescriptorFactory.fromBitmap(pinTrolley);
-        pinBusTramDescriptor = BitmapDescriptorFactory.fromBitmap(pinBusTram);
-        pinTrolleyBusDescriptor = BitmapDescriptorFactory.fromBitmap(pinTrolleyBus);
-        pinTrolleyTramDescriptor = BitmapDescriptorFactory.fromBitmap(pinTrolleyTram);
-        pinBusTramTrolleyDescriptor = BitmapDescriptorFactory.fromBitmap(pinBusTramTrolley);
+        try {
+            pinBusDescriptor = BitmapDescriptorFactory.fromBitmap(pinBus);
+            pinTramDescriptor = BitmapDescriptorFactory.fromBitmap(pinTram);
+            pinTrolleyDescriptor = BitmapDescriptorFactory.fromBitmap(pinTrolley);
+            pinBusTramDescriptor = BitmapDescriptorFactory.fromBitmap(pinBusTram);
+            pinTrolleyBusDescriptor = BitmapDescriptorFactory.fromBitmap(pinTrolleyBus);
+            pinTrolleyTramDescriptor = BitmapDescriptorFactory.fromBitmap(pinTrolleyTram);
+            pinBusTramTrolleyDescriptor = BitmapDescriptorFactory.fromBitmap(pinBusTramTrolley);
+        }catch(NullPointerException e){
+            e.printStackTrace();
+        }
     }
 
     private Bitmap getCorrectImageForStop(ArrayList<Integer> lineTypes){

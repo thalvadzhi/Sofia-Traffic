@@ -120,10 +120,10 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         public ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
-            trType = (ImageView) itemView.findViewById(R.id.ImageViewTransportationTypeSlideUpLayout);
-            lineName = (TextView) itemView.findViewById(R.id.TextViewLineName);
-            direction = (TextView) itemView.findViewById(R.id.textViewMapSlideUpDirection);
-            rl = (RelativeLayout) itemView.findViewById(R.id.RelativeLayoutMapSlideupLineBackground);
+            trType = itemView.findViewById(R.id.ImageViewTransportationTypeSlideUpLayout);
+            lineName = itemView.findViewById(R.id.TextViewLineName);
+            direction = itemView.findViewById(R.id.textViewMapSlideUpDirection);
+            rl =  itemView.findViewById(R.id.RelativeLayoutMapSlideupLineBackground);
         }
 
         public void setOnClickListener(final int position){
@@ -132,7 +132,7 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
                 public void onClick(View view) {
                     Line l = lines.get(position);
 
-                    CommunicationUtility.showRoute(Integer.toString(l.getType()), Integer.toString(l.getId()), Integer.parseInt(stopCode),(MainActivity)context);
+                    CommunicationUtility.showRoute(l, Integer.parseInt(stopCode),(MainActivity)context);
                 }
             });
         }

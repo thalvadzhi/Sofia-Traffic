@@ -16,6 +16,10 @@ import android.widget.Toast;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.restClient.Line;
+
+import java.util.Calendar;
 
 /**
  * Created by thalv on 08-Jul-16.
@@ -109,5 +113,46 @@ public class Utility {
         }
         bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
         return bmOut;
+    }
+
+    public static String getScheduleDayType() throws Exception {
+        Calendar cal = Calendar.getInstance();
+        if(cal != null){
+            int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+            if(dayOfWeek >= 0 && dayOfWeek < 5){
+                return Constants.WORKDAY;
+            }else if(dayOfWeek == 5){
+                return Constants.PRE_NON_WORKING_DAY;
+            }else{
+                return Constants.NON_WORKING_DAY;
+            }
+        }else{
+            throw new Exception("Couldn't get the current day.");
+        }
+    }
+
+    /**
+     * for sorting purposes
+     */
+    public static int compareLineNames(Line l1, Line l2){
+        String lineAName = l1.getName().replaceAll("[А-ЯA-Z]", "");
+        String lineBName = l2.getName().replaceAll("[А-ЯA-Z]", "");
+
+        String[] lineASplit = lineAName.split("-");
+        String[] lineBSplit = lineBName.split("-");
+
+        if(lineASplit.length > 0){
+            lineAName = lineASplit[0];
+        }
+
+        if(lineBSplit.length > 0){
+            lineBName = lineBSplit[0];
+        }
+
+        if(lineAName.length() == lineBName.length()){
+            return lineAName.compareTo(lineBName);
+        }else{
+            return lineAName.length() - lineBName.length();
+        }
     }
 }

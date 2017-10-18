@@ -32,10 +32,10 @@ public class StopViewHolder extends ChildViewHolder {
     private RelativeLayout rl;
     public StopViewHolder(@NonNull View itemView, Context context) {
         super(itemView);
-        showOnMap = (ImageButton) itemView.findViewById(R.id.locationItem);
-        stopName = (TextView) itemView.findViewById(R.id.stopName);
-        code = (TextView) itemView.findViewById(R.id.textViewRouteCode1);
-        rl = (RelativeLayout) itemView.findViewById(R.id.childLayout);
+        showOnMap =  itemView.findViewById(R.id.locationItem);
+        stopName =  itemView.findViewById(R.id.stopName);
+        code =  itemView.findViewById(R.id.textViewRouteCode1);
+        rl =  itemView.findViewById(R.id.childLayout);
         this.context = context;
         //find views
     }

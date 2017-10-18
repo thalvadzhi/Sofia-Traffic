@@ -35,6 +35,7 @@ import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.StopBuilder;
+import com.bearenterprises.sofiatraffic.restClient.StopInformationGetter;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.stations.LineTimes;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
@@ -96,11 +97,11 @@ public class TimesSearchFragment extends Fragment {
         stopNames = new ArrayList<>();
         coordinatorLayout = ((MainActivity) getActivity()).getCoordinatorLayout();
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        Button searchButton = (Button) rootView.findViewById(R.id.button_search);
-        refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
-        codeNameSwitch = (SegmentedGroup) rootView.findViewById(R.id.segmentedGroupCodeNameSwitch);
-        searchBoxesContainer = (ViewSwitcher) rootView.findViewById(R.id.switcher_code_name_entry_box);
-        autoCompleteTextView = (AutoCompleteTextView) rootView.findViewById(R.id.autocomplete_text_view_station_name);
+        Button searchButton = rootView.findViewById(R.id.button_search);
+        refreshLayout = rootView.findViewById(R.id.swiperefresh);
+        codeNameSwitch = rootView.findViewById(R.id.segmentedGroupCodeNameSwitch);
+        searchBoxesContainer = rootView.findViewById(R.id.switcher_code_name_entry_box);
+        autoCompleteTextView = rootView.findViewById(R.id.autocomplete_text_view_station_name);
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, stopNames);
         autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.addTextChangedListener(new TextWatcher() {
@@ -202,17 +203,18 @@ public class TimesSearchFragment extends Fragment {
         return rootView;
     }
 
-    public void nextInCodeName(){
-        if (codeNameSwitch.getCheckedRadioButtonId() == R.id.toggleStateCode){
+    public void nextInCodeName() {
+        if (codeNameSwitch.getCheckedRadioButtonId() == R.id.toggleStateCode) {
             codeNameSwitch.check(R.id.toggleStateName);
-        }else{
+        } else {
             codeNameSwitch.check(R.id.toggleStateCode);
         }
     }
 
-    public void checkCodeNameSwitch(int id){
+    public void checkCodeNameSwitch(int id) {
         codeNameSwitch.check(id);
     }
+
     private void setSearchMethod() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getContext());
         String searchMethod = sharedPref.getString(getResources().getString(R.string.key_choose_search_method), getResources().getString(R.string.search_method_code_value));
@@ -223,12 +225,13 @@ public class TimesSearchFragment extends Fragment {
             searchBoxesContainer.showNext();
         }
     }
-    public void clearEditTextFocus(){
-        if(t != null){
+
+    public void clearEditTextFocus() {
+        if (t != null) {
             t.clearFocus();
-            Log.i("neshto", t.hasFocus()+"");
         }
     }
+
     public void showNameSearchResults(String query) {
         ((MainActivity) getActivity()).hideSoftKeyboad();
         List<Stop> stops = readByQueryString(query, false);
@@ -291,13 +294,13 @@ public class TimesSearchFragment extends Fragment {
             //so we have to get everything from the DB and manually find the stops
             String sqlStations = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
             c = manipulator.readRawQuery(sqlStations, null);
-        }else{
+        } else {
             String sqlStations = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
             sqlStations += " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME + " LIKE ?";
             if (distinct) {
                 sqlStations += "GROUP BY " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME;
             }
-            c = manipulator.readRawQuery(sqlStations, new String[]{"%"+queryString+"%"});
+            c = manipulator.readRawQuery(sqlStations, new String[]{"%" + queryString + "%"});
         }
         try {
             if (c.moveToFirst()) {
@@ -305,7 +308,7 @@ public class TimesSearchFragment extends Fragment {
                     StopBuilder builder = new StopBuilder();
                     String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
                     if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        if(!stationName.toLowerCase(new Locale("bg")).contains(queryString.toLowerCase(new Locale("bg")))){
+                        if (!stationName.toLowerCase(new Locale("bg")).contains(queryString.toLowerCase(new Locale("bg")))) {
                             continue;
                         }
                     }
@@ -321,15 +324,15 @@ public class TimesSearchFragment extends Fragment {
                     Stop stop = builder.build();
                     if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP && distinct) {
                         boolean shouldAdd = true;
-                        for(Stop st : stops){
-                            if(st.getName().equals(stop.getName())){
-                               shouldAdd = false;
+                        for (Stop st : stops) {
+                            if (st.getName().equals(stop.getName())) {
+                                shouldAdd = false;
                             }
                         }
-                        if(shouldAdd){
+                        if (shouldAdd) {
                             stops.add(stop);
                         }
-                    }else{
+                    } else {
                         stops.add(stop);
                     }
 
@@ -349,46 +352,68 @@ public class TimesSearchFragment extends Fragment {
         //        private TimeResultsFragment timeResultsFragment;
         private SofiaTransportApi sofiaTransportApi;
         private String queryMethod;
+        private StopInformationGetter stopInformationGetter;
+        private final String TAG = SearchQuery.class.getName();
+
 
         public SearchQuery(String code, LoadingFragment l, FragmentManager m, MainActivity a) {
             this.code = code;
             this.m = m;
             this.l = l;
             this.a = a;
+            stopInformationGetter = new StopInformationGetter(Integer.parseInt(code), getContext());
 
         }
 
         @Override
         protected Stop doInBackground(Void... params) {
+            stopInformationGetter.setOnPreciseTimeScheduleMixReceivedListener(new StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener() {
+                @Override
+                public void received(Line line, List<Time> times, String means) {
+                    if(means.equals(StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener.NONE)){
+                        CommunicationUtility.removeLine(timeResultsFragment, line);
+                    }else{
+                        CommunicationUtility.addTimes(timeResultsFragment, line, times);
+                    }
+                }
+
+                @Override
+                public void receivedSchedule(Line line, StopInformationGetter.TimesWithDirection timesWithDirection) {
+                    CommunicationUtility.addTimesWithDirection(timeResultsFragment, line, timesWithDirection);
+                }
+            });
             sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             Stop stop = null;
+            Stop scheduleStop = null;
             queryMethod = Constants.QUERY_METHOD_SLOW;
             try {
                 MainActivity ma = ((MainActivity) getActivity());
-                if (ma == null){
+                if (ma == null) {
                     return null;
                 }
                 queryMethod = ma.getQueryMethod();
                 if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
-                    stop = getStop(code, sofiaTransportApi);
+                    stop = stopInformationGetter.getStopSlow(code);
                 } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {
-                    stop = getStopFast(code, sofiaTransportApi);
-                }
-                if (stop == null) {
-                    Utility.detachFragment(l, (MainActivity) getActivity());
-
-                    Utility.makeSnackbar("Няма информация!", (MainActivity) getActivity());
-                    return null;
+                    stop = stopInformationGetter.getStopFast(code);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                if (stop == null) {
+
+            }
+            try {
+                scheduleStop = stopInformationGetter.getStopWithAllLines(code);
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+            if(scheduleStop == null && stop == null){
                     Utility.detachFragment(l, (MainActivity) getActivity());
+
                     Utility.makeSnackbar("Няма информация!", (MainActivity) getActivity());
                     return null;
                 }
 
-            }
 //
 //            stop = new Stop(1503, "CBA", "GYZ");
 //            ArrayList<Line> lines = new ArrayList<>();
@@ -415,13 +440,17 @@ public class TimesSearchFragment extends Fragment {
 
 
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
-            for (Line line : stop.getLines()) {
+            for (Line line : scheduleStop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));
 //                lt.setVehicleTimes(vt);
                 lineTimes.add(lt);
 
             }
-            timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, stop);
+            if(stop == null){
+                timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, scheduleStop);
+            }else{
+                timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, stop);
+            }
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());
             return stop;
 
@@ -430,11 +459,17 @@ public class TimesSearchFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Stop stop) {
-            if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
-                updateLineInfoSlow(stop);
-            } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {
-                updateLineInfoFast(stop);
+//            if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
+//                updateLineInfoSlow(stop);
+//            } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {
+//                updateLineInfoFast(stop);
+//            }
+            try {
+                stopInformationGetter.getLineTimeWithSchedulesAsync();
+            } catch (IOException e) {
+                Log.d(TAG, "Couldn't get line time async", e);
             }
+
         }
 
     }

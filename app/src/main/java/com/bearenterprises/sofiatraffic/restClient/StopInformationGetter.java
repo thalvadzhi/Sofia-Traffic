@@ -61,7 +61,6 @@ public class StopInformationGetter {
 
     private void getScheduleLineTimesList(String code, final Line line) throws IOException {
         if (scheduleLineTimesList == null) {
-            requestAndCacheScheduleStop.getSchedule();
             requestAndCacheScheduleStop.addObserver(new RequestAndCacheScheduleStop.ScheduleReceivedObserver() {
                 @Override
                 public void onScheduleReceived(List<ScheduleLineTimes> scheduleLineTimesList) {
@@ -140,8 +139,8 @@ public class StopInformationGetter {
     }
 
     private void getTimesMixedWithSchedules() {
+        requestAndCacheScheduleStop.getSchedule();
         if (stop != null) {
-
             for (int i = 0; i < stop.getLines().size(); i++) {
                 final Line line = stop.getLines().get(i);
                 Call<List<Time>> call = sofiaTransportApi.getTimes(Integer.toString(stop.getCode()), Integer.toString(line.getId()));
@@ -246,7 +245,6 @@ public class StopInformationGetter {
         public TimesWithDirection(ArrayList<Time> times, String direction) {
             this.times = times;
             this.direction = direction;
-
         }
     }
 }

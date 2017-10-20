@@ -87,18 +87,15 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         int colorTrolley = typedValueTrolleyColor.data;
         switch (l.getType()){
             case 0:
-
                 holder.rl.setBackgroundColor(colorTram);
                 Bitmap imageTram = BitmapFactory.decodeResource(context.getResources(), tram);
                 holder.trType.setImageBitmap(imageTram);break;
             case 1:
                 holder.rl.setBackgroundColor(colorBus);
-
                 Bitmap imageBus = BitmapFactory.decodeResource(context.getResources(), bus);
                 holder.trType.setImageBitmap(imageBus);break;
             case 2:
                 holder.rl.setBackgroundColor(colorTrolley);
-
                 Bitmap imageTrolley = BitmapFactory.decodeResource(context.getResources(), trolley);
                 holder.trType.setImageBitmap(imageTrolley);break;
         }
@@ -131,7 +128,6 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
                 @Override
                 public void onClick(View view) {
                     Line l = lines.get(position);
-
                     CommunicationUtility.showRoute(l, Integer.parseInt(stopCode),(MainActivity)context);
                 }
             });

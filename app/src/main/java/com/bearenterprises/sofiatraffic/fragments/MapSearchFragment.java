@@ -68,17 +68,15 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.i("onCreateView", "yuhuuu");
         View v = inflater.inflate(R.layout.fragment_map_search, container, false);
 
-        coords = (LinearLayout) v.findViewById(R.id.coordinates);
+        coords = v.findViewById(R.id.coordinates);
         animationDuration = 200;
-        // Inflate the layout for this fragment
 
         linesForAdapter = new ArrayList<>();
         slideUpLayoutLinesAdapter = new SlideUpLayoutLinesAdapter(getContext(), linesForAdapter, null);
         listener = new OnCheckChangeListenerForLaterSetting();
-        slidingUpPanelLayout = (SlidingUpPanelLayout) v.findViewById(R.id.SlideUpPanelLayout);
+        slidingUpPanelLayout = v.findViewById(R.id.SlideUpPanelLayout);
         slidingUpPanelLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -94,7 +92,6 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                     transitionShape.reverseTransition(animationDuration);
                     code.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
                     stopName.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
-//                    direction.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
 
 
                 }else if(previousState == SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
@@ -105,22 +102,21 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                     transitionShape.reverseTransition(animationDuration);
                     code.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                     stopName.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
-//                    direction.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
                 }
             }
         });
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
 
         slidingUpPanelLayout.setAnchorPoint(0.4f);
-        backgroundColor = (LinearLayout) v.findViewById(R.id.LinearLayoutBackground);
-        getTimes = (ImageButton) v.findViewById(R.id.ImageButtonGetTimes);
+        backgroundColor = v.findViewById(R.id.LinearLayoutBackground);
+        getTimes =  v.findViewById(R.id.ImageButtonGetTimes);
         getTimes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CommunicationUtility.showTimes(Integer.toString(currentStop.getCode()), (MainActivity)getActivity());
             }
         });
-        favourite = (ToggleButton) v.findViewById(R.id.ToggleButtonFavourite);
+        favourite =  v.findViewById(R.id.ToggleButtonFavourite);
 
 
         favourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

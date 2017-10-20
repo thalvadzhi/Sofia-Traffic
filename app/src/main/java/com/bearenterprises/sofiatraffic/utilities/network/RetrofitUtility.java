@@ -6,11 +6,15 @@ import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.parsing.ParseApiError;
 import com.bearenterprises.sofiatraffic.utilities.registration.RegistrationUtility;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -40,7 +44,14 @@ public class RetrofitUtility {
         try {
             Stop stopLines = RetrofitUtility.handleUnauthorizedQuery(stop, activity);
             if(stopLines != null){
-                return stopLines.getLines();
+                ArrayList<Line> lines = stopLines.getLines();
+                Collections.sort(lines, new Comparator<Line>() {
+                    @Override
+                    public int compare(Line line, Line t1) {
+                        return Utility.compareLineNames(line, t1);
+                    }
+                });
+                return lines;
             }else{
                 return null;
             }

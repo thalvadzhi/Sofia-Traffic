@@ -414,35 +414,9 @@ public class TimesSearchFragment extends Fragment {
                     return null;
                 }
 
-//
-//            stop = new Stop(1503, "CBA", "GYZ");
-//            ArrayList<Line> lines = new ArrayList<>();
-//            lines.add(new Line(1, 66, "1"));
-//            stop.setLines(lines);
-//            Time t = new Time("1:00", false, false);
-//            Time t1 = new Time("1:10", false, false);
-//            Time t2 = new Time("1:20", false, false);
-//            Time t3 = new Time("2:50", false, false);
-//            Time t4 = new Time("2:50", false, false);
-//            Time t5 = new Time("2:50", false, false);
-//            Time t6 = new Time("2:50", false, false);
-//            Time t7 = new Time("2:50", false, false);
-
-//            ArrayList<Time> vt = new ArrayList<>();
-//            vt.add(t);
-//            vt.add(t1);
-//            vt.add(t2);
-//            vt.add(t3);
-//            vt.add(t4);
-//            vt.add(t5);
-//            vt.add(t6);
-//            vt.add(t7);
-
-
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
             for (Line line : scheduleStop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));
-//                lt.setVehicleTimes(vt);
                 lineTimes.add(lt);
 
             }
@@ -464,6 +438,9 @@ public class TimesSearchFragment extends Fragment {
 //            } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {
 //                updateLineInfoFast(stop);
 //            }
+            if(stop == null){
+                return;
+            }
             try {
                 stopInformationGetter.getLineTimeWithSchedulesAsync();
             } catch (IOException e) {

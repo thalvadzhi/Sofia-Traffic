@@ -23,7 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
@@ -124,10 +126,12 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.setOnClickListeners(position);
         holder.exclamationMark.setVisibility(View.VISIBLE);
+        holder.exclamationMarkTouchArea.setVisibility(View.VISIBLE);
         LineTimes vt = times.get(position);
         String direction = vt.getRouteName();
         if(!vt.isSchedule()){
             holder.exclamationMark.setVisibility(View.GONE);
+            holder.exclamationMarkTouchArea.setVisibility(View.GONE);
         }
         Description desc = null;
         if (direction == null) {
@@ -218,6 +222,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
         private TextView moreButton;
         private TextView dir;
         private ImageView exclamationMark;
+        private RelativeLayout exclamationMarkTouchArea;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -229,6 +234,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             this.moreButton = itemView.findViewById(R.id.more_button);
             this.dir = itemView.findViewById(R.id.dir_alt);
             this.exclamationMark = itemView.findViewById(R.id.exclamation_mark);
+            this.exclamationMarkTouchArea = itemView.findViewById(R.id.exclamation_mark_touch_area);
         }
 
         /**
@@ -295,7 +301,8 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             imageView.setOnClickListener(listener);
             bg.setOnClickListener(listener);
             moreButton.setOnClickListener(moreTimesListener);
-            exclamationMark.setOnClickListener(new ExclamationMarkListener());
+//            exclamationMark.setOnClickListener(new ExclamationMarkListener());
+            exclamationMarkTouchArea.setOnClickListener(new ExclamationMarkListener());
         }
     }
 }

@@ -65,17 +65,24 @@
                             android:textAlignment="center"
                             android:textAppearance="?android:attr/textAppearanceLarge"
                             android:textColor="#FFFFFF" />
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/exclamation_mark"
-                            android:background="@drawable/exclamation_mark"
+                        <RelativeLayout
+                            android:layout_width="40dp"
+                            android:layout_height="30dp"
                             android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
-                            android:layout_marginRight="5dp"
+                            android:gravity="center|center_horizontal"
+                            android:id="@+id/exclamation_mark_touch_area">
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:id="@+id/exclamation_mark"
+                                android:background="@drawable/exclamation_mark"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:layout_centerHorizontal="true"
 
-                            />
+                                />
+                        </RelativeLayout>
                     </RelativeLayout>
 
 

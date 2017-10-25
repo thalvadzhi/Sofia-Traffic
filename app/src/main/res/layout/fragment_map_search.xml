@@ -45,6 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:elevation="5dp"
             android:background="?transitionSlideUpPanel"
             android:id="@+id/LinearLayoutBackground">
             <RelativeLayout

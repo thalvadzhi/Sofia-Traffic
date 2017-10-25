@@ -58,4 +58,5 @@
     <string name="more_button">Още</string>
     <string name="stop_name">Име на спирката</string>
     <string name="show_all_on_map">Всички на картата</string>
+    <string name="exclamation_mark_tooltip_warning_bg">Информацията е от разписанието и е ориентировъчна!</string>
 </resources>

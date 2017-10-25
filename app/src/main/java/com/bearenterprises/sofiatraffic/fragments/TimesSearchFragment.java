@@ -387,21 +387,6 @@ public class TimesSearchFragment extends Fragment {
             Stop scheduleStop = null;
             queryMethod = Constants.QUERY_METHOD_SLOW;
             try {
-                MainActivity ma = ((MainActivity) getActivity());
-                if (ma == null) {
-                    return null;
-                }
-                queryMethod = ma.getQueryMethod();
-                if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
-                    stop = stopInformationGetter.getStopSlow(code);
-                } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {
-                    stop = stopInformationGetter.getStopFast(code);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            }
-            try {
                 scheduleStop = stopInformationGetter.getStopWithAllLines(code);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -409,7 +394,6 @@ public class TimesSearchFragment extends Fragment {
             }
             if(scheduleStop == null && stop == null){
                     Utility.detachFragment(l, (MainActivity) getActivity());
-
                     Utility.makeSnackbar("Няма информация!", (MainActivity) getActivity());
                     return null;
                 }
@@ -418,26 +402,27 @@ public class TimesSearchFragment extends Fragment {
             for (Line line : scheduleStop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));
                 lineTimes.add(lt);
-
             }
+
             if(stop == null){
                 timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, scheduleStop);
             }else{
                 timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, stop);
             }
+
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());
-            return stop;
+
+            if(stop == null){
+                return scheduleStop;
+            }else{
+                return stop;
+            }
 
 
         }
 
         @Override
         protected void onPostExecute(Stop stop) {
-//            if (queryMethod.equals(Constants.QUERY_METHOD_SLOW)) {
-//                updateLineInfoSlow(stop);
-//            } else if (queryMethod.equals(Constants.QUERY_METHOD_FAST)) {
-//                updateLineInfoFast(stop);
-//            }
             if(stop == null){
                 return;
             }

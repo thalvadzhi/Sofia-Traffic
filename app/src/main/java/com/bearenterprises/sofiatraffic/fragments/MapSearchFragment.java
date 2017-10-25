@@ -131,7 +131,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                 }
             }
         });
-        coordinates = (TextView) v.findViewById(R.id.TextViewCoordinates);
+        coordinates = v.findViewById(R.id.TextViewCoordinates);
         coordinates.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -143,10 +143,10 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
             }
         });
 
-        code = (TextView) v.findViewById(R.id.TextViewSlideUpCode);
-        stopName = (TextView) v.findViewById(R.id.TextViewStopName);
+        code = v.findViewById(R.id.TextViewSlideUpCode);
+        stopName = v.findViewById(R.id.TextViewStopName);
 
-        lines = (RecyclerView) v.findViewById(R.id.RecyclerViewLines);
+        lines = v.findViewById(R.id.RecyclerViewLines);
         lines.setAdapter(slideUpLayoutLinesAdapter);
         lines.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         lines.setNestedScrollingEnabled(true);
@@ -188,9 +188,6 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         favourite.setOnCheckedChangeListener(listener);
         currentStop = stop;
         stopName.setText(stop.getName());
-//        direction.setVisibility(View.GONE);
-//        direction.setText(stop.getDirection());
-
         coordinates.setText(stop.getLatitude() + ", " + stop.getLongtitude());
         GetLinesOnStop getLinesOnStop = new GetLinesOnStop();
         getLinesOnStop.execute(Integer.toString(stop.getCode()));

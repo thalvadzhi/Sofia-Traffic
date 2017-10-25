@@ -47,6 +47,21 @@ public class StopInformationGetter {
         return stop;
     }
 
+    private void getStopSlowAsyncAndMixWithSchedules(String code) {
+        Call<Stop> call = sofiaTransportApi.getStop(code);
+        call.enqueue(new Callback<Stop>() {
+            @Override
+            public void onResponse(Call<Stop> call, Response<Stop> response) {
+                stop = response.body();
+                getTimesMixedWithSchedules();
+            }
+
+            @Override
+            public void onFailure(Call<Stop> call, Throwable t) {
+            }
+        });
+    }
+
     public Stop getStopFast(String code) throws IOException {
         Call<Stop> call = sofiaTransportApi.getStopWithTimes(code);
         stop = RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
@@ -85,7 +100,6 @@ public class StopInformationGetter {
         if (timesWithDirection != null) {
             times = timesWithDirection.getTimes();
             if (times.size() != 0) {
-//                onPreciseTimeScheduleMixReceivedListener.received(line, times, OnPreciseTimeScheduleMixReceivedListener.SCHEDULE);
                 onPreciseTimeScheduleMixReceivedListener.receivedSchedule(line, timesWithDirection);
             } else {
                 onPreciseTimeScheduleMixReceivedListener.received(line, null, OnPreciseTimeScheduleMixReceivedListener.NONE);
@@ -103,19 +117,18 @@ public class StopInformationGetter {
         if (stop != null) {
             getTimesMixedWithSchedules();
         } else {
-//            getStopSlow(Integer.toString(stopCode));
-            getTimesMixedWithSchedules();
+            getStopSlowAsyncAndMixWithSchedules(Integer.toString(stopCode));
         }
     }
 
     private TimesWithDirection scheduleLineTimesToTimesOfLine(List<ScheduleLineTimes> slt, Line line) throws Exception {
         //TODO rewrite this in functional style
         for (ScheduleLineTimes s : slt) {
+            Line scheduleLine = new Line(s.getType(), null, s.getName());
             //the list contains the times for all the lines so we need to filter it
-            if (s.getType() == line.getType() && s.getName().equals(line.getName())) {
+            if (scheduleLine.equals(line)) {
                 String scheduleDayType = Utility.getScheduleDayType();
                 for (ScheduleTimes t : s.getSchedule()) {
-
                     //we only need the schedule for the current day
                     if (t.getScheduleDayTypes().contains(scheduleDayType)) {
                         return new TimesWithDirection(t.getTimes(), t.getRouteName());
@@ -172,7 +185,6 @@ public class StopInformationGetter {
 
                     }
                 });
-
             }
         }
         ArrayList<Line> lineDiff;

@@ -1,5 +1,7 @@
 package com.bearenterprises.sofiatraffic.restClient.schedules;
 
+import com.bearenterprises.sofiatraffic.restClient.Line;
+
 import java.util.List;
 
 /**
@@ -34,4 +36,5 @@ public class ScheduleLineTimes {
     public void setSchedule(List<ScheduleTimes> schedule) {
         this.schedule = schedule;
     }
+
 }

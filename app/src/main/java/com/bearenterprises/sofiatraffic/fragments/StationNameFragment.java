@@ -65,8 +65,8 @@ public class StationNameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_station_name, container, false);
-        toggleButton = (ToggleButton) view.findViewById(R.id.toggleButton);
-        textView = (TextView) view.findViewById(R.id.station_name_text_view);
+        toggleButton = view.findViewById(R.id.toggleButton);
+        textView = view.findViewById(R.id.station_name_text_view);
 
         final Stop station = getStationName(mStationCode);
         if(station == null){

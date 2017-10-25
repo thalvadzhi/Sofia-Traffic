@@ -93,9 +93,9 @@ public class NameResultAdapter extends RecyclerView.Adapter<NameResultAdapter.Vi
 
         public ViewHolder(View itemView) {
             super(itemView);
-            stopName = (TextView) itemView.findViewById(R.id.name_search_result_stop_name);
-            code = (TextView) itemView.findViewById(R.id.name_search_result_stop_code);
-            location = (ImageView) itemView.findViewById(R.id.imageView_name_result_location);
+            stopName = itemView.findViewById(R.id.name_search_result_stop_name);
+            code = itemView.findViewById(R.id.name_search_result_stop_code);
+            location = itemView.findViewById(R.id.imageView_name_result_location);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

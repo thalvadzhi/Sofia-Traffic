@@ -141,7 +141,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             }
         }
         if (direction != null) {
-            holder.dir.setText(direction);
+            holder.dir.setText(direction.toUpperCase());
         }
         holder.stopName.setText(vt.getLine().getName());
         holder.moreButton.setVisibility(View.GONE);
@@ -283,7 +283,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
             public void onClick(View view) {
                 Tooltip.TooltipView tooltip = Tooltip.make(context, new Tooltip.Builder(1)
                         .anchor(view, Tooltip.Gravity.TOP)
-                        .text("Информацията е от разписанието и е ориентировъчна!")
+                        .text(context.getString(R.string.exclamation_mark_tooltip_warning_bg))
                         .maxWidth(1000)
                         .withArrow(true)
                         .withStyleId(R.style.ToolTipLayoutStyle)

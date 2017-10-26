@@ -14,6 +14,10 @@ public class Line implements Serializable {
     private Integer routeId;
     private Integer id;
     private String name;
+    private String routeName;
+
+
+
     private List<Time> times = null;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
@@ -21,6 +25,14 @@ public class Line implements Serializable {
         this.type = type;
         this.id = id;
         this.name = name;
+    }
+
+    public String getRouteName() {
+        return routeName;
+    }
+
+    public void setRouteName(String routeName) {
+        this.routeName = routeName;
     }
 
     public void setRouteId(Integer routeId) {

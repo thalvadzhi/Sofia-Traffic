@@ -19,12 +19,12 @@
     <ToggleButton
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:text="New ToggleButton"
         android:id="@+id/toggleButton"
         android:layout_gravity="left|top"
+        android:background="?starToggle"
 
         style="@style/toggleButton"
-        android:background="?starToggle"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/station_name_text_view" />
+
 </RelativeLayout>

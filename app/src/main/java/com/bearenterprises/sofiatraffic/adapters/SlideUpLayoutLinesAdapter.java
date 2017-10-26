@@ -54,8 +54,13 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         holder.setOnClickListener(position);
 
         Description desc = DbUtility.getDescription(Integer.toString(l.getType()), l.getName(), stopCode, context);
+
         if (desc != null){
             holder.direction.setText(desc.getDirection());
+        }else{
+            if(l.getRouteName() != null){
+                holder.direction.setText(l.getRouteName().toUpperCase());
+            }
         }
 
 

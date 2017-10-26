@@ -222,10 +222,11 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         @Override
         protected void onPostExecute(ArrayList<Line> lines){
             if(lines != null){
+                slideUpLayoutLinesAdapter.notifyItemRangeRemoved(0, linesForAdapter.size());
                 linesForAdapter.clear();
                 linesForAdapter.addAll(lines);
                 slideUpLayoutLinesAdapter.setStopCode(this.code);
-                slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, lines.size());
+                slideUpLayoutLinesAdapter.notifyItemRangeInserted(0, linesForAdapter.size());
             }
         }
     }

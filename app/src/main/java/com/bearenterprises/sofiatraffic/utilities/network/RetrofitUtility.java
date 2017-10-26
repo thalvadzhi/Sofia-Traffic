@@ -1,11 +1,14 @@
 package com.bearenterprises.sofiatraffic.utilities.network;
 
+import android.util.Log;
+
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.ApiError;
-import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
-import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
+import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleLineTimes;
+import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleTimes;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.parsing.ParseApiError;
 import com.bearenterprises.sofiatraffic.utilities.registration.RegistrationUtility;
@@ -24,11 +27,13 @@ import retrofit2.Response;
  */
 
 public class RetrofitUtility {
+    public static String TAG = RetrofitUtility.class.toString();
+
     public static <T> T handleUnauthorizedQuery(Call<T> call, MainActivity mainActivity) throws IOException {
         Response<T> response = call.execute();
-        if(!response.isSuccessful()){
+        if (!response.isSuccessful()) {
             ApiError error = ParseApiError.parseError(response);
-            if(error.getCode() != null && error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)){
+            if (error.getCode() != null && error.getCode().equals(Constants.UNAUTHOROZIED_USER_ID)) {
                 RegistrationUtility.reRegister(mainActivity);
                 Call<T> cll = call.clone();
                 response = cll.execute();
@@ -38,13 +43,26 @@ public class RetrofitUtility {
         return response.body();
     }
 
-    public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity){
+    public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity) {
         SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
-        Call<Stop> stop = sofiaTransportApi.getScheduleStop(code);
+        Call<List<ScheduleLineTimes>> lineTimes = sofiaTransportApi.getScheduleLineTimes(code);
+        ArrayList<Line> lines = new ArrayList<>();
         try {
-            Stop stopLines = RetrofitUtility.handleUnauthorizedQuery(stop, activity);
-            if(stopLines != null){
-                ArrayList<Line> lines = stopLines.getLines();
+            String scheduleDayType = Utility.getScheduleDayType();
+            List<ScheduleLineTimes> stopLines = RetrofitUtility.handleUnauthorizedQuery(lineTimes, activity);
+
+            if (stopLines != null) {
+                for (ScheduleLineTimes slt : stopLines) {
+                    Line l = new Line(slt.getType(), null, slt.getName());
+                    List<ScheduleTimes> schedule = slt.getSchedule();
+                    for (ScheduleTimes st : schedule) {
+                        if (st.getScheduleDayTypes().contains(scheduleDayType)) {
+                            l.setRouteName(st.getRouteName());
+                            lines.add(l);
+                        }
+                    }
+                }
+
                 Collections.sort(lines, new Comparator<Line>() {
                     @Override
                     public int compare(Line line, Line t1) {
@@ -52,11 +70,11 @@ public class RetrofitUtility {
                     }
                 });
                 return lines;
-            }else{
+            } else {
                 return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.d(TAG, "Error getting lines for layout adapter", e);
         }
         return null;
     }

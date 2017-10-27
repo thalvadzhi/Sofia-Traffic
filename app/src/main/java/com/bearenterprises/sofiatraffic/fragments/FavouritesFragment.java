@@ -73,7 +73,7 @@ public class FavouritesFragment extends Fragment implements OnStartDragListener 
                     st.setFavouriteIndex(idx);
                 }
                 if(st.getLineTypes() == null){
-                    ArrayList<Stop> stationByCode = DbUtility.getStationByCode(Integer.toString(st.getCode()), (MainActivity) getActivity());
+                    ArrayList<Stop> stationByCode = DbUtility.getStationsByCode(Integer.toString(st.getCode()), (MainActivity) getActivity());
                     if(stationByCode != null && stationByCode.size() > 0){
                         st.setLineTypes(stationByCode.get(0).getLineTypes());
                     }

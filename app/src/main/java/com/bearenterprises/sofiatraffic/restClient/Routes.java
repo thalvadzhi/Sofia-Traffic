@@ -33,7 +33,7 @@ public class Routes {
     /**
      * 
      * @return
-     *     The routes
+     *     The routesSchedules
      */
     public List<Route> getRoutes() {
         return routes;
@@ -42,7 +42,7 @@ public class Routes {
     /**
      * 
      * @param routes
-     *     The routes
+     *     The routesSchedules
      */
     public void setRoutes(List<Route> routes) {
         this.routes = routes;

@@ -17,12 +17,20 @@ import java.util.ArrayList;
 
 public class DbUtility {
 
-    public static ArrayList<Stop> getStationByCode(String code, MainActivity mainActivity) throws SQLiteDatabaseLockedException {
+    public static ArrayList<Stop> getStationsByCode(String code, MainActivity mainActivity) throws SQLiteDatabaseLockedException {
         String codeNoZeroes = code.replaceFirst("^0+(?!$)", "");
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
         String[] args = new String[]{codeNoZeroes};
         return DbUtility.getStationsFromDatabase(query, args, mainActivity);
+    }
 
+    public static Stop getStationByCode(String code, MainActivity mainActivity) throws SQLiteDatabaseLockedException{
+        ArrayList<Stop> stationsByCode = getStationsByCode(code, mainActivity);
+        if(stationsByCode != null && stationsByCode.size() > 0){
+            return stationsByCode.get(0);
+        }else{
+            return new Stop();
+        }
     }
 
     public static <T extends Stop> void addLineTypes(T s, String lineTypes){
@@ -33,7 +41,7 @@ public class DbUtility {
     }
 
     public static<T extends Stop> void addLineTypes(T s, MainActivity mainActivity){
-        ArrayList<Stop> stationByCode = getStationByCode(Integer.toString(s.getCode()), mainActivity);
+        ArrayList<Stop> stationByCode = getStationsByCode(Integer.toString(s.getCode()), mainActivity);
         if(stationByCode != null && stationByCode.size() > 0){
             s.setLineTypes(stationByCode.get(0).getLineTypes());
         }

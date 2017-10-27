@@ -49,8 +49,9 @@ public class RetrofitUtility {
         ArrayList<Line> lines = new ArrayList<>();
         try {
             String scheduleDayType = Utility.getScheduleDayType();
+            long start = System.currentTimeMillis();
             List<ScheduleLineTimes> stopLines = RetrofitUtility.handleUnauthorizedQuery(lineTimes, activity);
-
+            Log.i("Lines info: ", ""+(System.currentTimeMillis() - start));
             if (stopLines != null) {
                 for (ScheduleLineTimes slt : stopLines) {
                     Line l = new Line(slt.getType(), null, slt.getName());

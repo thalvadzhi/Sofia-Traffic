@@ -104,7 +104,7 @@ public class StationNameFragment extends Fragment {
     private Stop getStationName(String code){
         ArrayList<Stop> stationByCode = null;
         try {
-            stationByCode = DbUtility.getStationByCode(code, (MainActivity) getContext());
+            stationByCode = DbUtility.getStationsByCode(code, (MainActivity) getContext());
         }catch (SQLiteDatabaseLockedException e){
             Utility.makeSnackbar("Информацията за спирките все още се обновява, моля изчакайте.", (MainActivity)getActivity());
         }

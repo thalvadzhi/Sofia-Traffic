@@ -1,6 +1,5 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,22 +11,23 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
-import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
+import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.adapters.ChangeListener;
 import com.bearenterprises.sofiatraffic.adapters.LineNamesAdapter;
 import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.Route;
-import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Routes;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleRoute;
+import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
-import com.bearenterprises.sofiatraffic.utilities.Utility;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -134,7 +134,6 @@ public class LinesFragment extends Fragment {
                 }catch (ClassCastException e){
                     e.printStackTrace();
                 }
-                Log.i("Shto taj be", (transportSchedule == null)+"");
 
                 if(transport == null && transportSchedule == null){
                     return;
@@ -144,23 +143,43 @@ public class LinesFragment extends Fragment {
                     return;
                 }
 
-                if (transportSchedule.getId() == null) {
+                if (transportSchedule.getId() != null) {
                     //means selected item is indeed scheduleStop
-                    RouteGetterSchedules routeGetterSchedules = new RouteGetterSchedules();
-                    routeGetterSchedules.execute(Integer.toString(idx), transportSchedule.getName());
-                } else {
+                    RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
+                        @Override
+                        public RouteShowerArguments getRoutes(SofiaTransportApi sofiaTransportApi, String lineType, String lineId) throws IOException {
+                            Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
+                            try {
+                                Routes route = routes.execute().body();
+                                RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
+                                return rsa;
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            return null;
+                        }
+                    });
                     String id = Integer.toString(transport.getId());
-                    RouteGetterVirtualTables getter = new RouteGetterVirtualTables();
-                    getter.execute(Integer.toString(idx), id);
+                    routeGetter.execute(Integer.toString(idx), id);
+                } else {
+                    RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
+                        @Override
+                        public RouteShowerArguments getRoutes(SofiaTransportApi sofiaTransportApi, String lineType, String lineId) throws IOException {
+                            Call<List<ScheduleRoute>> routes = sofiaTransportApi.getScheduleRoutes(lineType, lineId);
+                            try {
+                                List<ScheduleRoute> route = routes.execute().body();
+                                RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
+                                return rsa;
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            return null;
+                        }
+                    });
+                    routeGetter.execute(Integer.toString(idx), transportSchedule.getName());
                 }
-
-//                if (!(transport.getName().equals(Constants.LINE_ID_DEFAULT))){
-//                    String id = Integer.toString(transport.getId());
-//                    if ()
-//                    RouteGetterVirtualTables getter = new RouteGetterVirtualTables();
-//                    getter.execute(Integer.toString(idx), id);
-//                }
-
             }
 
             @Override
@@ -217,7 +236,13 @@ public class LinesFragment extends Fragment {
         if(currentPosition == targetPoisiton){
             int pos = selectLineId(line.getType(), line.getName());
             if(currentLineIdPosition == pos){
-                RoutesFragment f =((RoutesFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.location_container));
+                RoutesFragment f = null;
+                try {
+                    f = ((RoutesFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.location_container));
+                }catch (ClassCastException e){
+                    Log.d(TAG, "Strange thing", e);
+                    return;
+                }
                 if(f == null){
                     return;
                 }
@@ -230,83 +255,111 @@ public class LinesFragment extends Fragment {
     }
 
 
-    /**
-     * A class to get the routes from the Ivkos API (from the virtual tables)
-     * Typically there are two routes: From stop A to stop B, and from stop B to stop A
-     */
-    private class RouteGetterVirtualTables extends AsyncTask<String, Void, Routes>{
+    private class RouteGetter extends AsyncTask<String, Void, RouteShowerArguments>{
+        private Utility.RouteGettingFunction<String, String, RouteShowerArguments> routeGettingFunction;
 
-        protected void onPreExecute(){
-            Utility.changeFragment(R.id.location_container, loadingFragment, (MainActivity)getActivity());
-        }
-        @Override
-        protected Routes doInBackground(String... strings) {
-            String lineType = strings[0];
-            String lineId = strings[1];
-            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
-            Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
-            try {
-                Routes route = routes.execute().body();
-
-                return route;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
+        public RouteGetter(Utility.RouteGettingFunction<String, String, RouteShowerArguments> f){
+            routeGettingFunction = f;
         }
 
-        /**
-         * Now that the stops information has been received we can show it
-         * @param result
-         */
-        protected void onPostExecute(Routes result) {
-            if(result != null){
-                RouteShower routeShower = new RouteShower();
-                routeShower.execute(result);
-            }
-        }
-    }
-
-    private class RouteGetterSchedules extends AsyncTask<String, Void, RouteShowerArguments>{
-
-        protected void onPreExecute(){
-            Utility.changeFragment(R.id.location_container, loadingFragment, (MainActivity)getActivity());
-        }
         @Override
         protected RouteShowerArguments doInBackground(String... strings) {
             String lineType = strings[0];
-            String lineName = strings[1];
+            //could be either id or name
+            String lineIdentification = strings[1];
             SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
-            Call<List<ScheduleRoute>> scheduleRoutes = sofiaTransportApi.getScheduleRoutes(lineType, lineName);
+            RouteShowerArguments routeShowerArguments;
             try {
-                List<ScheduleRoute> scheduleRoutesResponse = scheduleRoutes.execute().body();
-
-                return new RouteShowerArguments(scheduleRoutesResponse, lineType);
+                routeShowerArguments = routeGettingFunction.getRoutes(sofiaTransportApi, lineType, lineIdentification);
+                return routeShowerArguments;
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.d(TAG, "Error getting route", e);
             }
 
             return null;
         }
 
-        /**
-         * Now that the stops information has been received we can show it
 
-         */
-        protected void onPostExecute(RouteShowerArguments args) {
-            if(args != null){
-                RouteShowerSchedule rsc = new RouteShowerSchedule();
-                rsc.execute(args);
+        @Override
+        protected void onPreExecute() {
+            Utility.changeFragment(R.id.location_container, loadingFragment, (MainActivity)getActivity());
+        }
+
+        @Override
+        protected void onPostExecute(RouteShowerArguments routeShowerArguments) {
+            if(routeShowerArguments != null){
+                RouteShower routeShower;
+                if(routeShowerArguments.routeType.equals(RouteShowerArguments.ROUTE_TYPE_SCHEDULE)){
+                     routeShower = new RouteShower(new Utility.RouteStopsFunction<RouteShowerArguments>() {
+                        @Override
+                        public ArrayList<ArrayList<Stop>> getStops(RouteShowerArguments routeShowerArguments) {
+                            ArrayList<ArrayList<Stop>> stops = new ArrayList<>();
+                            String currentScheduleDayType = "";
+                            try {
+                                currentScheduleDayType = Utility.getScheduleDayType();
+                            } catch (Exception e) {
+                                Log.d(TAG, "Couldn't get the current day", e);
+                            }
+
+                            for(ScheduleRoute route : routeShowerArguments.routesSchedules){
+                                if(route.getScheduleDayTypes().contains(currentScheduleDayType)){
+                                    ArrayList<Stop> routeStations = new ArrayList<>();
+                                    for (Stop stop : route.getStops()){
+                                        Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
+                                        st.setDescription(route.getRouteName());
+                                        if(st.getName() != null){
+                                            routeStations.add(st);
+                                        }
+                                    }
+                                    if(routeStations.size() != 0){
+                                        stops.add(routeStations);
+                                    }
+                                }
+
+                            }
+                            return stops;
+                        }
+                    });
+
+                }else{
+                    routeShower = new RouteShower(new Utility.RouteStopsFunction<RouteShowerArguments>() {
+                        @Override
+                        public ArrayList<ArrayList<Stop>> getStops(RouteShowerArguments routeShowerArguments) {
+                            ArrayList<ArrayList<Stop>> stops = new ArrayList<>();
+                            for(Route route : routeShowerArguments.routesVirtualTables.getRoutes()){
+                                ArrayList<Stop> routeStations = new ArrayList<>();
+                                for (Stop stop : route.getStops()) {
+                                    Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
+                                    if (st.getName() != null) {
+                                        routeStations.add(st);
+                                    }
+                                }
+                                if (routeStations.size() != 0) {
+                                    stops.add(routeStations);
+                                }
+
+                            }
+                            return stops;
+                        }
+                    });
+                }
+
+                if(routeShower != null){
+                    routeShower.execute(routeShowerArguments);
+                }
             }
         }
     }
-    private class RouteShower extends AsyncTask<Routes, Void, Void>{
 
+    private class RouteShower extends AsyncTask<RouteShowerArguments, Void, Void>{
+
+        private Utility.RouteStopsFunction routeStopsFunction;
+        public RouteShower(Utility.RouteStopsFunction routeStopsFunction){
+            this.routeStopsFunction = routeStopsFunction;
+        }
         @Override
-        protected Void doInBackground(Routes... routes) {
-
-            Routes result = routes[0];
+        protected Void doInBackground(RouteShowerArguments... routeShowerArguments) {
+            RouteShowerArguments rsa = routeShowerArguments[0];
             DbManipulator manipulator=null;
             try {
                 manipulator = new DbManipulator(getContext());
@@ -315,35 +368,16 @@ public class LinesFragment extends Fragment {
                 return null;
             }
 
-            ArrayList<ArrayList<Stop>> stations = new ArrayList<>();
-            String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS + " WHERE code=?";
-            //TODO fix when result is null
-            if (result == null){
+            if (rsa == null){
                 manipulator.closeDb();
                 Utility.detachFragment(loadingFragment, (MainActivity)getActivity());
                 return null;
             }
-            for(Route route : result.getRoutes()){
-                ArrayList<Stop> routeStations = new ArrayList<>();
-                for (Stop stop : route.getStops()){
-                    Cursor c = manipulator.readRawQuery(query, new String[]{Integer.toString(stop.getCode())});
-                    if(c.getCount() != 0) {
-                        c.moveToFirst();
-                        String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
-                        String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
-                        String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
-                        String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
-                        String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
-                        routeStations.add(new Stop(Integer.parseInt(stationCode), stationName, latitude, longtitude, description));
-                    }
-                }
-                if(routeStations.size() != 0){
-                    stations.add(routeStations);
-                }
 
-            }
+            ArrayList<ArrayList<Stop>> stations = routeStopsFunction.getStops(rsa);
+
             manipulator.closeDb();
-            int type = result.getLine().getType();
+            int type = Integer.parseInt(rsa.lineType);
             String typeString = null;
             switch (type){
                 case 0:
@@ -371,104 +405,27 @@ public class LinesFragment extends Fragment {
 
             return null;
         }
-
-
     }
-    /**
-     * This class is used to show the already received information from the ivkos API.
-     * It also polls the database in order to complete the data with location and description information.
-     */
-    private class RouteShowerSchedule extends AsyncTask<RouteShowerArguments, Void, Void>{
-
-        @Override
-        protected Void doInBackground(RouteShowerArguments... args) {
-
-            List<ScheduleRoute> result = args[0].routes;
-            String lineType = args[0].lineType;
-            DbManipulator manipulator=null;
-            try {
-               manipulator = new DbManipulator(getContext());
-            }catch (SQLiteDatabaseLockedException e){
-                Utility.makeSnackbar("Информацията за спирките все още се обновява", (MainActivity)getActivity());
-                return null;
-            }
-
-            ArrayList<ArrayList<Stop>> stations = new ArrayList<>();
-            String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS + " WHERE code=?";
-
-            if (result == null){
-                manipulator.closeDb();
-                Utility.detachFragment(loadingFragment, (MainActivity)getActivity());
-                return null;
-            }
-            String currentScheduleDayType = "";
-            try {
-                currentScheduleDayType = Utility.getScheduleDayType();
-            } catch (Exception e) {
-                Log.d(TAG, "Couldn't get the current day", e);
-            }
-            for(ScheduleRoute route : result){
-                if(route.getScheduleDayTypes().contains(currentScheduleDayType)){
-                    ArrayList<Stop> routeStations = new ArrayList<>();
-                    for (Stop stop : route.getStops()){
-                        Cursor c = manipulator.readRawQuery(query, new String[]{Integer.toString(stop.getCode())});
-                        if(c.getCount() != 0) {
-                            c.moveToFirst();
-                            String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
-                            String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
-                            String latitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
-                            String longtitude = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
-                            String description = route.getRouteName();
-                            routeStations.add(new Stop(Integer.parseInt(stationCode), stationName, latitude, longtitude, description));
-                        }
-                    }
-                    if(routeStations.size() != 0){
-                        stations.add(routeStations);
-                    }
-                }
-
-            }
-            manipulator.closeDb();
-            String typeString = null;
-            switch (Integer.parseInt(lineType)){
-                case 0:
-                    typeString = Constants.TRAM;
-                    break;
-                case 1:
-                    typeString = Constants.BUS;
-                    break;
-                case 2:
-                    typeString = Constants.TROLLEY;
-                    break;
-            }
-
-            if (stations.size() != 0){
-                int stCode = -1;
-                if(currentStopCode != null){
-                    stCode = currentStopCode.intValue();
-                }
-                RoutesFragment f = RoutesFragment.newInstanceSchedule(stations, typeString, stCode);
-                Utility.changeFragment(R.id.location_container, f, (MainActivity)getActivity());
-                currentStopCode = null;
-            }else{
-                Utility.detachFragment(loadingFragment, (MainActivity) getActivity());
-            }
-
-            return null;
-        }
-
-
-    }
-
 
 
     private class RouteShowerArguments{
-        public List<ScheduleRoute> routes;
+        public List<ScheduleRoute> routesSchedules;
+        public Routes routesVirtualTables;
         public String lineType;
+        public String routeType;
+        public static final String ROUTE_TYPE_SCHEDULE = "schedule route";
+        public static final String ROUTE_TYPE_VT = "vt route";
 
-        public RouteShowerArguments(List<ScheduleRoute> routes, String lineType) {
-            this.routes = routes;
+        RouteShowerArguments(List<ScheduleRoute> routesSchedules, String lineType) {
+            this.routesSchedules = routesSchedules;
             this.lineType = lineType;
+            this.routeType = this.ROUTE_TYPE_SCHEDULE;
+        }
+
+       RouteShowerArguments(Routes routesVirtualTables, String lineType){
+            this.routesVirtualTables = routesVirtualTables;
+            this.lineType = lineType;
+            this.routeType = this.ROUTE_TYPE_VT;
         }
     }
 
@@ -487,6 +444,7 @@ public class LinesFragment extends Fragment {
         @Override
         protected List<Line> doInBackground(Integer... idxs) {
             SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
+            //TODO maybe leave just one network call or make the call parallel
             Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
             Call<List<Line>> scheduleLines = sofiaTransportApi.getScheduleLines(Integer.toString(idxs[0]));
             try {
@@ -574,6 +532,4 @@ public class LinesFragment extends Fragment {
         super.onResume();
         ((MainActivity)getActivity()).hideSoftKeyboad();
     }
-
-
 }

@@ -10,9 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by thalv on 02-Jul-16.
@@ -23,6 +25,9 @@ public class LineTimes implements Serializable{
     private String times;
     private String routeName;
     private boolean isSchedule;
+    private final static String TIME_TEMPLATE = "%d:%d";
+    private final static String TIME_TEMPLATE_O_BEFORE_MINUTE = "%d:0%d";
+
 
     public boolean isSchedule() {
         return isSchedule;
@@ -66,9 +71,6 @@ public class LineTimes implements Serializable{
         if (vehicleTimes == null){
             return null;
         }
-//        if(times == null){
-//            times = generateTimes();
-//        }
         return generateTimes();
     }
 
@@ -116,20 +118,46 @@ public class LineTimes implements Serializable{
         ArrayList<Long> timeDiffs = new ArrayList<>();
         Calendar timeNow = Calendar.getInstance();
         for(Date date : dates){
-            Calendar helperCalendar = Calendar.getInstance();
-            Calendar targetTime = Calendar.getInstance();
-            helperCalendar.setTime(date);
-            targetTime.set(Calendar.HOUR_OF_DAY, helperCalendar.get(Calendar.HOUR_OF_DAY));
-            targetTime.set(Calendar.MINUTE, helperCalendar.get(Calendar.MINUTE));
-            int hourOfDayTarget = targetTime.get(Calendar.HOUR_OF_DAY);
-            int hourOfDayNow = timeNow.get(Calendar.HOUR_OF_DAY);
-            if(hourOfDayTarget < hourOfDayNow){
-                targetTime.add(Calendar.DAY_OF_MONTH, 1);
-            }
-            long timeDiff = Math.abs(targetTime.getTimeInMillis() - timeNow.getTimeInMillis());
+            Long timeDiff = getTimeDiff(date, timeNow);
             timeDiffs.add(timeDiff);
         }
         return timeDiffs;
+    }
+
+    private String formatHoursAndMinutes(int hours, int minutes){
+        String time;
+        if(minutes < 10){
+            time = String.format(TIME_TEMPLATE_O_BEFORE_MINUTE, hours, minutes);
+        }else{
+            time = String.format(TIME_TEMPLATE, hours, minutes);
+        }
+        return time;
+    }
+
+    private Long getTimeDiff(Date date, Calendar timeNow){
+        Calendar targetTime = createPresentDayCalendarAndSetHourAndMinute(date, timeNow);
+        long timeDiff = Math.abs(targetTime.getTimeInMillis() - timeNow.getTimeInMillis());
+        return timeDiff;
+    }
+
+    private Calendar createPresentDayCalendarAndSetHourAndMinute(Date date, Calendar timeNow){
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.YEAR, timeNow.get(Calendar.YEAR));
+        cal.set(Calendar.MONTH, timeNow.get(Calendar.MONTH));
+        int hourOfDaySchedule = cal.get(Calendar.HOUR_OF_DAY);
+        int hourOfDayNow = timeNow.get(Calendar.HOUR_OF_DAY);
+        cal.set(Calendar.DAY_OF_MONTH, timeNow.get(Calendar.DAY_OF_MONTH));
+        if(hourOfDaySchedule < hourOfDayNow){
+            cal.add(Calendar.DAY_OF_MONTH, 1);
+        }else if (hourOfDaySchedule == hourOfDayNow){
+            int minuteOfDaySchedule = cal.get(Calendar.MINUTE);
+            int minuteOfDayNow = timeNow.get(Calendar.MINUTE);
+            if(minuteOfDaySchedule < minuteOfDayNow){
+                cal.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+        return cal;
     }
 
     public ArrayList<String> getRemainingTimesList(){
@@ -137,7 +165,6 @@ public class LineTimes implements Serializable{
             return new ArrayList<>();
         }
         ArrayList<Date> dates = timesToDates(vehicleTimes);
-//        ArrayList<Date> dates = mockDates();
         ArrayList<Long> timeDiffs = datesToTimeDiffs(dates);
         Collections.sort(timeDiffs);
         ArrayList<String> times = new ArrayList<>();
@@ -180,8 +207,22 @@ public class LineTimes implements Serializable{
             return new ArrayList<>();
         }
         ArrayList<String> times = new ArrayList<>();
-        for(Time t : vehicleTimes){
-            times.add(t.getTime());
+        ArrayList<Date> dates = timesToDates(vehicleTimes);
+        final Calendar timeNow = Calendar.getInstance();
+        Collections.sort(dates, new Comparator<Date>() {
+            @Override
+            public int compare(Date date1, Date date2) {
+                Long timeDiffWithDate1 = getTimeDiff(date1, timeNow);
+                Long timeDiffWithDate2 = getTimeDiff(date2, timeNow);
+                return (int)(timeDiffWithDate1 - timeDiffWithDate2);
+            }
+        });
+        for(Date date : dates){
+            Calendar cal = createPresentDayCalendarAndSetHourAndMinute(date, timeNow);
+            int hours = cal.get(Calendar.HOUR_OF_DAY);
+            int minutes = cal.get(Calendar.MINUTE);
+            String time = formatHoursAndMinutes(hours, minutes);
+            times.add(time);
         }
         if(times.size() < 10){
             return times;

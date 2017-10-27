@@ -18,13 +18,28 @@ import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by thalv on 08-Jul-16.
  */
 public class Utility {
+
+    public interface RouteGettingFunction<T, K, R>{
+        public R getRoutes(SofiaTransportApi sofiaTransportApi, T t, K k) throws IOException;
+    }
+
+    public interface RouteStopsFunction<T>{
+        public ArrayList<ArrayList<Stop>> getStops(T routeShowerArguments);
+    }
+
+
     public static void toastOnUiThread(String message, Context context){
         final String msg = message;
         final MainActivity m = (MainActivity) context;

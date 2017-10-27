@@ -22,7 +22,7 @@ import java.util.List;
 public class RoutesFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ROUTES = "routes";
+    private static final String ROUTES = "routesSchedules";
     private static final String SCHEDULE_ROUTES = "schedule_routes";
 
     private static final String TR_TYPE = "tr_type";

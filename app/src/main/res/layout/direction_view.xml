@@ -49,7 +49,8 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/imageButton_show_on_map_group"
-                    android:layout_toRightOf="@+id/relativeLayout_tr_type">
+                    android:layout_toRightOf="@+id/relativeLayout_tr_type"
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/textView_from_stop"

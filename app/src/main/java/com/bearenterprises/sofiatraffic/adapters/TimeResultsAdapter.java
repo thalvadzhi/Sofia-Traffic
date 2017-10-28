@@ -272,7 +272,8 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
                 progressBar.setVisibility(View.VISIBLE);
                 if (position < times.size() && position >= 0) {
                     Line line = times.get(position).getLine();
-                    CommunicationUtility.updateLineInfoSlow(stop, new ArrayList<>(Arrays.asList(line)), (MainActivity) context);
+                    //TODO either delete this Listener or reimplement using stopInfoGetter
+//                    CommunicationUtility.updateLineInfoSlow(stop, new ArrayList<>(Arrays.asList(line)), (MainActivity) context);
                 }
             }
         }

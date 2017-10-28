@@ -47,7 +47,7 @@ public class LineNamesAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         LayoutInflater inflater = LayoutInflater.from(this.context);
         view = inflater.inflate(R.layout.spinner_item, null);
-        TextView text = (TextView) view.findViewById(R.id.textViewSpinnerItem);
+        TextView text = view.findViewById(R.id.textViewSpinnerItem);
         text.setText(getItem(i).getName());
         return view;
     }

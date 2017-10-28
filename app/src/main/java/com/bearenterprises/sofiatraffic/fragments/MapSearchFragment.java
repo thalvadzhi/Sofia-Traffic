@@ -63,6 +63,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         return mapFragment;
     }
 
+    private final String COORDINATES_TEMPLATE = "%.6f, %.6f";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -188,7 +189,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         favourite.setOnCheckedChangeListener(listener);
         currentStop = stop;
         stopName.setText(stop.getName());
-        coordinates.setText(stop.getLatitude() + ", " + stop.getLongtitude());
+        coordinates.setText(String.format(COORDINATES_TEMPLATE, Float.parseFloat(stop.getLatitude()), Float.parseFloat(stop.getLongtitude())));
         GetLinesOnStop getLinesOnStop = new GetLinesOnStop();
         getLinesOnStop.execute(Integer.toString(stop.getCode()));
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);

@@ -154,6 +154,7 @@ public class StopInformationGetter {
     private void getTimesMixedWithSchedules() {
         requestAndCacheScheduleStop.getSchedule();
         if (stop != null) {
+
             for (int i = 0; i < stop.getLines().size(); i++) {
                 final Line line = stop.getLines().get(i);
                 Call<List<Time>> call = sofiaTransportApi.getTimes(Integer.toString(stop.getCode()), Integer.toString(line.getId()));
@@ -162,16 +163,16 @@ public class StopInformationGetter {
                     public void onResponse(Call<List<Time>> call, Response<List<Time>> response) {
                         List<Time> times = response.body();
                         if (onPreciseTimeReceivedListener != null) {
-                            if (times != null) {
+                            if (times != null && times.size() != 0) {
                                 onPreciseTimeReceivedListener.received(line, times);
                             }
                         }
                         if (onPreciseTimeScheduleMixReceivedListener != null) {
-                            if (times != null) {
+                            if (times != null && times.size() != 0 ) {
                                 onPreciseTimeScheduleMixReceivedListener.received(line, times, OnPreciseTimeScheduleMixReceivedListener.PRECISE);
                             }
                         }
-                        if (times == null) {
+                        if (times == null || times.size() == 0) {
                             try {
                                 getScheduleLineTimesList(Integer.toString(scheduleStop.getCode()), line);
                             } catch (IOException e) {

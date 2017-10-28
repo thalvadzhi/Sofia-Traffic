@@ -40,50 +40,6 @@ public class DirectionViewHolder extends ParentViewHolder {
         showOnMap = itemView.findViewById(R.id.imageButton_show_on_map_group);
     }
 
-    public void bind(final DirectionSchedules direction) {
-        from.setText(direction.getFrom().getName());
-        to.setText(direction.getTo().getName());
-        showOnMap.setFocusable(false);
-
-        showOnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DbUtility.addLineTypes(direction.getStops(), (MainActivity) context);
-                CommunicationUtility.showOnMap(direction.getStops(), (MainActivity)context);
-            }
-        });
-
-        TypedValue typedValueBus = new TypedValue();
-        TypedValue typedValueTrolley = new TypedValue();
-        TypedValue typedValueTram = new TypedValue();
-
-        Resources.Theme theme = context.getTheme();
-        theme.resolveAttribute(R.attr.busColor, typedValueBus, true);
-        theme.resolveAttribute(R.attr.tramColor, typedValueTram, true);
-        theme.resolveAttribute(R.attr.trolleyColor, typedValueTrolley, true);
-
-        int colorBus = typedValueBus.data;
-        int colorTram = typedValueTram.data;
-        int colorTrolley = typedValueTrolley.data;
-
-
-        switch(direction.getTransportationType()){
-            case "bus":
-                background.setBackgroundColor(colorBus);
-                Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
-                trType.setImageBitmap(image);break;
-            case "tram":
-                background.setBackgroundColor(colorTram);
-                Bitmap image2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram_white);
-                trType.setImageBitmap(image2);break;
-            case "trolley":
-                background.setBackgroundColor(colorTrolley);
-                Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_white);
-                trType.setImageBitmap(image3);break;
-        }
-
-    }
-
     public void bind(final Direction direction) {
         from.setText(direction.getFrom().getName());
         to.setText(direction.getTo().getName());

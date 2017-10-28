@@ -103,7 +103,7 @@ public class MapFragment extends Fragment {
 
         initPinBitmaps();
 
-        mapView = ((MapView) view.findViewById(R.id.map));
+        mapView = (view.findViewById(R.id.map));
 
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -171,7 +171,7 @@ public class MapFragment extends Fragment {
                 if(stop != null){
                     ((MainActivity)getActivity()).showSlideUpPanelWithInfo(stop);
                 }
-                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 500, null);
+                map.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()), 300, null);
                 return true;
             }
         });
@@ -208,7 +208,7 @@ public class MapFragment extends Fragment {
                 if(closestStations != null){
                     setMarkers(closestStations, markers);
                     CameraUpdate cu = getCameraUpdate(markers);
-                    map.animateCamera(cu, 500, null);
+                    map.animateCamera(cu, 300, null);
 
                 }else{
                     Utility.makeSnackbar("Няма спирки в близост до това място", (MainActivity)getActivity());
@@ -252,7 +252,7 @@ public class MapFragment extends Fragment {
             builder.include(marker.getPosition());
         }
         LatLngBounds bounds = builder.build();
-        int padding = 0;
+        int padding = 100;
         return CameraUpdateFactory.newLatLngBounds(bounds, padding);
     }
 

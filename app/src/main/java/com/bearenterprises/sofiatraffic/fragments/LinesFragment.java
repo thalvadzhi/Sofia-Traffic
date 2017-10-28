@@ -288,7 +288,7 @@ public class LinesFragment extends Fragment {
         @Override
         protected void onPostExecute(RouteShowerArguments routeShowerArguments) {
             if(routeShowerArguments != null){
-                RouteShower routeShower;
+                final RouteShower routeShower;
                 if(routeShowerArguments.routeType.equals(RouteShowerArguments.ROUTE_TYPE_SCHEDULE)){
                      routeShower = new RouteShower(new Utility.RouteStopsFunction<RouteShowerArguments>() {
                         @Override
@@ -309,6 +309,8 @@ public class LinesFragment extends Fragment {
                                         st.setDescription(route.getRouteName());
                                         if(st.getName() != null){
                                             routeStations.add(st);
+                                        }else{
+                                            routeStations.add(stop);
                                         }
                                     }
                                     if(routeStations.size() != 0){
@@ -332,6 +334,8 @@ public class LinesFragment extends Fragment {
                                     Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
                                     if (st.getName() != null) {
                                         routeStations.add(st);
+                                    }else{
+                                        routeStations.add(stop);
                                     }
                                 }
                                 if (routeStations.size() != 0) {

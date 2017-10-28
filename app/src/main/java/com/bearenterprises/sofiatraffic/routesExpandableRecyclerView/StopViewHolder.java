@@ -73,6 +73,9 @@ public class StopViewHolder extends ChildViewHolder {
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(stop.getLatitude() == null || stop.getLongtitude() == null){
+                    return;
+                }
                 DbUtility.addLineTypes(stop, (MainActivity)context);
                 CommunicationUtility.showOnMap(stop, (MainActivity)context);
             }

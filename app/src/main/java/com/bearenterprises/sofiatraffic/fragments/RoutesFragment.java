@@ -9,11 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bearenterprises.sofiatraffic.adapters.RoutesAdapter;
-import com.bearenterprises.sofiatraffic.adapters.RoutesAdapterSchedules;
 import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.Direction;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
-import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.DirectionSchedules;
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 
 import java.util.ArrayList;
@@ -79,7 +77,6 @@ public class RoutesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_routes, container, false);
         routesRecyclerView =  view.findViewById(R.id.recyclerView_routes);
         List<Direction> directions = new ArrayList<>();
-        List<DirectionSchedules> directionSchedules = new ArrayList<>();
         if(routes != null){
             for (ArrayList<Stop> route : routes){
                 directions.add(new Direction(route, transportationType));

@@ -130,16 +130,6 @@ public class CommunicationUtility {
         f.removeFavourite(code);
     }
 
-    public static void updateLineInfoSlow(Stop station, ArrayList<Line> lines, MainActivity mainActivity){
-        if (mainActivity == null){
-            return;
-        }
-        TimesSearchFragment f = mainActivity.getTimesSearchFragment();
-        if (f == null){
-            return;
-        }
-        f.updateLineInfoSlowForSelectLines(station, lines);
-    }
 
     public static void nextSwitch(MainActivity activity){
         activity.getTimesSearchFragment().nextInCodeName();

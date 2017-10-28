@@ -106,20 +106,24 @@ public class DbUtility {
         ArrayList<Stop> stations = new ArrayList<>();
         try(Cursor c = manipulator.readRawQuery(query, codes)){
             if (c != null && c.getCount() > 0) {
-                c.moveToFirst();
+                if(c.moveToFirst()){
+                    do {
+                        String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
+                        String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
+                        String lat = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
+                        String lon = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
+                        String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
+                        String lineTypes = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LINE_TYPES));
+                        Stop s = new Stop(Integer.parseInt(stationCode), stationName, lat, lon, description);
+                        addLineTypes(s, lineTypes);
+                        stations.add(s);
+                    }while(c.moveToNext());
+                }
+
             } else {
                 Utility.makeSnackbar("Няма такава спирка", mainActivity);
                 return null;
             }
-            String stationName = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME));
-            String stationCode = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_CODE));
-            String lat = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LAT));
-            String lon = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LON));
-            String description = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_DESCRIPTION));
-            String lineTypes = c.getString(c.getColumnIndex(DbHelper.FeedEntry.COLUMN_NAME_LINE_TYPES));
-            Stop s = new Stop(Integer.parseInt(stationCode), stationName, lat, lon, description);
-            addLineTypes(s, lineTypes);
-            stations.add(s);
         }finally {
             if(manipulator != null){
                 manipulator.closeDb();

@@ -146,6 +146,18 @@ public class Utility {
         }
     }
 
+    public static String getNextScheduleDayType(String scheduleDayType) throws Exception{
+        if(scheduleDayType.equals(Constants.WORKDAY)){
+            return Constants.PRE_NON_WORKING_DAY;
+        }else if(scheduleDayType.equals(Constants.PRE_NON_WORKING_DAY)){
+            return Constants.NON_WORKING_DAY;
+        }else if(scheduleDayType.equals(Constants.NON_WORKING_DAY)){
+            return Constants.WORKDAY;
+        }else{
+            return null;
+        }
+    }
+
     /**
      * for sorting purposes
      */

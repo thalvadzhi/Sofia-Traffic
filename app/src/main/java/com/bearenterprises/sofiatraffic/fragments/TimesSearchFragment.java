@@ -182,6 +182,7 @@ public class TimesSearchFragment extends Fragment {
             public void onClick(View v) {
                 if (codeNameSwitch.getCheckedRadioButtonId() == R.id.toggleStateCode) {
                     String code = editTextSearchByCodeOrName.getText().toString();
+
                     showStationTimes(code);
                 } else {
                     String query = autoCompleteTextView.getText().toString();
@@ -232,6 +233,9 @@ public class TimesSearchFragment extends Fragment {
 
 
     public void showStationTimes(String code) {
+        if("".equals(code) || " ".equals(code)){
+            return;
+        }
         if (code != null) {
             //hide soft keyboard
             ((MainActivity) getActivity()).hideSoftKeyboad();

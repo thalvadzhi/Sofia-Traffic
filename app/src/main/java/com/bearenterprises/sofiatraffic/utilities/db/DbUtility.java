@@ -121,7 +121,6 @@ public class DbUtility {
                 }
 
             } else {
-                Utility.makeSnackbar("Няма такава спирка", mainActivity);
                 return null;
             }
         }finally {

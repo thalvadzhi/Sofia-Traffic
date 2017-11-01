@@ -30,6 +30,7 @@ import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -295,29 +296,49 @@ public class LinesFragment extends Fragment {
                         public ArrayList<ArrayList<Stop>> getStops(RouteShowerArguments routeShowerArguments) {
                             ArrayList<ArrayList<Stop>> stops = new ArrayList<>();
                             String currentScheduleDayType = "";
+                            String nextScheduleDayType = "";
+                            String nextNextScheduleDayType = "";
                             try {
                                 currentScheduleDayType = Utility.getScheduleDayType();
+                                nextScheduleDayType = Utility.getNextScheduleDayType(currentScheduleDayType);
+                                nextNextScheduleDayType = Utility.getNextScheduleDayType(nextScheduleDayType);
                             } catch (Exception e) {
                                 Log.d(TAG, "Couldn't get the current day", e);
                             }
-
+                            ArrayList<ArrayList<Stop>> nextStops = new ArrayList<>();
+                            ArrayList<ArrayList<Stop>> nextNextStops = new ArrayList<>();
                             for(ScheduleRoute route : routeShowerArguments.routesSchedules){
-                                if(route.getScheduleDayTypes().contains(currentScheduleDayType)){
-                                    ArrayList<Stop> routeStations = new ArrayList<>();
-                                    for (Stop stop : route.getStops()){
-                                        Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
-                                        st.setDescription(route.getRouteName());
-                                        if(st.getName() != null){
-                                            routeStations.add(st);
-                                        }else{
-                                            routeStations.add(stop);
-                                        }
+                                ArrayList<Stop> routeStations = new ArrayList<>();
+                                for (Stop stop : route.getStops()){
+                                    Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
+                                    st.setDescription(route.getRouteName());
+                                    if(st.getName() != null){
+                                        routeStations.add(st);
+                                    }else{
+                                        routeStations.add(stop);
                                     }
+                                }
+                                if(route.getScheduleDayTypes().contains(currentScheduleDayType)){
+
                                     if(routeStations.size() != 0){
                                         stops.add(routeStations);
                                     }
+                                }else if(route.getScheduleDayTypes().contains(nextScheduleDayType)){
+                                    if(routeStations.size() != 0){
+                                        nextStops.add(routeStations);
+                                    }
+                                }else if(route.getScheduleDayTypes().contains(nextNextScheduleDayType)){
+                                    if(routeStations.size() != 0){
+                                        nextNextStops.add(routeStations);
+                                    }
                                 }
-
+                            }
+                            if (stops.size() != 0){
+                                return stops;
+                            }else if(nextStops.size() != 0){
+                                return nextStops;
+                            }else if(nextNextStops.size() != 0){
+                                return nextNextStops;
                             }
                             return stops;
                         }

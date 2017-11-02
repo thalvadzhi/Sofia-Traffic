@@ -126,6 +126,7 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.setOnClickListeners(position);
         holder.exclamationMark.setVisibility(View.VISIBLE);
+        holder.progressBar.setVisibility(View.VISIBLE);
         holder.exclamationMarkTouchArea.setVisibility(View.VISIBLE);
         LineTimes vt = times.get(position);
         String direction = vt.getRouteName();

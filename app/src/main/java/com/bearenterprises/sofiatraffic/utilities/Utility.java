@@ -134,9 +134,9 @@ public class Utility {
         Calendar cal = Calendar.getInstance();
         if(cal != null){
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            if(dayOfWeek >= 0 && dayOfWeek < 5){
+            if(dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY){
                 return Constants.WORKDAY;
-            }else if(dayOfWeek == 5){
+            }else if(dayOfWeek == Calendar.SATURDAY){
                 return Constants.PRE_NON_WORKING_DAY;
             }else{
                 return Constants.NON_WORKING_DAY;

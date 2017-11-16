@@ -18,27 +18,22 @@ public class SubwayStop extends ISubwayStop {
     }
 
     @Override
-    public String getSubwayLine() {
-        return null;
-    }
-
-    @Override
-    List<String> getCoordinates() {
+    public List<String> getCoordinates() {
         return Arrays.asList(latitude, longitude);
     }
 
     @Override
-    String getName() {
+    public String getName() {
         return name;
     }
 
     @Override
-    List<Integer> getCodes() {
+    public List<Integer> getCodes() {
         return Arrays.asList(code1, code2);
     }
 
     @Override
-    Integer getStopType() {
+    public Integer getStopType() {
         return Constants.SUBWAY;
     }
 }

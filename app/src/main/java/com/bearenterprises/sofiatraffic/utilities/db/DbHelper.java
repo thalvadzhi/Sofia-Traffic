@@ -25,12 +25,12 @@ public class DbHelper extends SQLiteOpenHelper {
 
         //column names for SUBWAY db
         public static final String COLUMN_NAME_STOP_NAME_SUB = "stopName";
-        public static final String COLUMN_NAME_CODE1 = "code1";
-        public static final String COLUMN_NAME_CODE2 = "code2";
+        public static final String COLUMN_NAME_CODE1_SUB = "code1";
+        public static final String COLUMN_NAME_CODE2_SUB = "code2";
         public static final String COLUMN_NAME_LAT_SUB = "latitude";
         public static final String COLUMN_NAME_LON_SUB = "longitude";
-        public static final String COLUMN_NAME_ID = "id";
-        public static final String COLUMN_NAME_LINE = "line";
+        public static final String COLUMN_NAME_ID_SUB = "id";
+        public static final String COLUMN_NAME_LINE_SUB = "line";
 
 
         //column names for DESCRIPTIONS db
@@ -74,12 +74,12 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_SUBWAY =
             "CREATE TABLE " + FeedEntry.TABLE_NAME_SUBWAY + " ("+
                     FeedEntry.COLUMN_NAME_STOP_NAME_SUB + TEXT_TYPE + COMMA_SEP +
-                    FeedEntry.COLUMN_NAME_CODE1 + TEXT_TYPE + COMMA_SEP +
-                    FeedEntry.COLUMN_NAME_CODE2 + TEXT_TYPE + COMMA_SEP +
+                    FeedEntry.COLUMN_NAME_CODE1_SUB + TEXT_TYPE + COMMA_SEP +
+                    FeedEntry.COLUMN_NAME_CODE2_SUB + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_NAME_LAT_SUB + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_NAME_LON_SUB + TEXT_TYPE + COMMA_SEP +
-                    FeedEntry.COLUMN_NAME_ID + TEXT_TYPE + COMMA_SEP +
-                    FeedEntry.COLUMN_NAME_LINE + TEXT_TYPE +
+                    FeedEntry.COLUMN_NAME_ID_SUB + TEXT_TYPE + COMMA_SEP +
+                    FeedEntry.COLUMN_NAME_LINE_SUB + TEXT_TYPE +
                     " )";
 
     private static final String DROP_TABLE_STATIONS =

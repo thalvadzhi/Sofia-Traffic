@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
@@ -41,8 +42,8 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
         long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
 
-//if(true){
-        if (shouldUpdate(lastUpdate)){
+if(true){
+//        if (shouldUpdate(lastUpdate)){
             //means it's time to update
 
             try {
@@ -135,9 +136,9 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             return false;
         }
 
-        if (!updatedCoordinates && !updatedDescriptions && !updatedSubway){
-            return false;
-        }
+//        if (!updatedCoordinates && !updatedDescriptions && !updatedSubway){
+//            return false;
+//        }
 
         publishProgress(Constants.SHOW_DIALOG);
 
@@ -145,8 +146,9 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
         List<Description> descriptions = DescriptionsParser.parseDescriptions(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
-        ArrayList<Stop> stations = null;
-        stations = JSONParser.getStationsFromFile(Constants.STOPS_COORDINATE_FILE, this.context);
+
+        ArrayList<Stop> stations = JSONParser.getStationsFromFile(Constants.STOPS_COORDINATE_FILE, this.context);
+        List<SubwayStop> subwayStops = JSONParser.getSubwayStopsFromFile(Constants.SUBWAY_STOPS_FILE, this.context);
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         if(stations == null){
             throw new Exception("stations array is null");
@@ -170,11 +172,25 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             v.put(DbHelper.FeedEntry.COLUMN_NAME_DIRECTION, desc.getDirection());
             descriptionContentValues.add(v);
         }
+        ArrayList<ContentValues> subwayContentValues = new ArrayList<>();
+        for (SubwayStop subwayStop : subwayStops){
+            ContentValues v = new ContentValues();
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE1_SUB, subwayStop.getCodes().get(0));
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE2_SUB, subwayStop.getCodes().get(1));
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_STOP_NAME_SUB, subwayStop.getName());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_ID_SUB, subwayStop.getSubwayId());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_SUB, subwayStop.getSubwayLine());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT_SUB, subwayStop.getCoordinates().get(0));
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON_SUB, subwayStop.getCoordinates().get(1));
+            subwayContentValues.add(v);
+        }
+
 
         DbManipulator manipulator = new DbManipulator(this.context);
         manipulator.deleteAll();
         manipulator.insert(stationInformation, DbHelper.FeedEntry.TABLE_NAME_STATIONS);
         manipulator.insert(descriptionContentValues, DbHelper.FeedEntry.TABLE_NAME_DESCRIPTIONS);
+        manipulator.insert(subwayContentValues, DbHelper.FeedEntry.TABLE_NAME_SUBWAY);
         manipulator.closeDb();
 
         return true;

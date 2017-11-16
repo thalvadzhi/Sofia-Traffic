@@ -15,19 +15,56 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by thalv on 02-Jul-16.
  */
 public class JSONParser {
+    public static String TAG = JSONParser.class.toString();
 
-    public static ArrayList<Stop> getStationsFromFile(String fileName, Context context){
+    public static String readFileAsString(String fileName, Context context){
         String source= null;
         try {
             source = Files.asCharSource(new File(context.getFilesDir(), fileName), Charsets.UTF_8).read();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return source;
+    }
+
+    public static List<SubwayStop> getSubwayStopsFromFile(String fileName, Context context){
+        String source = readFileAsString(fileName, context);
+        return getSubwayStopFromString(source);
+    }
+
+    public static List<SubwayStop> getSubwayStopFromString(String json){
+        List<SubwayStop> stops = new ArrayList<>();
+        if(json == null){
+            return null;
+        }
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject stop = jsonArray.getJSONObject(i);
+                String name = stop.getString("stopName");
+                String line = stop.getString("line");
+                String id = stop.getString("id");
+                String code1 = (String) stop.getJSONArray("stopCodes").get(0);
+                String code2 = (String) stop.getJSONArray("stopCodes").get(1);
+                String lat = Double.toString((Double) stop.getJSONArray("coordinates").get(0));
+                String lon = Double.toString((Double) stop.getJSONArray("coordinates").get(1));
+                stops.add(new SubwayStop(name, lon, lat, line, id, Integer.parseInt(code1), Integer.parseInt(code2)));
+            }
+        } catch (JSONException e) {
+            Log.d(TAG, "error parsing subway json", e);
+        }
+        return stops;
+    }
+
+
+    public static ArrayList<Stop> getStationsFromFile(String fileName, Context context){
+        String source = readFileAsString(fileName, context);
         return getStations(source);
     }
 
@@ -50,9 +87,9 @@ public class JSONParser {
                 stations.add(s);
             }
         } catch (JSONException e) {
-            Log.d("jsonexception", "jsonexception", e);
+            Log.d(TAG, "jsonexception", e);
         } catch (Exception e){
-            Log.d("exception", "exception", e);
+            Log.d(TAG, "exception", e);
         }
         return stations;
     }

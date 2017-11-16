@@ -110,5 +110,6 @@ public class DbManipulator {
     public void deleteAll() {
         db.execSQL(DbHelper.FeedEntry.SQL_DELETE_ALL_STATIONS);
         db.execSQL(DbHelper.FeedEntry.SQL_DELETE_ALL_DESCRIPTIONS);
+        db.execSQL(DbHelper.FeedEntry.SQL_DELETE_ALL_SUBWAY);
     }
 }

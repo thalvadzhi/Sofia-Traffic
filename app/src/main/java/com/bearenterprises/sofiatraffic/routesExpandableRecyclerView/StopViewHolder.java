@@ -7,7 +7,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
@@ -73,7 +72,7 @@ public class StopViewHolder extends ChildViewHolder {
         showOnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(stop.getLatitude() == null || stop.getLongtitude() == null){
+                if(stop.getLatitude() == null || stop.getLongitude() == null){
                     return;
                 }
                 DbUtility.addLineTypes(stop, (MainActivity)context);

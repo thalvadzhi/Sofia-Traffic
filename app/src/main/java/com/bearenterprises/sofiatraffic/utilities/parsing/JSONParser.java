@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -29,6 +30,7 @@ public class JSONParser {
         }
         return getStations(source);
     }
+
 
     public static ArrayList<Stop> getStations(String json){
         if(json == null){

@@ -10,8 +10,7 @@ import java.util.List;
  * Created by thalv on 02-Jul-16.
  */
 public class Constants {
-    public static final String XML_COORDINATE_FILE = "coordinates.xml";
-    public static final String JSON_COORDINATE_FILE = "coordinates.json";
+    public static final String STOPS_COORDINATE_FILE = "coordinates.json";
     public static final String JSON_COORDINATE_FILE_NEW = "new_coordinates.json";
     public static final String SHOW_DIALOG = "show dialog";
     public static final String DISMISS_DIALOG = "dismiss dialog";
@@ -21,6 +20,17 @@ public class Constants {
     public static final String HASH_DESCS_NEW = "hash_descs_new.txt";
     public static final String HASH_COORDS = "hash_coords.txt";
     public static final String HASH_DESCS = "hash_descs.txt";
+
+    //subway
+    public static final String SUBWAY_STOPS_FILE = "subway.json";
+    public static final String SUBWAY_HASH = "hash_subway.json";
+    public static final String SUBWAY_HASH_NEW = "new_hash_subway.json";
+    public static final String SUBWAY_STOPS_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/subway/subway_coords.json";
+    public static final String SUBWAY_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/subway/hash.txt";
+    public static final String SUBWAY_LINE_BLUE = "blue";
+    public static final String SUBWAY_LINE_RED = "red";
+
+
 
     public static final int NO_SUCH_LINE = -200;
 
@@ -71,10 +81,14 @@ public class Constants {
     public static final String QUERY_METHOD_SLOW = "slow";
     public static final String QUERY_METHOD_FAST = "fast";
 
+    //schedule types
     public static final String WORKDAY = "WORKDAY";
     public static final String PRE_NON_WORKING_DAY = "PRE_NON_WORKING_DAY";
     public static final String NON_WORKING_DAY = "NON_WORKING_DAY";
 
+    //stop type
+    public static final int NORMAL = 10;
+    public static final int SUBWAY = 20;
 
 
 

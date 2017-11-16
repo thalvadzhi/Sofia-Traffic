@@ -34,7 +34,7 @@ public class StopBuilder {
     }
 
     public StopBuilder setLongtitude(String longtitude){
-        stop.setLongtitude(longtitude);
+        stop.setLongitude(longtitude);
         return this;
     }
 

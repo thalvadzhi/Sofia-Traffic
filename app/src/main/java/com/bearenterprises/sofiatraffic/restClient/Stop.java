@@ -1,22 +1,18 @@
 
 package com.bearenterprises.sofiatraffic.restClient;
 
-import android.os.Parcelable;
 
+import com.bearenterprises.sofiatraffic.constants.Constants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class Stop implements Serializable{
+public class Stop extends IStop implements Serializable{
 
-    private Integer favouriteIndex; // the index of appearance in Favourites tab
-    private Integer id;
     private Integer code;
-    private String name;
-    private String longtitude;
-    private String latitude;
     private String description;
-    private String alias;
     private ArrayList<Line> lines;
     private ArrayList<Integer> lineTypes;
 
@@ -29,20 +25,20 @@ public class Stop implements Serializable{
         this.name = name;
     }
 
-    public Stop(Integer id, Integer code, String name, String latitude, String longtitude, String description) {
+    public Stop(Integer id, Integer code, String name, String latitude, String longitude, String description) {
         this.id = id;
         this.code = code;
         this.name = name;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
         this.latitude = latitude;
         this.description = description;
         this.lineTypes = new ArrayList<>();
     }
 
-    public Stop(Integer code, String name, String latitude, String longtitude, String description) {
+    public Stop(Integer code, String name, String latitude, String longitude, String description) {
         this.code = code;
         this.name = name;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
         this.latitude = latitude;
         this.description = description;
         this.lineTypes = new ArrayList<>();
@@ -51,18 +47,16 @@ public class Stop implements Serializable{
 
 
     public Stop(Integer code, String name, String description) {
-
         this.code = code;
         this.name = name;
         this.description = description;
         this.lineTypes = new ArrayList<>();
-
     }
 
-    public Stop(Integer code, String name,  String latitude, String longtitude) {
+    public Stop(Integer code, String name,  String latitude, String longitude) {
         this.name = name;
         this.code = code;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
         this.latitude = latitude;
         this.lineTypes = new ArrayList<>();
 
@@ -74,7 +68,6 @@ public class Stop implements Serializable{
 
     public void addLineType(Integer lineType){
         this.lineTypes.add(lineType);
-
     }
 
     public String getAlias() {
@@ -85,8 +78,8 @@ public class Stop implements Serializable{
         this.alias = alias;
     }
 
-    public String getLongtitude() {
-        return longtitude;
+    public String getLongitude() {
+        return longitude;
     }
 
     public String getLatitude() {
@@ -97,64 +90,43 @@ public class Stop implements Serializable{
         return description;
     }
 
-
-    /**
-     * 
-     * @return
-     *     The id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * 
-     * @param id
-     *     The id
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * 
-     * @return
-     *     The code
-     */
     public Integer getCode() {
         return code;
     }
 
-    /**
-     * 
-     * @param code
-     *     The code
-     */
     public void setCode(Integer code) {
         this.code = code;
     }
 
-    /**
-     * 
-     * @return
-     *     The name
-     */
+    @Override
+    public List<String> getCoordinates() {
+        return Arrays.asList(this.latitude, this.longitude);
+    }
+
     public String getName() {
         return name;
     }
 
-    /**
-     * 
-     * @param name
-     *     The name
-     */
-    public void setName(String name) {
-        this.name = name;
+    @Override
+    public List<Integer> getCodes() {
+        return Arrays.asList(this.code);
     }
 
+    @Override
+    public Integer getStopType() {
+        return Constants.NORMAL;
+    }
 
-    public Integer getFavouriteIndex() {
-        return favouriteIndex;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setFavouriteIndex(Integer favouriteIndex) {
@@ -169,8 +141,8 @@ public class Stop implements Serializable{
         this.lines = lines;
     }
 
-    public void setLongtitude(String longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public void setLatitude(String latitude) {

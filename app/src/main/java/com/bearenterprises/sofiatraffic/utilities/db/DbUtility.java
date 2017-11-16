@@ -84,7 +84,6 @@ public class DbUtility {
         }finally {
             if(manipulator != null){
                 manipulator.closeDb();
-
             }
         }
         return desc;

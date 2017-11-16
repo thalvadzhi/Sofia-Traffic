@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -184,12 +183,14 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
         favourite.setOnCheckedChangeListener(null);
         if(checkIfAlreadyInFavourites(Integer.toString(stop.getCode()))){
             favourite.setChecked(true);
+        }else{
+            favourite.setChecked(false);
         }
         code.setText(Integer.toString(stop.getCode()));
         favourite.setOnCheckedChangeListener(listener);
         currentStop = stop;
         stopName.setText(stop.getName());
-        coordinates.setText(String.format(COORDINATES_TEMPLATE, Float.parseFloat(stop.getLatitude()), Float.parseFloat(stop.getLongtitude())));
+        coordinates.setText(String.format(COORDINATES_TEMPLATE, Float.parseFloat(stop.getLatitude()), Float.parseFloat(stop.getLongitude())));
         GetLinesOnStop getLinesOnStop = new GetLinesOnStop();
         getLinesOnStop.execute(Integer.toString(stop.getCode()));
         slidingUpPanelLayout.setPanelState(SlidingUpPanelLayout.PanelState.ANCHORED);

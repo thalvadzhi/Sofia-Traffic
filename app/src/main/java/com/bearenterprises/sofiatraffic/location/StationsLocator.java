@@ -37,10 +37,10 @@ public class StationsLocator {
 
             Location l1 = new Location("");
             l1.setLatitude(Float.parseFloat(c1.getLatitude()));
-            l1.setLongitude(Float.parseFloat(c1.getLongtitude()));
+            l1.setLongitude(Float.parseFloat(c1.getLongitude()));
             Location l2 = new Location("");
             l2.setLatitude(Float.parseFloat(c2.getLatitude()));
-            l2.setLongitude(Float.parseFloat(c2.getLongtitude()));
+            l2.setLongitude(Float.parseFloat(c2.getLongitude()));
 
             float distance1 = location.distanceTo(l1);
             float distance2 = location.distanceTo(l2);
@@ -50,13 +50,13 @@ public class StationsLocator {
 
     private boolean determineViabilityOfStation(Stop station){
 
-        if(station.getLatitude().equals("") || station.getLongtitude().equals("")){
+        if(station.getLatitude().equals("") || station.getLongitude().equals("")){
             return false;
         }
         Location stationLocation = new Location("");
 
         stationLocation.setLatitude(Float.parseFloat(station.getLatitude()));
-        stationLocation.setLongitude(Float.parseFloat(station.getLongtitude()));
+        stationLocation.setLongitude(Float.parseFloat(station.getLongitude()));
 
         float distance = this.location.distanceTo(stationLocation);
 
@@ -123,7 +123,7 @@ public class StationsLocator {
             return null;
         }
         for(Stop st : allStations){
-            if(st.getLatitude().equals("") || st.getLongtitude().equals("")){
+            if(st.getLatitude().equals("") || st.getLongitude().equals("")){
                 continue;
             }
             priorityQueue.add(st);

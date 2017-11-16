@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.design.widget.CoordinatorLayout;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
@@ -29,12 +28,9 @@ import java.util.List;
  */
 public class DbUpdater extends AsyncTask<Void, String, Void>{
     private Context context;
-    private boolean fileDownloaderExceptionHappened;
-    private CoordinatorLayout coordinatorLayout;
 
     public DbUpdater(Context context) {
         this.context = context;
-        this.fileDownloaderExceptionHappened = false;
     }
 
 
@@ -79,60 +75,26 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         }
     }
 
-
-
-
-    /*
-        Downloads the new file and checks if it has changed
-        returns true if file has changed or it is the first time that the file is created
-        returns false otherwise
-     */
-    private boolean handleFileDownloading(String fileName) throws IOException {
-        String newFile = null, downloadUrl = null, hash = null;
-        switch (fileName){
-            case Constants.JSON_COORDINATE_FILE:
-                newFile = Constants.JSON_COORDINATE_FILE_NEW;
-                downloadUrl = Constants.COORDINATES_DOWNLOAD_URL_JSON;
-                break;
-            case Constants.DESCRIPTIONS_FILE_NAME:
-                newFile = Constants.DESCRIPTIONS_FILE_NAME_NEW;
-                downloadUrl = Constants.DESCRIPTIONS_DOWNLOAD_URL;
-        }
-        File f = new File(context.getFilesDir() + File.separator + fileName);
-        if(f.exists()){
-            File new_f = new File(context.getFilesDir() + File.separator + newFile);
-            FileDownloader downloader = new FileDownloader(this.context, downloadUrl, new_f);
-            downloader.download();
-            if(FileUtils.contentEquals(f, new_f)){
-                new_f.delete();
-                return false;
-            }else{
-                f.delete();
-                new_f.renameTo(new File(context.getFilesDir() + File.separator + fileName));
-            }
-        }else{
-            FileDownloader downloader = new FileDownloader(this.context, downloadUrl, f);
-            downloader.download();
-        }
-        return true;
-
-    }
     private boolean handleFileDownloadingWithHash(String fileName) throws IOException {
-        String newFile = null, downloadUrl = null, hashUrl = null, hashFileName =null, hashNewFileName=null;
+        String downloadUrl = null, hashUrl = null, hashFileName =null, hashNewFileName=null;
         switch (fileName){
-            case Constants.JSON_COORDINATE_FILE:
-                newFile = Constants.JSON_COORDINATE_FILE_NEW;
+            case Constants.STOPS_COORDINATE_FILE:
                 downloadUrl = Constants.COORDINATES_DOWNLOAD_URL_JSON;
                 hashUrl = Constants.COORDINATES_HASH_URL;
                 hashFileName = Constants.HASH_COORDS;
                 hashNewFileName = Constants.HASH_COORDS_NEW;
                 break;
             case Constants.DESCRIPTIONS_FILE_NAME:
-                newFile = Constants.DESCRIPTIONS_FILE_NAME_NEW;
                 downloadUrl = Constants.DESCRIPTIONS_DOWNLOAD_URL;
                 hashUrl = Constants.DESCRIPTIONS_HASH_URL;
                 hashFileName = Constants.HASH_DESCS;
                 hashNewFileName = Constants.HASH_DESCS_NEW;
+                break;
+            case Constants.SUBWAY_STOPS_FILE:
+                downloadUrl = Constants.SUBWAY_STOPS_URL;
+                hashUrl = Constants.SUBWAY_HASH_URL;
+                hashFileName = Constants.SUBWAY_HASH;
+                hashNewFileName = Constants.SUBWAY_HASH_NEW;
                 break;
         }
         File hashFile = new File(context.getFilesDir() + File.separator + hashFileName);
@@ -163,16 +125,17 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
     }
     public boolean update() throws Exception{
-        boolean updatedCoordinates, updatedDescriptions ;
+        boolean updatedCoordinates, updatedDescriptions, updatedSubway ;
         try{
-            updatedCoordinates = handleFileDownloadingWithHash(Constants.JSON_COORDINATE_FILE);
+            updatedCoordinates = handleFileDownloadingWithHash(Constants.STOPS_COORDINATE_FILE);
             updatedDescriptions = handleFileDownloadingWithHash(Constants.DESCRIPTIONS_FILE_NAME);
+            updatedSubway = handleFileDownloadingWithHash(Constants.SUBWAY_STOPS_FILE);
         }catch (IOException e){
             Utility.makeSnackbar("Настъпи грешка при изтеглянето", (MainActivity) context);
             return false;
         }
 
-        if (!updatedCoordinates && !updatedDescriptions){
+        if (!updatedCoordinates && !updatedDescriptions && !updatedSubway){
             return false;
         }
 
@@ -183,7 +146,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         List<Description> descriptions = DescriptionsParser.parseDescriptions(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
         ArrayList<Stop> stations = null;
-        stations = JSONParser.getStationsFromFile(Constants.JSON_COORDINATE_FILE, this.context);
+        stations = JSONParser.getStationsFromFile(Constants.STOPS_COORDINATE_FILE, this.context);
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         if(stations == null){
             throw new Exception("stations array is null");
@@ -193,7 +156,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE, station.getCode());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME, station.getName());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongtitude());
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_TYPES, lineTypesToString(station));
             stationInformation.add(v);
         }

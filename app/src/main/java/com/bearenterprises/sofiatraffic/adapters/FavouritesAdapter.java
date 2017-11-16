@@ -248,7 +248,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
                 @Override
                 public void onClick(View v) {
                     Stop s = favourites.get(position);
-                    String coords = s.getLatitude() + "," + s.getLongtitude();
+                    String coords = s.getLatitude() + "," + s.getLongitude();
                     ClipboardManager clipboard = (ClipboardManager) context.getSystemService(CLIPBOARD_SERVICE);
                     ClipData clip = ClipData.newPlainText("Координатите на спирката", coords);
                     clipboard.setPrimaryClip(clip);

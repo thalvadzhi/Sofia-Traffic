@@ -42,8 +42,8 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
         long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
 
-if(true){
-//        if (shouldUpdate(lastUpdate)){
+//if(true){
+        if (shouldUpdate(lastUpdate)){
             //means it's time to update
 
             try {
@@ -136,9 +136,9 @@ if(true){
             return false;
         }
 
-//        if (!updatedCoordinates && !updatedDescriptions && !updatedSubway){
-//            return false;
-//        }
+        if (!updatedCoordinates && !updatedDescriptions && !updatedSubway){
+            return false;
+        }
 
         publishProgress(Constants.SHOW_DIALOG);
 

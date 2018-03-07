@@ -2,9 +2,7 @@ package com.bearenterprises.sofiatraffic.utilities.parsing;
 
 import android.content.Context;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Splitter;
-import com.google.common.io.Files;
+import com.bearenterprises.sofiatraffic.utilities.ReadWholeFileAsStringKt;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +20,7 @@ public class DescriptionsParser {
 
     public static Map<String, String> parse(Context context, String fileName){
         try {
-            String source = Files.asCharSource(new File(context.getFilesDir(), fileName), Charsets.UTF_8).read();
+            String source = ReadWholeFileAsStringKt.readFileAsString(new File(context.getFilesDir(), fileName));
             String[] split = source.split("\n");
             Map<String, String> m = new HashMap<>();
             for(int i = 0; i < split.length; i++){
@@ -30,7 +28,7 @@ public class DescriptionsParser {
                 m.put(codeDesct[0], codeDesct[1]);
             }
             return m;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -39,7 +37,7 @@ public class DescriptionsParser {
     public static List<Description> parseDescriptions(Context context, String fileName){
         try{
             List<Description> descs = new ArrayList<>();
-            String source = Files.asCharSource(new File(context.getFilesDir(), fileName), Charsets.UTF_8).read();
+            String source = ReadWholeFileAsStringKt.readFileAsString(new File(context.getFilesDir(), fileName));
             String[] descriptions = source.split(";");
             for (int i = 0; i < descriptions.length; i++){
                 String[] description = descriptions[i].split("=");
@@ -51,7 +49,7 @@ public class DescriptionsParser {
                 descs.add(new Description(transportationType, lineName, stopCode, direction));
             }
             return descs;
-        }catch (IOException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
         return null;

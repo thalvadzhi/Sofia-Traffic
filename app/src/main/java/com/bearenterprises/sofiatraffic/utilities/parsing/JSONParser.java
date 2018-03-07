@@ -6,8 +6,8 @@ import android.util.Log;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
 import com.bearenterprises.sofiatraffic.stations.GeoLine;
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
+import com.bearenterprises.sofiatraffic.utilities.ReadWholeFileAsStringKt;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,8 +27,9 @@ public class JSONParser {
     public static String readFileAsString(String fileName, Context context){
         String source= null;
         try {
-            source = Files.asCharSource(new File(context.getFilesDir(), fileName), Charsets.UTF_8).read();
-        } catch (IOException e) {
+//            source = Files.asCharSource(new File(context.getFilesDir(), fileName), Charsets.UTF_8).read();
+            source = ReadWholeFileAsStringKt.readFileAsString(new File(context.getFilesDir(), fileName));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return source;

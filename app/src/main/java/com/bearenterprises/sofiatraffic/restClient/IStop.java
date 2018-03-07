@@ -1,5 +1,7 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -11,6 +13,7 @@ public abstract class IStop {
     protected String alias;
     protected Integer id;
     protected String name;
+    @SerializedName(value="longitude", alternate={"longtitude"})
     protected String longitude;
     protected String latitude;
 

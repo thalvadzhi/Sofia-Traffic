@@ -247,7 +247,9 @@ public class MapFragment extends Fragment {
             map.clear();
             ArrayList<Marker> markers = new ArrayList<>();
             setMarkers(stations, markers, ordered);
-            map.animateCamera(getCameraUpdate(markers));
+            if(markers.size() != 0){
+                map.animateCamera(getCameraUpdate(markers));
+            }
         }
     }
 
@@ -287,7 +289,7 @@ public class MapFragment extends Fragment {
             String latitude = station.getLatitude();
             String longtitude = station.getLongitude();
 
-            if(!latitude.equals("") && !longtitude.equals("")){
+            if(latitude != null && longtitude != null && !"".equals(latitude) && !"".equals(longtitude)){
                 double lat = Float.parseFloat(latitude);
                 double lon = Float.parseFloat(longtitude);
                 MarkerOptions options = new MarkerOptions();

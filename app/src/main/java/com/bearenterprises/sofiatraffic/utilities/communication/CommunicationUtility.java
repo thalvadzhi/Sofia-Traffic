@@ -11,6 +11,8 @@ import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.StopInformationGetter;
 import com.bearenterprises.sofiatraffic.restClient.Time;
 import com.bearenterprises.sofiatraffic.restClient.Line;
+import com.bearenterprises.sofiatraffic.routesExpandableRecyclerView.Direction;
+import com.bearenterprises.sofiatraffic.stations.GeoLine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +68,7 @@ public class CommunicationUtility {
         f.showStationTimes(code);
     }
 
-    public static<T extends Stop> void showOnMap(ArrayList<T> stations, MainActivity mainActivity){
+    public static<T extends Stop> void showOnMap(ArrayList<T> stations, boolean ordered, MainActivity mainActivity){
         if (mainActivity == null){
             return;
         }
@@ -76,13 +78,50 @@ public class CommunicationUtility {
         if (f == null){
             return;
         }
-        f.getMapFragment().showOnMap(stations);
+        f.getMapFragment().showOnMap(stations, ordered);
     }
 
-    public static<T extends Stop> void showOnMap(T st, MainActivity mainActivity){
+    public static void showPolyLine(Direction direction, MainActivity activity){
+        if (activity == null){
+            return;
+        }
+        CommunicationUtility.hideSlideUpPanel(activity);
+        activity.setPage(Constants.SECTION_MAP_SEARCH_IDX);
+        MapSearchFragment f = activity.getMapSearchFragment();
+        if (f == null){
+            return;
+        }
+        List<GeoLine> geoLines = activity.getGeoLines();
+        if (geoLines == null){
+            return;
+        }
+        for(GeoLine l : geoLines){
+            String tr_type = symbolToNumberType(direction.getTransportationType());
+            if(tr_type.equals(Integer.toString(l.getType()))){
+                String start = Integer.toString(direction.getFrom().getCode());
+                String end = Integer.toString(direction.getTo().getCode());
+
+                if(l.getFirstStop().equals(start) && l.getLastStop().equals(end)){
+                    f.getMapFragment().showPolyOnMap(l.getGeo(), tr_type);
+                    return;
+                }
+            }
+        }
+    }
+
+    public static String symbolToNumberType(String symbol){
+        switch (symbol){
+            case "tram": return "0";
+            case "bus": return "1";
+            case "trolley": return "2";
+            default: return "-1";
+        }
+    }
+
+    public static<T extends Stop> void showOnMap(T st, boolean ordered, MainActivity mainActivity){
         ArrayList<Stop> stations = new ArrayList<>();
         stations.add(st);
-        CommunicationUtility.showOnMap(stations, mainActivity);
+        CommunicationUtility.showOnMap(stations, ordered, mainActivity);
     }
 
     public static void hideSlideUpPanel(MainActivity mainActivity){

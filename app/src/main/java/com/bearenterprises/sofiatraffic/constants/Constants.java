@@ -21,6 +21,13 @@ public class Constants {
     public static final String HASH_COORDS = "hash_coords.txt";
     public static final String HASH_DESCS = "hash_descs.txt";
 
+    //polyline
+    public static final String POLYLINE_FILE = "polyline.json";
+    public static final String POLYLINE_HASH = "hash_polyline.txt";
+    public static final String POLYLINE_HASH_NEW = "new_hash_polyline.txt";
+    public static final String POLYLINE_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/polyline_getter/polyline.txt";
+    public static final String POLYLINE_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/polyline_getter/hash.txt";
+
     //subway
     public static final String SUBWAY_STOPS_FILE = "subway.json";
     public static final String SUBWAY_HASH = "hash_subway.json";

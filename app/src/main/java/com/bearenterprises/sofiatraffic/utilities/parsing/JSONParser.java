@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
+import com.bearenterprises.sofiatraffic.stations.GeoLine;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -36,6 +37,35 @@ public class JSONParser {
     public static List<SubwayStop> getSubwayStopsFromFile(String fileName, Context context){
         String source = readFileAsString(fileName, context);
         return getSubwayStopFromString(source);
+    }
+
+    public static List<GeoLine> getGeoLinesFromFile(String fileName, Context context){
+        String source = readFileAsString(fileName, context);
+        return getGeoLines(source);
+    }
+
+    private static List<GeoLine> getGeoLines(String json){
+        List<GeoLine> geoLines = new ArrayList<>();
+        if (json == null){
+            return null;
+        }
+
+        try{
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject line = jsonArray.getJSONObject(i);
+                String name = line.getString("name");
+                int type = line.getInt("type");
+                String first = line.getString("first_stop");
+                String last = line.getString("last_stop");
+                String geo = line.getString("geo");
+                GeoLine gl = new GeoLine(type, first, last, geo, name);
+                geoLines.add(gl);
+            }
+        }catch (JSONException e){
+            Log.d(TAG, "error parsing geo json", e);
+        }
+        return geoLines;
     }
 
     public static List<SubwayStop> getSubwayStopFromString(String json){

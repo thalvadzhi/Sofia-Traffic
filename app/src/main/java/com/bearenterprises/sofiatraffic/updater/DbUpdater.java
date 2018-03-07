@@ -9,6 +9,7 @@ import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
+import com.bearenterprises.sofiatraffic.stations.GeoLine;
 import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
@@ -33,7 +34,13 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
     public DbUpdater(Context context) {
         this.context = context;
     }
+    public OnUpdateFinishedListener listener;
+    public List<GeoLine> geoLines;
 
+
+    public void setOnUpdateFinishedListener(OnUpdateFinishedListener listener){
+        this.listener = listener;
+    }
 
     @Override
     protected Void doInBackground(Void... voids) {
@@ -57,10 +64,12 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
                 Utility.makeSnackbar("Информацията за спирките НЕ беше обновена :(", (MainActivity)context);
                 publishProgress(Constants.DISMISS_DIALOG);
             }
+
             publishProgress(Constants.DISMISS_DIALOG);
-
-
-
+        }
+        geoLines = JSONParser.getGeoLinesFromFile(Constants.POLYLINE_FILE, context);
+        if(listener != null){
+            listener.onUpdateFinished();
         }
 
         return null;
@@ -97,6 +106,12 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
                 hashFileName = Constants.SUBWAY_HASH;
                 hashNewFileName = Constants.SUBWAY_HASH_NEW;
                 break;
+            case Constants.POLYLINE_FILE:
+                downloadUrl = Constants.POLYLINE_URL;
+                hashUrl = Constants.POLYLINE_HASH_URL;
+                hashFileName = Constants.POLYLINE_HASH;
+                hashNewFileName = Constants.POLYLINE_HASH_NEW;
+                break;
         }
         File hashFile = new File(context.getFilesDir() + File.separator + hashFileName);
         File targetFile = new File(context.getFilesDir() + File.separator + fileName);
@@ -126,29 +141,30 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 
     }
     public boolean update() throws Exception{
-        boolean updatedCoordinates, updatedDescriptions, updatedSubway ;
+        boolean updatedCoordinates, updatedDescriptions, updatedSubway, updatedPoly ;
         try{
             updatedCoordinates = handleFileDownloadingWithHash(Constants.STOPS_COORDINATE_FILE);
             updatedDescriptions = handleFileDownloadingWithHash(Constants.DESCRIPTIONS_FILE_NAME);
-            updatedSubway = handleFileDownloadingWithHash(Constants.SUBWAY_STOPS_FILE);
+//            updatedSubway = handleFileDownloadingWithHash(Constants.SUBWAY_STOPS_FILE);
+            updatedPoly = handleFileDownloadingWithHash(Constants.POLYLINE_FILE);
         }catch (IOException e){
             Utility.makeSnackbar("Настъпи грешка при изтеглянето", (MainActivity) context);
             return false;
         }
 
-        if (!updatedCoordinates && !updatedDescriptions && !updatedSubway){
+        if (!updatedCoordinates && !updatedDescriptions && !updatedPoly){
             return false;
         }
 
         publishProgress(Constants.SHOW_DIALOG);
 
 
-
+        geoLines = JSONParser.getGeoLinesFromFile(Constants.POLYLINE_FILE, context);
         List<Description> descriptions = DescriptionsParser.parseDescriptions(this.context, Constants.DESCRIPTIONS_FILE_NAME);
 
 
         ArrayList<Stop> stations = JSONParser.getStationsFromFile(Constants.STOPS_COORDINATE_FILE, this.context);
-        List<SubwayStop> subwayStops = JSONParser.getSubwayStopsFromFile(Constants.SUBWAY_STOPS_FILE, this.context);
+//        List<SubwayStop> subwayStops = JSONParser.getSubwayStopsFromFile(Constants.SUBWAY_STOPS_FILE, this.context);
         ArrayList<ContentValues> stationInformation = new ArrayList<>();
         if(stations == null){
             throw new Exception("stations array is null");
@@ -172,25 +188,25 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             v.put(DbHelper.FeedEntry.COLUMN_NAME_DIRECTION, desc.getDirection());
             descriptionContentValues.add(v);
         }
-        ArrayList<ContentValues> subwayContentValues = new ArrayList<>();
-        for (SubwayStop subwayStop : subwayStops){
-            ContentValues v = new ContentValues();
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE1_SUB, subwayStop.getCodes().get(0));
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE2_SUB, subwayStop.getCodes().get(1));
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_STOP_NAME_SUB, subwayStop.getName());
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_ID_SUB, subwayStop.getSubwayId());
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_SUB, subwayStop.getSubwayLine());
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT_SUB, subwayStop.getCoordinates().get(0));
-            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON_SUB, subwayStop.getCoordinates().get(1));
-            subwayContentValues.add(v);
-        }
+//        ArrayList<ContentValues> subwayContentValues = new ArrayList<>();
+//        for (SubwayStop subwayStop : subwayStops){
+//            ContentValues v = new ContentValues();
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE1_SUB, subwayStop.getCodes().get(0));
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE2_SUB, subwayStop.getCodes().get(1));
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_STOP_NAME_SUB, subwayStop.getName());
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_ID_SUB, subwayStop.getSubwayId());
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_SUB, subwayStop.getSubwayLine());
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT_SUB, subwayStop.getCoordinates().get(0));
+//            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON_SUB, subwayStop.getCoordinates().get(1));
+//            subwayContentValues.add(v);
+//        }
 
 
         DbManipulator manipulator = new DbManipulator(this.context);
         manipulator.deleteAll();
         manipulator.insert(stationInformation, DbHelper.FeedEntry.TABLE_NAME_STATIONS);
         manipulator.insert(descriptionContentValues, DbHelper.FeedEntry.TABLE_NAME_DESCRIPTIONS);
-        manipulator.insert(subwayContentValues, DbHelper.FeedEntry.TABLE_NAME_SUBWAY);
+//        manipulator.insert(subwayContentValues, DbHelper.FeedEntry.TABLE_NAME_SUBWAY);
         manipulator.closeDb();
 
         return true;
@@ -215,6 +231,12 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
 //        return true;
         long delta = System.currentTimeMillis() - lastUpdate;
         return (delta > Constants.DAY_IN_MILLISECONDS || lastUpdate == Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
+    }
+
+    public static abstract class OnUpdateFinishedListener{
+        public void onUpdateFinished(){
+
+        }
     }
 
 }

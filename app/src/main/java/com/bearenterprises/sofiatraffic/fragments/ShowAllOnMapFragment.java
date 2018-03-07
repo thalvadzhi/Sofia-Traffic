@@ -59,8 +59,8 @@ public class ShowAllOnMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_show_all_on_map, container, false);
-        showOnMapText = (TextView) view.findViewById(R.id.show_all_name_results_on_map);
-        showOnMapButton = (ImageView) view.findViewById(R.id.show_all_name_results_on_map_button);
+        showOnMapText = view.findViewById(R.id.show_all_name_results_on_map);
+        showOnMapButton = view.findViewById(R.id.show_all_name_results_on_map_button);
 
         if(stops.size() == 0){
             showOnMapText.setText("Няма намерени спирки");
@@ -72,7 +72,7 @@ public class ShowAllOnMapFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     DbUtility.addLineTypes(stops, (MainActivity)getActivity());
-                    CommunicationUtility.showOnMap(stops, (MainActivity)getActivity());
+                    CommunicationUtility.showOnMap(stops, false, (MainActivity)getActivity());
                 }
             });
         }

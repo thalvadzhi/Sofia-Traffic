@@ -55,7 +55,7 @@ public class PlacesFragment extends android.support.v4.app.Fragment {
                 }
                 closestStations.add(new Stop(-1, (String)place.getName(), Double.toString(latLng.latitude), Double.toString(latLng.longitude)));
                 if(closestStations.size() != 0){
-                    CommunicationUtility.showOnMap(closestStations, (MainActivity)getActivity());
+                    CommunicationUtility.showOnMap(closestStations, false, (MainActivity)getActivity());
                 }else{
                     Utility.makeSnackbar("Няма спирки в близост до това място", (MainActivity)getActivity());
                 }

@@ -111,7 +111,7 @@ public class NameResultAdapter extends RecyclerView.Adapter<NameResultAdapter.Vi
                 @Override
                 public void onClick(View v) {
                     DbUtility.addLineTypes(stops.get(position), (MainActivity)context);
-                    CommunicationUtility.showOnMap(stops.get(position), (MainActivity)context);
+                    CommunicationUtility.showOnMap(stops.get(position), false, (MainActivity)context);
                 }
             });
         }

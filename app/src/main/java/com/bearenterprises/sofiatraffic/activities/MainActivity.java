@@ -35,6 +35,7 @@ import com.bearenterprises.sofiatraffic.fragments.MapSearchFragment;
 import com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
+import com.bearenterprises.sofiatraffic.stations.GeoLine;
 import com.bearenterprises.sofiatraffic.updater.DbUpdater;
 import com.bearenterprises.sofiatraffic.utilities.network.GenerateClient;
 import com.bearenterprises.sofiatraffic.utilities.registration.RegistrationUtility;
@@ -43,6 +44,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.List;
 import java.util.Stack;
 
 import retrofit2.Retrofit;
@@ -68,7 +70,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private int currentPage;
     public static Retrofit retrofit;
     private static String queryMethod;
+    private List<GeoLine> geoLines;
 
+    public List<GeoLine> getGeoLines() {
+        return geoLines;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,18 +107,24 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         RegistrationUtility.handleRegistration(this);
         GenerateClient.setRegistration(registration);
 
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
+        coordinatorLayout =  findViewById(R.id.main_content);
         dialog = new ProgressDialog(this);
         backupManager = new BackupManager(this);
         //Check if station info needs updating
-        DbUpdater updater = new DbUpdater(this);
+        final DbUpdater updater = new DbUpdater(this);
+        updater.setOnUpdateFinishedListener(new DbUpdater.OnUpdateFinishedListener() {
+            @Override
+            public void onUpdateFinished() {
+                geoLines = updater.geoLines;
+            }
+        });
         updater.execute();
 
         currentPage = 0;
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setOffscreenPageLimit(4);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

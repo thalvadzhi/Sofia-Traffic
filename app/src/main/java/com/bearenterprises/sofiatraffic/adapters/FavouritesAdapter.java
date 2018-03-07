@@ -238,7 +238,7 @@ public class FavouritesAdapter extends RecyclerView.Adapter<FavouritesAdapter.Vi
                 @Override
                 public void onClick(View view) {
                     if(position >= 0 && position < favourites.size()){
-                        CommunicationUtility.showOnMap(favourites.get(position), (MainActivity)context);
+                        CommunicationUtility.showOnMap(favourites.get(position), false, (MainActivity)context);
                     }
                 }
             });

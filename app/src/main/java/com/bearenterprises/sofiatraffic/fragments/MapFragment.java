@@ -38,8 +38,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -205,7 +208,7 @@ public class MapFragment extends Fragment {
                 ArrayList<Stop> closestStations = getStationsAround(loc);
                 ArrayList<Marker> markers = new ArrayList<>();
                 if(closestStations != null){
-                    setMarkers(closestStations, markers);
+                    setMarkers(closestStations, markers, false);
                     CameraUpdate cu = getCameraUpdate(markers);
                     map.animateCamera(cu, 300, null);
 
@@ -235,12 +238,35 @@ public class MapFragment extends Fragment {
     }
 
     public <T extends Stop>void showOnMap(ArrayList<T> stations){
+        showOnMap(stations, false);
+    }
+
+    public <T extends Stop>void showOnMap(ArrayList<T> stations, boolean ordered){
         if(map != null && stations != null){
             previousMarker = null;
             map.clear();
             ArrayList<Marker> markers = new ArrayList<>();
-            setMarkers(stations, markers);
+            setMarkers(stations, markers, ordered);
             map.animateCamera(getCameraUpdate(markers));
+        }
+    }
+
+
+
+    public void showPolyOnMap(String geo, String tr_type){
+        if(map != null && geo != null && !"".equals(geo)){
+            List<LatLng> decode = PolyUtil.decode(geo);
+            int color = getColorByTrType(tr_type);
+            map.addPolyline(new PolylineOptions().addAll(decode).color(color));
+        }
+    }
+
+    public int getColorByTrType(String tr_type){
+        switch (tr_type){
+            case "0": return ContextCompat.getColor(getContext(), R.color.colorTram);
+            case "1": return ContextCompat.getColor(getContext(), R.color.colorBus);
+            case "2": return ContextCompat.getColor(getContext(), R.color.colorTrolley);
+            default: return -1;
         }
     }
 
@@ -255,7 +281,8 @@ public class MapFragment extends Fragment {
         return CameraUpdateFactory.newLatLngBounds(bounds, padding);
     }
 
-    private<T extends Stop> void setMarkers(ArrayList<T> closestStations, ArrayList<Marker> markers) {
+    private<T extends Stop> void setMarkers(ArrayList<T> closestStations, ArrayList<Marker> markers, boolean ordered) {
+        int i = 0;
         for(Stop station : closestStations){
             String latitude = station.getLatitude();
             String longtitude = station.getLongitude();
@@ -271,12 +298,15 @@ public class MapFragment extends Fragment {
                 BitmapDescriptor correctImageForStop = getCorrectBitmapDescriptorForStop(lineTypesOnStop);
 
                 Marker marker = map.addMarker(options);
-
+                if(ordered && i == 0){
+                    marker.setAlpha(0.5f);
+                }
 
                 marker.setTag(station);
                 marker.setIcon(correctImageForStop);
 
                 markers.add(marker);
+                i++;
             }
 
         }

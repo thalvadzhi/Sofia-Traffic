@@ -49,7 +49,8 @@ public class DirectionViewHolder extends ParentViewHolder {
             @Override
             public void onClick(View v) {
                 DbUtility.addLineTypes(direction.getStops(), (MainActivity) context);
-                CommunicationUtility.showOnMap(direction.getStops(), (MainActivity)context);
+                CommunicationUtility.showOnMap(direction.getStops(), true, (MainActivity)context);
+                CommunicationUtility.showPolyLine(direction, (MainActivity)context);
             }
         });
 

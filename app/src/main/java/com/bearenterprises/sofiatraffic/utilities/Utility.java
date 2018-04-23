@@ -24,35 +24,39 @@ import com.bearenterprises.sofiatraffic.restClient.Stop;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by thalv on 08-Jul-16.
  */
 public class Utility {
 
-    public interface RouteGettingFunction<T, K, R>{
+    public interface RouteGettingFunction<T, K, R> {
         public R getRoutes(SofiaTransportApi sofiaTransportApi, T t, K k) throws IOException;
     }
 
-    public interface RouteStopsFunction<T>{
+    public interface RouteStopsFunction<T> {
         public ArrayList<ArrayList<Stop>> getStops(T routeShowerArguments);
     }
 
 
-    public static void toastOnUiThread(String message, Context context){
+    public static void toastOnUiThread(String message, Context context) {
         final String msg = message;
         final MainActivity m = (MainActivity) context;
-            m.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(m, msg, Toast.LENGTH_LONG).show();
-                }
-            });
+        m.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(m, msg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
-    public static void makeSnackbar(String message, MainActivity mainActivity){
-        if (message == null || mainActivity == null){
+    public static void makeSnackbar(String message, MainActivity mainActivity) {
+        if (message == null || mainActivity == null) {
             return;
         }
         Snackbar
@@ -60,19 +64,19 @@ public class Utility {
                 .show();
     }
 
-    public static void setTheme(final AppCompatActivity activity){
+    public static void setTheme(final AppCompatActivity activity) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
         String theme = sharedPref.getString(activity.getResources().getString(R.string.key_choose_theme), activity.getResources().getString(R.string.light_theme_value));
         String themeDark = activity.getResources().getString(R.string.dark_theme_value);
-        if(theme.equals(themeDark)){
+        if (theme.equals(themeDark)) {
             activity.setTheme(R.style.DarkTheme);
-        }else{
+        } else {
             activity.setTheme(R.style.LightTheme);
         }
     }
 
-    public static void changeFragmentSlideIn(int id, Fragment fragment, MainActivity activity){
-        if(fragment == null || activity == null){
+    public static void changeFragmentSlideIn(int id, Fragment fragment, MainActivity activity) {
+        if (fragment == null || activity == null) {
             return;
         }
         activity.getSupportFragmentManager()
@@ -82,19 +86,20 @@ public class Utility {
                 .commitAllowingStateLoss();
 
     }
-    public static void changeFragment(int id, Fragment fragment, AppCompatActivity activity){
-        if(fragment == null || activity == null){
+
+    public static void changeFragment(int id, Fragment fragment, AppCompatActivity activity) {
+        if (fragment == null || activity == null) {
             return;
         }
-       activity.getSupportFragmentManager().
+        activity.getSupportFragmentManager().
                 beginTransaction().
                 replace(id, fragment).
                 commitAllowingStateLoss();
     }
 
 
-    public static void detachFragment(Fragment fragment, AppCompatActivity activity){
-        if(fragment == null || activity == null){
+    public static void detachFragment(Fragment fragment, AppCompatActivity activity) {
+        if (fragment == null || activity == null) {
             return;
         }
         activity.getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
@@ -118,8 +123,8 @@ public class Utility {
                 // get current index in 2D-matrix
                 int index = y * width + x;
                 pixel = pixels[index];
-                for(int i = 0; i < colorsToReplace.length; i++){
-                    if(pixel != Color.parseColor("#FFFFFF") && pixel != 0){
+                for (int i = 0; i < colorsToReplace.length; i++) {
+                    if (pixel != Color.parseColor("#FFFFFF") && pixel != 0) {
                         pixels[index] = colorThatWillReplace;
                     }
 
@@ -132,28 +137,28 @@ public class Utility {
 
     public static String getScheduleDayType() throws Exception {
         Calendar cal = Calendar.getInstance();
-        if(cal != null){
+        if (cal != null) {
             int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-            if(dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY){
+            if (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY) {
                 return Constants.WORKDAY;
-            }else if(dayOfWeek == Calendar.SATURDAY){
+            } else if (dayOfWeek == Calendar.SATURDAY) {
                 return Constants.PRE_NON_WORKING_DAY;
-            }else{
+            } else {
                 return Constants.NON_WORKING_DAY;
             }
-        }else{
+        } else {
             throw new Exception("Couldn't get the current day.");
         }
     }
 
-    public static String getNextScheduleDayType(String scheduleDayType) throws Exception{
-        if(scheduleDayType.equals(Constants.WORKDAY)){
+    public static String getNextScheduleDayType(String scheduleDayType) throws Exception {
+        if (scheduleDayType.equals(Constants.WORKDAY)) {
             return Constants.PRE_NON_WORKING_DAY;
-        }else if(scheduleDayType.equals(Constants.PRE_NON_WORKING_DAY)){
+        } else if (scheduleDayType.equals(Constants.PRE_NON_WORKING_DAY)) {
             return Constants.NON_WORKING_DAY;
-        }else if(scheduleDayType.equals(Constants.NON_WORKING_DAY)){
+        } else if (scheduleDayType.equals(Constants.NON_WORKING_DAY)) {
             return Constants.WORKDAY;
-        }else{
+        } else {
             return null;
         }
     }
@@ -161,25 +166,63 @@ public class Utility {
     /**
      * for sorting purposes
      */
-    public static int compareLineNames(Line l1, Line l2){
-        String lineAName = l1.getName().replaceAll("[А-ЯA-Z]", "");
-        String lineBName = l2.getName().replaceAll("[А-ЯA-Z]", "");
+    public static int compareLineNames(Line l1, Line l2) {
+        String lineAName = l1.getName();
+        String lineBName = l2.getName();
+
+        //handle night lines
+        //replace N with padding of zeros so that the night lines appear at the bottom
+        lineAName = lineAName.replaceFirst("^N", "000");
+        lineBName = lineBName.replaceFirst("^N", "000");
+
+        lineAName = lineAName.replaceAll("[А-ЯA-Z]", "");
+        lineBName = lineBName.replaceAll("[А-ЯA-Z]", "");
+
 
         String[] lineASplit = lineAName.split("-");
         String[] lineBSplit = lineBName.split("-");
 
-        if(lineASplit.length > 0){
+        if (lineASplit.length > 0) {
             lineAName = lineASplit[0];
         }
 
-        if(lineBSplit.length > 0){
+        if (lineBSplit.length > 0) {
             lineBName = lineBSplit[0];
         }
 
-        if(lineAName.length() == lineBName.length()){
+        if (lineAName.length() == lineBName.length()) {
             return lineAName.compareTo(lineBName);
-        }else{
+        } else {
             return lineAName.length() - lineBName.length();
         }
     }
+
+    public static Stop mergeStops(Stop s1, Stop s2) {
+        if(s1 == null && s2 == null){
+            return null;
+        }
+
+        HashSet<Line> allLines;
+        if(s1 != null && s1.getLines() != null){
+            allLines = new HashSet<>(s1.getLines());
+        }else{
+            allLines = new HashSet<>();
+        }
+
+        if(s2 != null && s2.getLines() != null){
+            allLines.addAll(s2.getLines());
+        }
+
+        ArrayList<Line> allLinesList = new ArrayList<>(allLines);
+        Collections.sort(allLinesList, (o1, o2) -> o1.getName().compareTo(o2.getName()));
+        if (s1 != null){
+            s1.setLines(allLinesList);
+            return s1;
+        }else{
+            s2.setLines(allLinesList);
+            return s2;
+        }
+    }
+
 }
+

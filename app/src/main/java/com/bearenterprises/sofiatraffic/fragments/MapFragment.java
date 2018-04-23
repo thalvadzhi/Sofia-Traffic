@@ -256,7 +256,7 @@ public class MapFragment extends Fragment {
 
 
     public void showPolyOnMap(String geo, String tr_type){
-        if(map != null && geo != null && !"".equals(geo)){
+        if(map != null && geo != null && !"".equals(geo) && !geo.equals("null")){
             List<LatLng> decode = PolyUtil.decode(geo);
             int color = getColorByTrType(tr_type);
             map.addPolyline(new PolylineOptions().addAll(decode).color(color));

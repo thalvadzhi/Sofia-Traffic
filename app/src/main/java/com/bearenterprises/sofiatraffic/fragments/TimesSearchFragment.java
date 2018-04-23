@@ -349,9 +349,12 @@ public class TimesSearchFragment extends Fragment {
                 }
             });
             Stop scheduleStop = null;
+            Stop stop = null;
             queryMethod = Constants.QUERY_METHOD_SLOW;
             try {
                 scheduleStop = stopInformationGetter.getStopWithAllLines(stopCode);
+                stop = stopInformationGetter.getStopSlow(stopCode);
+                scheduleStop = Utility.mergeStops(scheduleStop, stop);
             } catch (IOException e) {
                 e.printStackTrace();
 

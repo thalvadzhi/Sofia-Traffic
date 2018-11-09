@@ -99,7 +99,7 @@ public class StopInformationGetter {
 
         if (timesWithDirection != null) {
             times = timesWithDirection.getTimes();
-            if (times.size() != 0) {
+            if (times != null && times.size() != 0) {
                 onPreciseTimeScheduleMixReceivedListener.receivedSchedule(line, timesWithDirection);
             } else {
                 onPreciseTimeScheduleMixReceivedListener.received(line, null, OnPreciseTimeScheduleMixReceivedListener.NONE);

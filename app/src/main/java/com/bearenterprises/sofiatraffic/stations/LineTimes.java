@@ -170,9 +170,15 @@ public class LineTimes implements Serializable{
         ArrayList<String> times = new ArrayList<>();
         for(Long timeDiff : timeDiffs){
 
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(timeDiff);
-            long diffHours = minutes / 60;
-            long diffMinutes = minutes % 60;
+            long seconds = TimeUnit.MILLISECONDS.toSeconds(timeDiff);
+            long diffHours = seconds / 3600;
+            long diffMinutes = (seconds / 60) % 60;
+            long diffSeconds = (seconds % 3600) % 60;
+
+            if (diffSeconds >= 30){
+                //rounding minutes
+                diffMinutes += 1;
+            }
 
             if(diffHours != 0){
                 String paddedDiffMinutes = null;

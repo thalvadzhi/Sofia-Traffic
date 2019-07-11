@@ -9,11 +9,13 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +38,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -133,6 +136,13 @@ public class MapFragment extends Fragment {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        TypedValue typedValue = new TypedValue();
+        getContext().getTheme().resolveAttribute(R.attr.mapTheme, typedValue, true);
+        int mapTheme = typedValue.resourceId;
+        MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(getContext(), mapTheme);
+
+        map.setMapStyle(style);
+
         map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
@@ -208,9 +218,15 @@ public class MapFragment extends Fragment {
                 ArrayList<Stop> closestStations = getStationsAround(loc);
                 ArrayList<Marker> markers = new ArrayList<>();
                 if(closestStations != null){
-                    setMarkers(closestStations, markers, false);
-                    CameraUpdate cu = getCameraUpdate(markers);
-                    map.animateCamera(cu, 300, null);
+                    try{
+                        setMarkers(closestStations, markers, false);
+                        CameraUpdate cu = getCameraUpdate(markers);
+                        map.animateCamera(cu, 300, null);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Utility.makeSnackbar("Настъпи грешка", (MainActivity)getActivity());
+
+                    }
 
                 }else{
                     Utility.makeSnackbar("Няма спирки в близост до това място", (MainActivity)getActivity());

@@ -1,10 +1,11 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
@@ -23,6 +24,7 @@ public class RoutesAdapter extends ExpandableRecyclerAdapter<Direction, Stop, Di
     private Context context;
     private LayoutInflater mInflater;
     private int highlightedPositionParent = -1, highlightedPositionChild =-1;
+    private int highlightedStopCode = -1;
     public RoutesAdapter(@NonNull List<Direction> parentList, Context context) {
         super(parentList);
         this.context = context;
@@ -30,9 +32,8 @@ public class RoutesAdapter extends ExpandableRecyclerAdapter<Direction, Stop, Di
 
     }
 
-    public void setHighlightedPosition(int posParent, int posChild){
-        this.highlightedPositionChild = posChild;
-        this.highlightedPositionParent = posParent;
+    public void setHighlightedPosition(int highlightedStopCode){
+        this.highlightedStopCode = highlightedStopCode;
     }
 
     @NonNull
@@ -56,8 +57,10 @@ public class RoutesAdapter extends ExpandableRecyclerAdapter<Direction, Stop, Di
 
     @Override
     public void onBindChildViewHolder(@NonNull StopViewHolder childViewHolder, int parentPosition, int childPosition, @NonNull Stop child) {
-        boolean highlighted = parentPosition == highlightedPositionParent && childPosition == highlightedPositionChild;
+        boolean highlighted = highlightedStopCode == child.getCode();
+//        childViewHolder.setIsRecyclable(!highlighted);
         childViewHolder.bind(child, highlighted);
+
 
     }
 

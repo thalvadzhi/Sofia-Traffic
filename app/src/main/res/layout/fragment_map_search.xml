@@ -62,8 +62,6 @@
                     android:paddingBottom="5dp"
                     android:textAlignment="center"
                     android:gravity="center"
-
-
                     android:layout_centerVertical="true"
                     android:textSize="20dp"
                     android:textColor="@color/white"
@@ -75,7 +73,7 @@
                     android:layout_marginRight="10dp"
                     android:padding="5dp"
                     android:id="@+id/TextViewSlideUpCode"
-                    android:background="@drawable/transition_grey_white_shape"
+                    android:background="?attr/slideUpPanelCode"
                     android:textColor="@android:color/black"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true" />
@@ -120,6 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="40dp"
                 android:layout_toRightOf="@+id/LinearLayoutGetTimes"
+                android:id="@+id/LinearLayoutToggleFavourites"
                 android:orientation="vertical"
                 android:gravity="center">
 
@@ -160,7 +159,7 @@
                 android:id="@+id/TextViewCoordinates"/>
         </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:paddingLeft="10dp"
                 android:paddingTop="10dp"
                 android:id="@+id/RecyclerViewLines"

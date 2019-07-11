@@ -1,7 +1,6 @@
 package com.bearenterprises.sofiatraffic.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.bearenterprises.sofiatraffic.R;
-import com.bearenterprises.sofiatraffic.constants.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

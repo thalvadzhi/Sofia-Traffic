@@ -3,10 +3,12 @@ package com.bearenterprises.sofiatraffic.restClient;
 
 import com.bearenterprises.sofiatraffic.restClient.Time;
 
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class Line implements Serializable {
 
@@ -17,9 +19,12 @@ public class Line implements Serializable {
     private String routeName;
 
 
+    public Line(){
 
+    }
     private List<Time> times = null;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+//    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     public Line(Integer type, Integer id, String name) {
         this.type = type;
@@ -106,13 +111,13 @@ public class Line implements Serializable {
         this.name = name;
     }
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
+//    public Map<String, Object> getAdditionalProperties() {
+//        return this.additionalProperties;
+//    }
+//
+//    public void setAdditionalProperty(String name, Object value) {
+//        this.additionalProperties.put(name, value);
+//    }
 
     @Override
     public boolean equals(Object o) {

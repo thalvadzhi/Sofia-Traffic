@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,9 +11,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
-import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bignerdranch.expandablerecyclerview.ParentViewHolder;

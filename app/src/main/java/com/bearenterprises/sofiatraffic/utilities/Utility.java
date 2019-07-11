@@ -3,15 +3,11 @@ package com.bearenterprises.sofiatraffic.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
-import android.graphics.Paint;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
@@ -25,10 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by thalv on 08-Jul-16.

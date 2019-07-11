@@ -2,9 +2,10 @@ package com.bearenterprises.sofiatraffic.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import com.bearenterprises.sofiatraffic.adapters.NameResultAdapter;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class NameResultsFragment extends Fragment {
@@ -52,7 +52,7 @@ public class NameResultsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_name_results, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView_name_results);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         nameResultAdapter = new NameResultAdapter(stops, getContext());
         recyclerView.setAdapter(nameResultAdapter);
         return view;

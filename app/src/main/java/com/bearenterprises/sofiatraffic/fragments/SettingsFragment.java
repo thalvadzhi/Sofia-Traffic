@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.AlertDialog;
 
-import com.bearenterprises.sofiatraffic.activities.MainActivity;
+import androidx.appcompat.app.AlertDialog;
+
 import com.bearenterprises.sofiatraffic.R;
 
 public class SettingsFragment extends PreferenceFragment {

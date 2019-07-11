@@ -5,13 +5,15 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
+
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.NonNull;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
@@ -48,7 +50,7 @@ public class StopViewHolder extends ChildViewHolder {
             @ColorInt int colorFrom = typedValue.data;
             int colorTo = Color.TRANSPARENT;
             ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-            colorAnimation.setDuration(2000); // milliseconds
+            colorAnimation.setDuration(1500); // milliseconds
             colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
                 @Override

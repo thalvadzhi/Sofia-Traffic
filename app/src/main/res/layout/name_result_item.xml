@@ -8,7 +8,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="330dp"
         android:layout_height="wrap_content"
         app:cardElevation="5dp"
@@ -57,5 +57,5 @@
                 android:background="?locationSelector" />
 
         </RelativeLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>

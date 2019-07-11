@@ -3,7 +3,8 @@ package com.bearenterprises.sofiatraffic.fragments;
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,13 +25,11 @@ import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleRoute;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
-import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
 import com.bearenterprises.sofiatraffic.utilities.db.DbManipulator;
 import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -349,23 +348,30 @@ public class LinesFragment extends Fragment {
                         @Override
                         public ArrayList<ArrayList<Stop>> getStops(RouteShowerArguments routeShowerArguments) {
                             ArrayList<ArrayList<Stop>> stops = new ArrayList<>();
-                            for(Route route : routeShowerArguments.routesVirtualTables.getRoutes()){
-                                ArrayList<Stop> routeStations = new ArrayList<>();
-                                for (Stop stop : route.getStops()) {
-                                    Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
-                                    if (st.getName() != null) {
-                                        routeStations.add(st);
-                                    }else{
-                                        routeStations.add(stop);
+                            try{
+                                for(Route route : routeShowerArguments.routesVirtualTables.getRoutes()){
+                                    ArrayList<Stop> routeStations = new ArrayList<>();
+                                    for (Stop stop : route.getStops()) {
+                                        Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
+                                        if (st.getName() != null) {
+                                            routeStations.add(st);
+                                        }else{
+                                            routeStations.add(stop);
+                                        }
                                     }
-                                }
-                                if (routeStations.size() != 0) {
-                                    stops.add(routeStations);
-                                }
+                                    if (routeStations.size() != 0) {
+                                        stops.add(routeStations);
+                                    }
 
+                                }
+                                return stops;
+                            }catch (Exception e){
+                                e.printStackTrace();
                             }
+
                             return stops;
                         }
+
                     });
                 }
 
@@ -484,7 +490,7 @@ public class LinesFragment extends Fragment {
                 });
                 return allLines;
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;

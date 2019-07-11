@@ -1,12 +1,11 @@
 package com.bearenterprises.sofiatraffic.callback;
 
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bearenterprises.sofiatraffic.adapters.ReorderAdapter;
 
-import static android.support.v7.widget.helper.ItemTouchHelper.*;
-
+import static androidx.recyclerview.widget.ItemTouchHelper.Callback;
 /**
  * Created by thalvadzhiev on 4/23/17.
  */

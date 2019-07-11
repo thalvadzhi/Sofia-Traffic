@@ -4,10 +4,12 @@ package com.bearenterprises.sofiatraffic.restClient;
 
 import com.bearenterprises.sofiatraffic.constants.Constants;
 
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 public class Stop extends IStop implements Serializable{
 

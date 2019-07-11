@@ -5,12 +5,16 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +40,7 @@ import java.util.ArrayList;
 
 import static android.content.Context.CLIPBOARD_SERVICE;
 
-public class MapSearchFragment extends android.support.v4.app.Fragment {
+public class MapSearchFragment extends Fragment {
 
     public MapSearchFragment() {
         // Required empty public constructor
@@ -49,8 +53,9 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
     private TextView code;
     private TextView coordinates;
     private RecyclerView lines;
-    private ImageButton getTimes;
+    private LinearLayout getTimes;
     private ToggleButton favourite;
+    private LinearLayout favouriteContainer;
     private ArrayList<Line> linesForAdapter;
     private SlideUpLayoutLinesAdapter slideUpLayoutLinesAdapter;
     private LinearLayout backgroundColor;
@@ -85,14 +90,23 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
             @Override
             public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+                Resources.Theme theme = getContext().getTheme();
                 if(previousState == SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING){
                     TransitionDrawable transition = (TransitionDrawable) backgroundColor.getBackground();
                     TransitionDrawable transitionShape = (TransitionDrawable) code.getBackground();
                     transition.reverseTransition(animationDuration);
                     transitionShape.reverseTransition(animationDuration);
-                    code.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
-                    stopName.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
 
+                    TypedValue codeTextColorUpTypedValue = new TypedValue();
+                    TypedValue stopNameTextColorUpTypedValue = new TypedValue();
+
+                    theme.resolveAttribute(R.attr.slideUpPanelCodeTextColorUp, codeTextColorUpTypedValue, true);
+                    theme.resolveAttribute(R.attr.slideUpPanelStopNameTextColorUp, stopNameTextColorUpTypedValue, true);
+                    int codeTextColor = codeTextColorUpTypedValue.resourceId;
+                    int stopNameTextColor = stopNameTextColorUpTypedValue.resourceId;
+
+                    code.setTextColor(ContextCompat.getColor(getContext(), codeTextColor));
+                    stopName.setTextColor(ContextCompat.getColor(getContext(), stopNameTextColor));
 
                 }else if(previousState == SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.COLLAPSED){
                     slidingUpPanelLayout.setPanelHeight(backgroundColor.getHeight());
@@ -100,8 +114,17 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
                     TransitionDrawable transitionShape = (TransitionDrawable) code.getBackground();
                     transition.startTransition(animationDuration);
                     transitionShape.reverseTransition(animationDuration);
-                    code.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
-                    stopName.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
+
+                    TypedValue codeTextColorDownTypedValue = new TypedValue();
+                    TypedValue stopNameTextColorDownTypedValue = new TypedValue();
+
+                    theme.resolveAttribute(R.attr.slideUpPanelCodeTextColorDown, codeTextColorDownTypedValue, true);
+                    theme.resolveAttribute(R.attr.slideUpPanelStopNameTextColorDown, stopNameTextColorDownTypedValue, true);
+                    int codeTextColor = codeTextColorDownTypedValue.resourceId;
+                    int stopNameTextColor = stopNameTextColorDownTypedValue.resourceId;
+
+                    code.setTextColor(ContextCompat.getColor(getContext(), codeTextColor));
+                    stopName.setTextColor(ContextCompat.getColor(getContext(), stopNameTextColor));
                 }
             }
         });
@@ -109,16 +132,23 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
         slidingUpPanelLayout.setAnchorPoint(0.4f);
         backgroundColor = v.findViewById(R.id.LinearLayoutBackground);
-        getTimes =  v.findViewById(R.id.ImageButtonGetTimes);
+        getTimes =  v.findViewById(R.id.LinearLayoutGetTimes);
         getTimes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CommunicationUtility.showTimes(Integer.toString(currentStop.getCode()), (MainActivity)getActivity());
             }
         });
-        favourite =  v.findViewById(R.id.ToggleButtonFavourite);
 
+        favouriteContainer =  v.findViewById(R.id.LinearLayoutToggleFavourites);
+        favouriteContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                favourite.toggle();
+            }
+        });
 
+        favourite = v.findViewById(R.id.ToggleButtonFavourite);
         favourite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -148,7 +178,7 @@ public class MapSearchFragment extends android.support.v4.app.Fragment {
 
         lines = v.findViewById(R.id.RecyclerViewLines);
         lines.setAdapter(slideUpLayoutLinesAdapter);
-        lines.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        lines.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
         lines.setNestedScrollingEnabled(true);
 
 

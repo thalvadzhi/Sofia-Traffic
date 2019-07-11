@@ -6,7 +6,8 @@
     android:orientation="horizontal">
 
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cardView_results"
         android:layout_width="330dp"
@@ -22,7 +23,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/toBeAbove"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -179,7 +181,7 @@
         <!--</RelativeLayout>-->
 
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
     <!--</LinearLayout>-->

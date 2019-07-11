@@ -5,14 +5,10 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Typeface;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.RecyclerView;
+
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
@@ -23,10 +19,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;

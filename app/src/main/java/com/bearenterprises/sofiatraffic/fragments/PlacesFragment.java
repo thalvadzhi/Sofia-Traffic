@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
+import androidx.fragment.app.Fragment;
+
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.location.StationsLocator;
@@ -15,15 +17,15 @@ import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
+import com.google.android.libraries.places.compat.Place;
+import com.google.android.libraries.places.compat.ui.PlaceSelectionListener;
+import com.google.android.libraries.places.compat.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 
-public class PlacesFragment extends android.support.v4.app.Fragment {
+public class PlacesFragment extends Fragment {
 
     public PlacesFragment() {
         // Required empty public constructor

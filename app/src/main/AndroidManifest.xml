@@ -12,7 +12,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name="androidx.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:backupAgent=".backup.BackupManagerHelper"
         android:fullBackupContent="@xml/backup"

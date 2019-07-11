@@ -1,9 +1,9 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
 
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,6 @@ import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -61,6 +60,10 @@ public class ShowAllOnMapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_show_all_on_map, container, false);
         showOnMapText = view.findViewById(R.id.show_all_name_results_on_map);
         showOnMapButton = view.findViewById(R.id.show_all_name_results_on_map_button);
+
+        if(showOnMapButton == null || showOnMapText == null){
+            return view;
+        }
 
         if(stops.size() == 0){
             showOnMapText.setText("Няма намерени спирки");

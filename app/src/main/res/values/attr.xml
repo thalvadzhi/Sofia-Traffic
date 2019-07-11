@@ -33,4 +33,11 @@
     <attr name="sc_border_width" format="dimension" />
     <attr name="sc_tint_color" format="color" />
     <attr name="sc_checked_text_color" format="color" />
+    <attr name="mapTheme" format="reference"/>
+    <attr name="slideUpPanelCode" format="reference"/>
+    <attr name="slideUpPanelCodeTextColorUp" format="color"/>
+    <attr name="slideUpPanelCodeTextColorDown" format="color"/>
+    <attr name="slideUpPanelStopNameTextColorUp" format="color"/>
+    <attr name="slideUpPanelStopNameTextColorDown" format="color"/>
+
 </resources>

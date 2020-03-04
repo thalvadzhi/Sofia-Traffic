@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -39,6 +41,7 @@ public class StationNameFragment extends Fragment {
     private String mStationCode;
     private TextView textView;
     private ToggleButton toggleButton;
+    private ImageButton locationButton;
 
 
     public StationNameFragment() {
@@ -68,30 +71,42 @@ public class StationNameFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_station_name, container, false);
         toggleButton = view.findViewById(R.id.toggleButton);
         textView = view.findViewById(R.id.station_name_text_view);
+        locationButton = view.findViewById(R.id.station_location);
 
         final Stop station = getStationName(mStationCode);
+
         if(station == null){
             toggleButton.setVisibility(View.GONE);
-        }else{
-            textView.setText(station.getName());
-            if (checkIfAlreadyInFavourites(mStationCode)){
-                toggleButton.setChecked(true);
-            }
-            toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked){
-                        //means previously was not checked
-                        FavouritesModifier.save(station, getContext());
-                        CommunicationUtility.addFavourite(station, (MainActivity) getActivity());
-                    }else{
-                        //means previously was
-                        FavouritesModifier.remove(station.getCode(), getContext());
-                        CommunicationUtility.removeFavourite(station.getCode(), (MainActivity) getActivity());
-                    }
-                }
-            });
+            locationButton.setVisibility(View.GONE);
+            return view;
         }
+
+        textView.setText(station.getName());
+        if (checkIfAlreadyInFavourites(mStationCode)){
+            toggleButton.setChecked(true);
+        }
+        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    //means previously was not checked
+                    FavouritesModifier.save(station, getContext());
+                    CommunicationUtility.addFavourite(station, (MainActivity) getActivity());
+                }else{
+                    //means previously was
+                    FavouritesModifier.remove(station.getCode(), getContext());
+                    CommunicationUtility.removeFavourite(station.getCode(), (MainActivity) getActivity());
+                }
+            }
+        });
+
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommunicationUtility.showOnMap(station,  (MainActivity) getActivity());
+            }
+        });
+
 
         return view;
     }

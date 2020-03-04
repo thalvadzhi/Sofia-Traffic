@@ -1,9 +1,15 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.StationNameFragment"
     >
+    <ImageButton
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:id="@+id/station_location"
+        android:background="?attr/locationInSlideUp" />
 
     <TextView
         android:layout_width="250dp"
@@ -20,11 +26,11 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/toggleButton"
-        android:layout_gravity="left|top"
+        android:layout_gravity="center_vertical"
         android:background="?starToggle"
-
         style="@style/toggleButton"
-        android:layout_centerVertical="true"
-        android:layout_toEndOf="@+id/station_name_text_view" />
+         />
 
-</RelativeLayout>
+
+
+</LinearLayout>

@@ -48,6 +48,8 @@
         <item name="slideUpPanelCodeTextColorDown">@color/white</item>
         <item name="slideUpPanelStopNameTextColorUp">@color/white</item>
         <item name="slideUpPanelStopNameTextColorDown">@color/black</item>
+        <item name="icon_toolbar">@drawable/icon</item>
+
     </style>
 
     <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
@@ -87,6 +89,7 @@
         <item name="slideUpPanelCodeTextColorDown">@color/black</item>
         <item name="slideUpPanelStopNameTextColorUp">@color/white</item>
         <item name="slideUpPanelStopNameTextColorDown">@color/white</item>
+        <item name="icon_toolbar">@drawable/icon_white</item>
 
     </style>
 

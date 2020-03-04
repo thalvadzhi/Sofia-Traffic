@@ -11,6 +11,7 @@ import com.bearenterprises.sofiatraffic.utilities.network.RetrofitUtility;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -28,10 +29,9 @@ public class StopInformationGetter {
     private SofiaTransportApi sofiaTransportApi;
     private Context context;
     private List<ScheduleLineTimes> scheduleLineTimesList;
-    private OnPreciseTimeReceivedListener onPreciseTimeReceivedListener;
-    private OnScheduleReceivedListener onScheduleReceivedListener;
-    private OnPreciseTimeScheduleMixReceivedListener onPreciseTimeScheduleMixReceivedListener;
+
     private RequestAndCacheScheduleStop requestAndCacheScheduleStop;
+    private OnScheduleLinesReceived onScheduleLinesReceived;
     private static final String TAG = StopInformationGetter.class.getName();
 
     public StopInformationGetter(int stopCode, Context context) {
@@ -41,104 +41,73 @@ public class StopInformationGetter {
         this.context = context;
     }
 
+    public Stop getScheduleStopWithTimes(String code) throws Exception {
+        scheduleStop = this.getScheduleStop(code);
+        scheduleLineTimesList = this.getScheduleLineTimes(code);
+        populateScheduleStopLineTimes(scheduleStop, scheduleLineTimesList);
+        return scheduleStop;
+    }
+
+    /**
+     * Get schedule stop should be called before this. This will populate the line times.
+     */
+    public void getScheduleTimesAsync(){
+        Call<List<ScheduleLineTimes>> call = sofiaTransportApi.getScheduleLineTimes(Integer.toString(this.stopCode));
+        call.enqueue(new Callback<List<ScheduleLineTimes>>() {
+            @Override
+            public void onResponse(Call<List<ScheduleLineTimes>> call, Response<List<ScheduleLineTimes>> response) {
+                scheduleLineTimesList = response.body();
+                try {
+                    populateScheduleStopLineTimes(scheduleStop, scheduleLineTimesList);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                for (Line l : scheduleStop.getLines()){
+                    onScheduleLinesReceived.scheduleReceived(l);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ScheduleLineTimes>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void populateScheduleStopLineTimes(Stop scheduleStop, List<ScheduleLineTimes> scheduleLineTimesList) throws Exception {
+        String currentDayType = Utility.getScheduleDayType();
+        for(Line l : scheduleStop.getLines()){
+            for (ScheduleLineTimes slt : scheduleLineTimesList){
+                if(l.getName().equals(slt.getName())){
+                    for (ScheduleTimes st: slt.getSchedule()){
+                        if (st.getScheduleDayTypes().contains(currentDayType)){
+                           l.setTimes(st.getTimes());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public Stop getStopSlow(String code) throws IOException {
         Call<Stop> call = sofiaTransportApi.getStop(code);
         stop = RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
         return stop;
     }
 
-    private void getStopSlowAsyncAndMixWithSchedules(String code) {
-        Call<Stop> call = sofiaTransportApi.getStop(code);
-        call.enqueue(new Callback<Stop>() {
-            @Override
-            public void onResponse(Call<Stop> call, Response<Stop> response) {
-                stop = response.body();
-                getTimesMixedWithSchedules();
-            }
 
-            @Override
-            public void onFailure(Call<Stop> call, Throwable t) {
-            }
-        });
-    }
-
-    public Stop getStopFast(String code) throws IOException {
-        Call<Stop> call = sofiaTransportApi.getStopWithTimes(code);
-        stop = RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
-        return stop;
-    }
-
-    private Stop getScheduleStop(String code) throws IOException {
+    public Stop getScheduleStop(String code) throws IOException {
         Call<Stop> call = sofiaTransportApi.getScheduleStop(code);
         scheduleStop = RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
         return scheduleStop;
     }
 
-    private void getScheduleLineTimesList(String code, final Line line) throws IOException {
-        if (scheduleLineTimesList == null) {
-            requestAndCacheScheduleStop.addObserver(new RequestAndCacheScheduleStop.ScheduleReceivedObserver() {
-                @Override
-                public void onScheduleReceived(List<ScheduleLineTimes> scheduleLineTimesList) {
-                    handleScheduleTimes(scheduleLineTimesList, line);
-                }
-            });
-        } else {
-            handleScheduleTimes(scheduleLineTimesList, line);
-        }
+    private List<ScheduleLineTimes> getScheduleLineTimes(String code) throws IOException {
+        Call<List<ScheduleLineTimes>> call = sofiaTransportApi.getScheduleLineTimes(code);
+        return RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
     }
 
-    private void handleScheduleTimes(List<ScheduleLineTimes> scheduleLineTimesList, Line line) {
-        List<Time> times;
-        TimesWithDirection timesWithDirection;
-        try {
-            timesWithDirection = scheduleLineTimesToTimesOfLine(scheduleLineTimesList, line);
-        } catch (Exception e) {
-            Log.d(TAG, "Couldn't transform scheduleLineTimes to times", e);
-            return;
-        }
-
-        if (timesWithDirection != null) {
-            times = timesWithDirection.getTimes();
-            if (times != null && times.size() != 0) {
-                onPreciseTimeScheduleMixReceivedListener.receivedSchedule(line, timesWithDirection);
-            } else {
-                onPreciseTimeScheduleMixReceivedListener.received(line, null, OnPreciseTimeScheduleMixReceivedListener.NONE);
-            }
-        } else {
-            onPreciseTimeScheduleMixReceivedListener.received(line, null, OnPreciseTimeScheduleMixReceivedListener.NONE);
-        }
-    }
-
-    public Stop getStopWithAllLines(String code) throws IOException {
-        return getScheduleStop(code);
-    }
-
-    public void getLineTimeWithSchedulesAsync() throws IOException {
-        if (stop != null) {
-            getTimesMixedWithSchedules();
-        } else {
-            getStopSlowAsyncAndMixWithSchedules(Integer.toString(stopCode));
-        }
-    }
-
-    private TimesWithDirection scheduleLineTimesToTimesOfLine(List<ScheduleLineTimes> slt, Line line) throws Exception {
-        //TODO rewrite this in functional style
-        for (ScheduleLineTimes s : slt) {
-            Line scheduleLine = new Line(s.getType(), null, s.getName());
-            //the list contains the times for all the lines so we need to filter it
-            if (scheduleLine.equals(line)) {
-                String scheduleDayType = Utility.getScheduleDayType();
-                for (ScheduleTimes t : s.getSchedule()) {
-                    //we only need the schedule for the current day
-                    if (t.getScheduleDayTypes().contains(scheduleDayType)) {
-                        return new TimesWithDirection(t.getTimes(), t.getRouteName());
-                    }
-                }
-                break;
-            }
-        }
-        return null;
-    }
 
 
     private ArrayList<Line> lineDifference(ArrayList<Line> linesWithGPS, ArrayList<Line> linesWithSchedules) {
@@ -151,113 +120,15 @@ public class StopInformationGetter {
         return diff;
     }
 
-    private void getTimesMixedWithSchedules() {
-        requestAndCacheScheduleStop.getSchedule();
-        if (stop != null) {
 
-            for (int i = 0; i < stop.getLines().size(); i++) {
-                final Line line = stop.getLines().get(i);
-                Call<List<Time>> call = sofiaTransportApi.getTimes(Integer.toString(stop.getCode()), Integer.toString(line.getId()));
-                call.enqueue(new Callback<List<Time>>() {
-                    @Override
-                    public void onResponse(Call<List<Time>> call, Response<List<Time>> response) {
-                        List<Time> times = response.body();
-                        if (onPreciseTimeReceivedListener != null) {
-                            if (times != null && times.size() != 0) {
-                                onPreciseTimeReceivedListener.received(line, times);
-                            }
-                        }
-                        if (onPreciseTimeScheduleMixReceivedListener != null) {
-                            if (times != null && times.size() != 0 ) {
-                                onPreciseTimeScheduleMixReceivedListener.received(line, times, OnPreciseTimeScheduleMixReceivedListener.PRECISE);
-                            }
-                        }
-                        if (times == null || times.size() == 0) {
-                            try {
-                                getScheduleLineTimesList(Integer.toString(scheduleStop.getCode()), line);
-                            } catch (IOException e) {
-                                Log.d(TAG, "Couldn't get schedulelinetimes", e);
-                            }
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<Time>> call, Throwable t) {
-
-                    }
-                });
-            }
-        }
-        ArrayList<Line> lineDiff;
-        if (stop == null) {
-            lineDiff = scheduleStop.getLines();
-        } else {
-            lineDiff = lineDifference(stop.getLines(), scheduleStop.getLines());
-        }
-        for (Line line : lineDiff) {
-            try {
-                getScheduleLineTimesList(Integer.toString(scheduleStop.getCode()), line);
-            } catch (IOException e) {
-                Log.d(TAG, "Couldn't get schedulelinetimes", e);
-            }
-        }
+    public abstract static class OnScheduleLinesReceived{
+        public abstract void scheduleReceived(Line line);
     }
 
-    public abstract class OnScheduleReceivedListener {
-        public abstract void received(List<ScheduleLineTimes> scheduleLineTimes);
-    }
-
-    public abstract class OnPreciseTimeReceivedListener {
-        public abstract void received(Line line, List<Time> times);
-    }
-
-    public abstract static class OnPreciseTimeScheduleMixReceivedListener {
-        public static final String SCHEDULE = "schedule";
-        public static final String PRECISE = "precise";
-        public static final String NONE = "no_info";
-
-        //means is either schedule or precise
-        public abstract void received(Line line, List<Time> times, String means);
-
-        public abstract void receivedSchedule(Line line, TimesWithDirection timesWithDirection);
-    }
-
-    public void setOnPreciseTimeReceivedListener(OnPreciseTimeReceivedListener onPreciseTimeReceivedListener) {
-        this.onPreciseTimeReceivedListener = onPreciseTimeReceivedListener;
-    }
-
-    public void setOnScheduleReceivedListener(OnScheduleReceivedListener onScheduleReceivedListener) {
-        this.onScheduleReceivedListener = onScheduleReceivedListener;
-    }
-
-    public void setOnPreciseTimeScheduleMixReceivedListener(OnPreciseTimeScheduleMixReceivedListener onPreciseTimeScheduleMixReceivedListener) {
-        this.onPreciseTimeScheduleMixReceivedListener = onPreciseTimeScheduleMixReceivedListener;
+    public void setOnScheduleLinesReceived(OnScheduleLinesReceived onScheduleLinesReceived){
+        this.onScheduleLinesReceived = onScheduleLinesReceived;
     }
 
 
-    public static class TimesWithDirection {
-        private ArrayList<Time> times;
-        private String direction;
-
-        public ArrayList<Time> getTimes() {
-            return times;
-        }
-
-        public void setTimes(ArrayList<Time> times) {
-            this.times = times;
-        }
-
-        public String getDirection() {
-            return direction;
-        }
-
-        public void setDirection(String direction) {
-            this.direction = direction;
-        }
-
-        public TimesWithDirection(ArrayList<Time> times, String direction) {
-            this.times = times;
-            this.direction = direction;
-        }
-    }
 }

@@ -142,16 +142,32 @@ public class TimeResultsFragment extends Fragment {
         return view;
     }
 
-    public void addTimeScheduleWithDirection(Line line, StopInformationGetter.TimesWithDirection timesWithDirection) {
+
+    public void addScheduleTimes(Line line){
         int indexOfLine = getIndexOfLine(line);
         if(indexOfLine != Constants.NO_SUCH_LINE){
             synchronized (lineTimes){
                 LineTimes vt = lineTimes.get(indexOfLine);
                 vt.setSchedule(true);
-                vt.setVehicleTimes(timesWithDirection.getTimes());
-                vt.setRouteName(timesWithDirection.getDirection());
+                vt.setVehicleTimes((ArrayList<Time>) line.getTimes());
+//                vt.setRouteName(timesWithDirection.getDirection());
                 this.timeResultsAdapter.notifyItemChanged(indexOfLine);
             }
         }
+    }
+
+    /**
+     * If the times have already been set it means that they are accurate time and
+     * they won't need to be set with  schedule times
+     * @param line
+     * @return true if the times have already been set, false otherwise
+     */
+    public boolean checkIfAlreadySet(Line line) throws Exception {
+        int indexOfLine = getIndexOfLine(line);
+        if(indexOfLine != Constants.NO_SUCH_LINE){
+            LineTimes vt = lineTimes.get(indexOfLine);
+            return vt.getVehicleTimes() != null;
+        }
+        throw new Exception("No such line exists");
     }
 }

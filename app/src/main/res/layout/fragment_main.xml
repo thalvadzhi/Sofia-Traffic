@@ -34,14 +34,14 @@
                     style="@style/RadioButton"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:text="Код" />
+                    android:text="@string/search_toggle_code" />
 
                 <RadioButton
                     android:id="@+id/toggleStateName"
                     style="@style/RadioButton"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:text="Име" />
+                    android:text="@string/search_toggle_name" />
             </info.hoang8f.android.segmented.SegmentedGroup>
 
             <androidx.cardview.widget.CardView

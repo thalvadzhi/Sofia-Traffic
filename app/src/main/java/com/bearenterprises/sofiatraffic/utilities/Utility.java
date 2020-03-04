@@ -2,6 +2,7 @@ package com.bearenterprises.sofiatraffic.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import com.google.android.material.snackbar.Snackbar;
@@ -59,12 +60,24 @@ public class Utility {
 
     public static void setTheme(final AppCompatActivity activity) {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(activity);
-        String theme = sharedPref.getString(activity.getResources().getString(R.string.key_choose_theme), activity.getResources().getString(R.string.light_theme_value));
         String themeDark = activity.getResources().getString(R.string.dark_theme_value);
+        String themeLight = activity.getResources().getString(R.string.light_theme_value);
+        String themeAuto = activity.getResources().getString(R.string.auto_theme_value);
+        String theme = sharedPref.getString(activity.getResources().getString(R.string.key_choose_theme), themeAuto);
+
         if (theme.equals(themeDark)) {
             activity.setTheme(R.style.DarkTheme);
-        } else {
+        } else if (theme.equals(themeLight)) {
             activity.setTheme(R.style.LightTheme);
+        }else if (theme.equals(themeAuto)){
+            switch (activity.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) {
+                case Configuration.UI_MODE_NIGHT_YES:
+                    activity.setTheme(R.style.DarkTheme);
+                    break;
+                case Configuration.UI_MODE_NIGHT_NO:
+                    activity.setTheme(R.style.LightTheme);
+                    break;
+            }
         }
     }
 

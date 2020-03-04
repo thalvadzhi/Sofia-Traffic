@@ -40,4 +40,9 @@
     <attr name="slideUpPanelStopNameTextColorUp" format="color"/>
     <attr name="slideUpPanelStopNameTextColorDown" format="color"/>
 
+    <declare-styleable name="toolbarStylable">
+        <attr name="icon_toolbar" format="reference"/>
+    </declare-styleable>
+
+
 </resources>

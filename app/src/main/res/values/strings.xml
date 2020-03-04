@@ -17,8 +17,12 @@
     <string name="settings_map_value">map</string>
     <string name="dark_theme">Тъмна</string>
     <string name="light_theme">Светла</string>
+    <string name="auto_theme">Автоматична (зависи от системната)</string>
+
     <string name="dark_theme_value">dark</string>
     <string name="light_theme_value">light</string>
+    <string name="auto_theme_value">auto</string>
+
     <string name="query_method_slow_value">slow</string>
     <string name="query_method_fast_value">fast</string>
     <string name="query_method_slow">Бавно (повече времена)</string>
@@ -59,4 +63,6 @@
     <string name="stop_name">Име на спирката</string>
     <string name="show_all_on_map">Всички на картата</string>
     <string name="exclamation_mark_tooltip_warning_bg">Информацията е от разписанието и е ориентировъчна!</string>
+    <string name="search_toggle_code">Код</string>
+    <string name="search_toggle_name">Име</string>
 </resources>

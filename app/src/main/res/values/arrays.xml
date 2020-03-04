@@ -10,6 +10,8 @@
     <string-array name="choose_theme_human_readable">
         <item>@string/dark_theme</item>
         <item>@string/light_theme</item>
+        <item>@string/auto_theme</item>
+
     </string-array>
 
     <string-array name="choose_screen_values">
@@ -21,6 +23,7 @@
     <string-array name="choose_theme_values">
         <item>@string/dark_theme_value</item>
         <item>@string/light_theme_value</item>
+        <item>@string/auto_theme_value</item>
     </string-array>
 
     <string-array name="choose_query_method_values">

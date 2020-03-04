@@ -333,40 +333,57 @@ public class TimesSearchFragment extends Fragment {
 
         @Override
         protected Stop doInBackground(Void... params) {
-            stopInformationGetter.setOnPreciseTimeScheduleMixReceivedListener(new StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener() {
-                @Override
-                public void received(Line line, List<Time> times, String means) {
-                    if (means.equals(StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener.NONE)) {
-                        CommunicationUtility.removeLine(timeResultsFragment, line);
-                    } else {
-                        CommunicationUtility.addTimes(timeResultsFragment, line, times);
-                    }
-                }
+//            stopInformationGetter.setOnPreciseTimeScheduleMixReceivedListener(new StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener() {
+//                @Override
+//                public void received(Line line, List<Time> times, String means) {
+////                    if (means.equals(StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener.NONE)) {
+////                        CommunicationUtility.removeLine(timeResultsFragment, line);
+////                    } else {
+////                        CommunicationUtility.addTimes(timeResultsFragment, line, times);
+////                    }
+//                }
+//
+//                @Override
+//                public void receivedSchedule(Line line, StopInformationGetter. TimesWithDirection timesWithDirection) {
+//
+//                }
+//            });
+
+            stopInformationGetter.setOnScheduleLinesReceived(new StopInformationGetter.OnScheduleLinesReceived(){
 
                 @Override
-                public void receivedSchedule(Line line, StopInformationGetter.TimesWithDirection timesWithDirection) {
-                    CommunicationUtility.addTimesWithDirection(timeResultsFragment, line, timesWithDirection);
+                public void scheduleReceived(Line line) {
+                    try {
+                        if (!CommunicationUtility.checkIfTimesAlreadySet(timeResultsFragment, line)){
+                            CommunicationUtility.addScheduleTime(timeResultsFragment, line);
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             Stop scheduleStop = null;
             Stop stop = null;
+            Stop mergedStop = null;
             queryMethod = Constants.QUERY_METHOD_SLOW;
             try {
-                scheduleStop = stopInformationGetter.getStopWithAllLines(stopCode);
+                scheduleStop = stopInformationGetter.getScheduleStop(stopCode);
                 stop = stopInformationGetter.getStopSlow(stopCode);
-                scheduleStop = Utility.mergeStops(scheduleStop, stop);
-            } catch (IOException e) {
+                stopInformationGetter.getScheduleTimesAsync();
+                mergedStop = Utility.mergeStops(scheduleStop, stop);
+            } catch (Exception e) {
                 e.printStackTrace();
 
             }
-            if (scheduleStop == null) {
+            if (mergedStop == null) {
                 detachLoadingFragment();
                 Utility.makeSnackbar("Няма информация!", (MainActivity) getActivity());
                 return null;
             }
 
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
-            for (Line line : scheduleStop.getLines()) {
+            for (Line line : mergedStop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));
                 lineTimes.add(lt);
             }
@@ -383,11 +400,15 @@ public class TimesSearchFragment extends Fragment {
             if (stop == null) {
                 return;
             }
-            try {
-                stopInformationGetter.getLineTimeWithSchedulesAsync();
-            } catch (IOException e) {
-                Log.d(TAG, "Couldn't get line time async", e);
+            Log.i("OnPost", "Why tho");
+            for(Line line : stop.getLines()){
+                CommunicationUtility.addTimes(timeResultsFragment, line, line.getTimes());
             }
+//            try {
+//                stopInformationGetter.getLineTimeWithSchedulesAsync();
+//            } catch (IOException e) {
+//                Log.d(TAG, "Couldn't get line time async", e);
+//            }
 
         }
     }

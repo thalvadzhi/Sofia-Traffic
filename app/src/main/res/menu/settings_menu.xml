@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools" >
 
     <item
-        android:id="@+id/search"
+        android:id="@+id/settings_button"
         android:icon="@drawable/settings_white"
         app:showAsAction="always"
         android:title="text"/>

@@ -25,12 +25,12 @@
             android:layout_height="wrap_content" />
 
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?viewPagerBackgroundColor"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    </LinearLayout>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?viewPagerBackgroundColor"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

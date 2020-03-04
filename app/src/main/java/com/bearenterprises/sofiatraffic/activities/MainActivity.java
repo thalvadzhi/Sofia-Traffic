@@ -23,8 +23,11 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.inputmethod.InputMethodManager;
 
 import com.bearenterprises.sofiatraffic.R;
@@ -267,10 +270,37 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.settings_button) {
 
-        if (id == R.id.search) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            float fromRotation = 0;
+            float toRotation = 180;
+            View actionView = findViewById(R.id.settings_button);
+
+            final RotateAnimation rotateAnim = new RotateAnimation(
+                    fromRotation, toRotation, actionView.getWidth()/2, actionView.getHeight()/2);
+
+            rotateAnim.setDuration(50); // Use 0 ms to rotate instantly
+            rotateAnim.setFillAfter(true); // Must be true or the animation will reset
+
+            actionView.startAnimation(rotateAnim);
+            rotateAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
             return true;
         }
 

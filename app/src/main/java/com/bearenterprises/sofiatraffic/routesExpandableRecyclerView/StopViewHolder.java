@@ -78,7 +78,7 @@ public class StopViewHolder extends ChildViewHolder {
                     return;
                 }
                 DbUtility.addLineTypes(stop, (MainActivity)context);
-                CommunicationUtility.showOnMap(stop, false, (MainActivity)context);
+                CommunicationUtility.showOnMap(stop,  (MainActivity)context);
             }
         });
 

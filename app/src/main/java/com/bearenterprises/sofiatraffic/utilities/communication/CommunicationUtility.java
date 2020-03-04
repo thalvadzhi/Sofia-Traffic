@@ -42,11 +42,19 @@ public class CommunicationUtility {
         fragment.addTimeSchedule(line, (ArrayList<Time>) times);
     }
 
-    public static void addTimesWithDirection(TimeResultsFragment fragment, Line line, StopInformationGetter.TimesWithDirection timesWithDirection){
+
+    public static void addScheduleTime(TimeResultsFragment fragment, Line line){
         if (fragment == null){
             return;
         }
-        fragment.addTimeScheduleWithDirection(line, timesWithDirection);
+        fragment.addScheduleTimes(line);
+    }
+
+    public static boolean checkIfTimesAlreadySet(TimeResultsFragment fragment, Line line) throws Exception {
+        if (fragment == null){
+            throw new Exception("Fragment is null.");
+        }
+        return fragment.checkIfAlreadySet(line);
     }
 
     public static void removeLine(TimeResultsFragment fragment, Line line){
@@ -68,6 +76,13 @@ public class CommunicationUtility {
         f.showStationTimes(code);
     }
 
+    /**
+     *
+     * @param stations
+     * @param ordered whether to mark the first stop of a list of stops by making it semitransparent
+     * @param mainActivity
+     * @param <T>
+     */
     public static<T extends Stop> void showOnMap(ArrayList<T> stations, boolean ordered, MainActivity mainActivity){
         if (mainActivity == null){
             return;
@@ -118,10 +133,11 @@ public class CommunicationUtility {
         }
     }
 
-    public static<T extends Stop> void showOnMap(T st, boolean ordered, MainActivity mainActivity){
+
+    public static<T extends Stop> void showOnMap(T st, MainActivity mainActivity){
         ArrayList<Stop> stations = new ArrayList<>();
         stations.add(st);
-        CommunicationUtility.showOnMap(stations, ordered, mainActivity);
+        CommunicationUtility.showOnMap(stations, false, mainActivity);
     }
 
     public static void hideSlideUpPanel(MainActivity mainActivity){

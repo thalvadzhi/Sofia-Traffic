@@ -66,6 +66,7 @@ public class StopInformationGetter {
                 for (Line l : scheduleStop.getLines()){
                     onScheduleLinesReceived.scheduleReceived(l);
                 }
+                onScheduleLinesReceived.allLinesProcessed();
             }
 
             @Override
@@ -124,6 +125,7 @@ public class StopInformationGetter {
 
     public abstract static class OnScheduleLinesReceived{
         public abstract void scheduleReceived(Line line);
+        public abstract void allLinesProcessed();
     }
 
     public void setOnScheduleLinesReceived(OnScheduleLinesReceived onScheduleLinesReceived){

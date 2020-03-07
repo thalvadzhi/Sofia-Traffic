@@ -1,11 +1,13 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,8 @@ import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUti
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 
 public class TimeResultsFragment extends Fragment {
@@ -170,4 +174,19 @@ public class TimeResultsFragment extends Fragment {
         }
         throw new Exception("No such line exists");
     }
+
+    public void removeAllUnpopulatedLines(){
+        synchronized (lineTimes){
+            int indexOfLine = 0;
+            Iterator<LineTimes> lineTimesIterator = lineTimes.iterator();
+            while(lineTimesIterator.hasNext()){
+                if(lineTimesIterator.next().getVehicleTimes() == null){
+                    lineTimesIterator.remove();
+                    this.timeResultsAdapter.notifyItemRemoved(indexOfLine);
+                }
+                indexOfLine += 1;
+            }
+        }
+    }
+
 }

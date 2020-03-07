@@ -328,27 +328,10 @@ public class TimesSearchFragment extends Fragment {
         public SearchQuery(String code) {
             this.stopCode = code;
             stopInformationGetter = new StopInformationGetter(Integer.parseInt(code), getContext());
-
         }
 
         @Override
         protected Stop doInBackground(Void... params) {
-//            stopInformationGetter.setOnPreciseTimeScheduleMixReceivedListener(new StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener() {
-//                @Override
-//                public void received(Line line, List<Time> times, String means) {
-////                    if (means.equals(StopInformationGetter.OnPreciseTimeScheduleMixReceivedListener.NONE)) {
-////                        CommunicationUtility.removeLine(timeResultsFragment, line);
-////                    } else {
-////                        CommunicationUtility.addTimes(timeResultsFragment, line, times);
-////                    }
-//                }
-//
-//                @Override
-//                public void receivedSchedule(Line line, StopInformationGetter. TimesWithDirection timesWithDirection) {
-//
-//                }
-//            });
-
             stopInformationGetter.setOnScheduleLinesReceived(new StopInformationGetter.OnScheduleLinesReceived(){
 
                 @Override
@@ -356,11 +339,15 @@ public class TimesSearchFragment extends Fragment {
                     try {
                         if (!CommunicationUtility.checkIfTimesAlreadySet(timeResultsFragment, line)){
                             CommunicationUtility.addScheduleTime(timeResultsFragment, line);
-
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                @Override
+                public void allLinesProcessed() {
+                    CommunicationUtility.removeAllUnpopulatedLines(timeResultsFragment);
                 }
             });
             Stop scheduleStop = null;
@@ -370,8 +357,7 @@ public class TimesSearchFragment extends Fragment {
             try {
                 scheduleStop = stopInformationGetter.getScheduleStop(stopCode);
                 stop = stopInformationGetter.getStopSlow(stopCode);
-                stopInformationGetter.getScheduleTimesAsync();
-                mergedStop = Utility.mergeStops(scheduleStop, stop);
+                mergedStop = Utility.mergeStops(stop, scheduleStop);
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -384,11 +370,14 @@ public class TimesSearchFragment extends Fragment {
 
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
             for (Line line : mergedStop.getLines()) {
-                LineTimes lt = new LineTimes(line, Integer.toString(line.getType()));
+                LineTimes lt = new LineTimes(line, Integer.toString(line.getType()), (ArrayList<Time>) line.getTimes());
                 lineTimes.add(lt);
             }
 
-            timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, scheduleStop);
+            timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, mergedStop);
+            // it's important that this is called after creating the timeresultsfragment
+            //
+            stopInformationGetter.getScheduleTimesAsync();
 
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());
 
@@ -401,9 +390,9 @@ public class TimesSearchFragment extends Fragment {
                 return;
             }
             Log.i("OnPost", "Why tho");
-            for(Line line : stop.getLines()){
-                CommunicationUtility.addTimes(timeResultsFragment, line, line.getTimes());
-            }
+//            for(Line line : stop.getLines()){
+//            CommunicationUtility.addTimes(timeResultsFragment, line, line.getTimes());
+//        }
 //            try {
 //                stopInformationGetter.getLineTimeWithSchedulesAsync();
 //            } catch (IOException e) {

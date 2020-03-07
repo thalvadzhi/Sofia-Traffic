@@ -50,6 +50,13 @@ public class CommunicationUtility {
         fragment.addScheduleTimes(line);
     }
 
+    public static void removeAllUnpopulatedLines(TimeResultsFragment fragment){
+        if (fragment == null){
+            return;
+        }
+        fragment.removeAllUnpopulatedLines();
+    }
+
     public static boolean checkIfTimesAlreadySet(TimeResultsFragment fragment, Line line) throws Exception {
         if (fragment == null){
             throw new Exception("Fragment is null.");

@@ -47,10 +47,9 @@ public class LineTimes implements Serializable{
 
     private ArrayList<Time> vehicleTimes;
 
-    public LineTimes(Line line, String type, String times, ArrayList<Time> vehicleTimes) {
+    public LineTimes(Line line, String type, ArrayList<Time> vehicleTimes) {
         this.line = line;
         this.type = type;
-        this.times = times;
         this.vehicleTimes = vehicleTimes;
     }
 

@@ -328,6 +328,7 @@ public class TimesSearchFragment extends Fragment {
         public SearchQuery(String code) {
             this.stopCode = code;
             stopInformationGetter = new StopInformationGetter(Integer.parseInt(code), getContext());
+            timeResultsFragment = null;
         }
 
         @Override
@@ -377,7 +378,7 @@ public class TimesSearchFragment extends Fragment {
 
             timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, mergedStop);
             // it's important that this is called after creating the timeresultsfragment
-            stopInformationGetter.getScheduleTimesAsync();
+
             try {
                 // this is so the station name animation doesn't stutter
                 // since when adding the result fragment the station name animation is still taking place
@@ -386,6 +387,7 @@ public class TimesSearchFragment extends Fragment {
                 e.printStackTrace();
             }
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());
+            stopInformationGetter.getScheduleTimesAsync();
 
             return scheduleStop;
         }

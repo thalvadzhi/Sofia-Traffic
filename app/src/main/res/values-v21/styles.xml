@@ -105,7 +105,7 @@
         <item name="tabsBackgroundColor">@color/lightGrayDarkTheme</item>
         <item name="toolbarTextColor">@color/white</item>
         <item name="settingsIcon">@drawable/settings_white</item>
-        <item name="barUnderTabLayoutColor">@color/lightGrayDarkTheme</item>
+        <item name="barUnderTabLayoutColor">@color/lightGray</item>
         <item name="slideUpPanelBorderColor">@color/lightGray</item>
     </style>
 

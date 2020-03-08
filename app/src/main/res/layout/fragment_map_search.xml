@@ -4,7 +4,8 @@
     sothree:umanoParallaxOffset="300dp"
     sothree:umanoScrollableView="@+id/RecyclerViewLines"
     android:gravity="bottom"
-    sothree:umanoShadowHeight="4dp"
+    sothree:umanoShadowHeight="10dp"
+
     sothree:umanoOverlay="true"
     sothree:umanoFadeColor="@android:color/transparent"
 
@@ -40,13 +41,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:elevation="5dp"
-            android:background="?transitionSlideUpPanel"
+            android:background="?attr/transitionSlideUpPanel"
             android:id="@+id/LinearLayoutBackground">
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -64,7 +66,7 @@
                     android:gravity="center"
                     android:layout_centerVertical="true"
                     android:textSize="20dp"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/slideUpPanelStopNameTextColorUp"
                     android:layout_toLeftOf="@+id/TextViewSlideUpCode"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -74,7 +76,7 @@
                     android:padding="5dp"
                     android:id="@+id/TextViewSlideUpCode"
                     android:background="?attr/slideUpPanelCode"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/slideUpPanelCodeTextColorUp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true" />
 

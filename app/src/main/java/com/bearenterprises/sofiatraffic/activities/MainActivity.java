@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                     }
                     mapSearchFragment.getMapFragment().getMap();
                 }else{
-                    Utility.toastOnUiThread("Без достъп до местоположението някои от функциите няма да работят правилно", this);
+                    Utility.toastOnUiThread(getString(R.string.without_access_to_location_wont_function_properly), this);
                 }
                 break;
         }
@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public void showLoadingStopsInfoDialog(){
         try {
             dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            dialog.setMessage("Информацията за спирките се обновява. Моля изчакайте.");
+            dialog.setMessage(getString(R.string.please_wait_stop_info_updating));
             dialog.setIndeterminate(true);
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();

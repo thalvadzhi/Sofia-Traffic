@@ -5,12 +5,17 @@
         <!-- Customize your theme here. -->
         <item name="colorButtonNormal">@color/colorAccent</item>
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <item name="colorPrimaryDark">@color/white</item>
+
         <item name="colorAccent">@color/colorAccent</item>
+<!--        <item name="android:colorButtonNormal">@color/colorAccent</item>-->
         <item name="viewPagerBackgroundColor">@color/viewPagerBackgroundLight</item>
-        <item name="tabSelectedColor">@color/white</item>
-        <item name="tabUnselectedColor">@color/lightGray</item>
-        <item name="actionBarColor">@color/colorPrimaryDark</item>
+        <item name="tabSelectedColor">@color/black</item>
+        <item name="tabUnselectedColor">@color/black</item>
+        <!--        <item name="actionBarColor">@color/colorPrimaryDark</item>-->
+        <item name="actionBarColor">@color/white</item>
+
         <item name="locationSelector">@drawable/location_button</item>
         <item name="starToggle">@drawable/star_toggle</item>
         <item name="iconEdit">@drawable/ic_mode_edit_black_48dp</item>
@@ -37,11 +42,16 @@
         <item name="iconCopyCoordinates">@drawable/copy_black</item>
         <item name="mapTheme">@raw/light_map</item>
         <item name="slideUpPanelCode">@drawable/transition_grey_white_shape</item>
-        <item name="slideUpPanelCodeTextColorUp">@color/black</item>
+        <item name="slideUpPanelCodeTextColorUp">@color/white</item>
         <item name="slideUpPanelCodeTextColorDown">@color/white</item>
-        <item name="slideUpPanelStopNameTextColorUp">@color/white</item>
+        <item name="slideUpPanelStopNameTextColorUp">@color/black</item>
         <item name="slideUpPanelStopNameTextColorDown">@color/black</item>
         <item name="icon_toolbar">@drawable/icon</item>
+        <item name="tabsBackgroundColor">@color/white</item>
+        <item name="toolbarTextColor">@color/black</item>
+        <item name="settingsIcon">@drawable/settings_black</item>
+        <item name="barUnderTabLayoutColor">@color/lightGrayDarkTheme</item>
+        <item name="slideUpPanelBorderColor">@color/lightGrayDarkTheme</item>
 
 
     </style>
@@ -50,15 +60,17 @@
         <item name="viewPagerBackgroundColor">@color/viewPagerBackgroundDark</item>
         <item name="tabSelectedColor">@color/white</item>
         <item name="tabUnselectedColor">@color/lightGray</item>
-        <item name="actionBarColor">@android:color/black</item>
+        <item name="actionBarColor">@color/lightGrayDarkTheme</item>
         <item name="locationSelector">@drawable/location_button_white</item>
-        <item name="colorButtonNormal">@color/accent_material_dark</item>
         <item name="starToggle">@drawable/star_toggle_white</item>
+        <item name="colorPrimaryDark">@color/lightGrayDarkTheme</item>
+
+<!--        <item name="android:colorButtonNormal">@color/accent_material_dark</item>-->
         <item name="iconEdit">@drawable/ic_edit_white_48dp</item>
         <item name="stationCodeBackgroundFavourites">@drawable/rounded_edges_white</item>
         <item name="stationCodeTextColorFavourites">@android:color/black</item>
         <item name="transitionSlideUpPanel">@drawable/transition_black_white</item>
-        <item name="backgroundColorSlideUpPanel">@color/darkGrey</item>
+        <item name="backgroundColorSlideUpPanel">@color/lightGrayDarkTheme</item>
         <item name="whiteBlack">@color/white</item>
         <item name="locationInSlideUp">@drawable/location_white</item>
         <item name="clock">@drawable/clock_white1</item>
@@ -84,6 +96,11 @@
         <item name="slideUpPanelStopNameTextColorUp">@color/white</item>
         <item name="slideUpPanelStopNameTextColorDown">@color/white</item>
         <item name="icon_toolbar">@drawable/icon_white</item>
+        <item name="tabsBackgroundColor">@color/lightGrayDarkTheme</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="settingsIcon">@drawable/settings_white</item>
+        <item name="barUnderTabLayoutColor">@color/lightGrayDarkTheme</item>
+        <item name="slideUpPanelBorderColor">@color/lightGray</item>
 
     </style>
 

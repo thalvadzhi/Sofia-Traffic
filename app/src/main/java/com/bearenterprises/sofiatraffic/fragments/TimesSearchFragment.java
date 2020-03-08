@@ -350,6 +350,7 @@ public class TimesSearchFragment extends Fragment {
                     CommunicationUtility.removeAllUnpopulatedLines(timeResultsFragment);
                 }
             });
+
             Stop scheduleStop = null;
             Stop stop = null;
             Stop mergedStop = null;
@@ -376,29 +377,18 @@ public class TimesSearchFragment extends Fragment {
 
             timeResultsFragment = TimeResultsFragment.newInstance(lineTimes, mergedStop);
             // it's important that this is called after creating the timeresultsfragment
-            //
             stopInformationGetter.getScheduleTimesAsync();
-
+            try {
+                // this is so the station name animation doesn't stutter
+                // since when adding the result fragment the station name animation is still taking place
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());
 
             return scheduleStop;
         }
 
-        @Override
-        protected void onPostExecute(Stop stop) {
-            if (stop == null) {
-                return;
-            }
-            Log.i("OnPost", "Why tho");
-//            for(Line line : stop.getLines()){
-//            CommunicationUtility.addTimes(timeResultsFragment, line, line.getTimes());
-//        }
-//            try {
-//                stopInformationGetter.getLineTimeWithSchedulesAsync();
-//            } catch (IOException e) {
-//                Log.d(TAG, "Couldn't get line time async", e);
-//            }
-
-        }
     }
 }

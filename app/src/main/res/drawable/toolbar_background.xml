@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <!-- draw a 4 dp width border around the rectangle shape -->
+            <stroke android:color="?attr/tabsBackgroundColor" android:width="1dp"/>
+<!--            <corners android:radius="1dp" />-->
+            <corners android:topLeftRadius="0dp" android:topRightRadius="4dp"
+                android:bottomLeftRadius="0dp" android:bottomRightRadius="0dp"/>
+        </shape>
+    </item>
+
+    <item android:left="1dp" android:right="1dp" android:top="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="?attr/tabsBackgroundColor"/>
+            <corners android:topLeftRadius="4dp" android:topRightRadius="4dp"
+                android:bottomLeftRadius="0dp" android:bottomRightRadius="0dp"/>
+        </shape>
+    </item>
+
+</layer-list>

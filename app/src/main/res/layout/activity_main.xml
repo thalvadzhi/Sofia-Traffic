@@ -22,7 +22,11 @@
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            app:tabIndicatorFullWidth="false"
+
+            android:background="@drawable/tab_layout_background"/>
 
 
         <androidx.viewpager.widget.ViewPager

@@ -39,6 +39,11 @@
     <attr name="slideUpPanelCodeTextColorDown" format="color"/>
     <attr name="slideUpPanelStopNameTextColorUp" format="color"/>
     <attr name="slideUpPanelStopNameTextColorDown" format="color"/>
+    <attr name="tabsBackgroundColor" format="color"/>
+    <attr name="toolbarTextColor" format="color"/>
+    <attr name="settingsIcon" format="reference"/>
+    <attr name="barUnderTabLayoutColor" format="color"/>
+    <attr name="slideUpPanelBorderColor" format="color"/>
 
     <declare-styleable name="toolbarStylable">
         <attr name="icon_toolbar" format="reference"/>

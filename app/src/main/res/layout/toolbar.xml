@@ -2,9 +2,8 @@
 <androidx.appcompat.widget.Toolbar android:id="@+id/my_toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-
-    android:background="?actionBarColor"
-    android:elevation="4dp"
+    app:tabIndicatorHeight="3dp"
+    android:background="@drawable/toolbar_background"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,10 +21,12 @@
             android:layout_gravity="center"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
             android:gravity="center"
+            android:layout_gravity="left"
+            android:textColor="?attr/toolbarTextColor"
             android:text="@string/app_name"
             android:textAllCaps="false"
             android:textSize="18sp" />

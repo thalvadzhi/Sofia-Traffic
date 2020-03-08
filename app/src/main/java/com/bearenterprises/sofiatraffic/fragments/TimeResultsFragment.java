@@ -176,6 +176,9 @@ public class TimeResultsFragment extends Fragment {
     }
 
     public void removeAllUnpopulatedLines(){
+        if (lineTimes == null){
+            return;
+        }
         synchronized (lineTimes){
             int indexOfLine = 0;
             Iterator<LineTimes> lineTimesIterator = lineTimes.iterator();

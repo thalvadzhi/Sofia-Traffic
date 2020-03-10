@@ -31,14 +31,14 @@
 
     <string name="key_time_mode">time_or_remaining_time</string>
     <string name="time_mode_title">Часове или оставащо време</string>
-    <string name="time_mode_summary">Времената на пристигащият транспорт да бъдат в формат "час на пристигане" или "оставащо време до пристигане"</string>
+    <string name="time_mode_summary">Времената на пристигащия транспорт да бъдат в формат "час на пристигане" или "оставащо време до пристигане"</string>
     <string name="time_mode_time_value">time</string>
     <string name="time_mode_remaining_time_value">remaining_time</string>
     <string name="time_mode_default">@string/time_mode_remaining_time_value</string>
     <string name="time_mode_time">Час на пристигане</string>
-    <string name="time_mode_remaining_time">Оставащо време до пристигнае</string>
+    <string name="time_mode_remaining_time">Оставащо време до пристигане</string>
 
-    <string name="summary_startup_screen">Кой да бъде началният екран(Любими, Карта и тн.)</string>
+    <string name="summary_startup_screen">Кой да бъде началният екран (Любими, Карта и т.н.)</string>
     <string name="key_choose_startup_screen">choose_startup_screen</string>
     <string name="key_choose_theme">choose_theme</string>
     <string name="choose_theme">Тема</string>

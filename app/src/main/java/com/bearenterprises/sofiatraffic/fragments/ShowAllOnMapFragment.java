@@ -65,6 +65,10 @@ public class ShowAllOnMapFragment extends Fragment {
             return view;
         }
 
+        if (stops == null){
+            return view;
+        }
+
         if(stops.size() == 0){
             showOnMapText.setText("Няма намерени спирки");
             showOnMapButton.setVisibility(View.GONE);

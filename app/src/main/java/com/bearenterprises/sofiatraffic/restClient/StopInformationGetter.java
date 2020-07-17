@@ -56,17 +56,20 @@ public class StopInformationGetter {
         call.enqueue(new Callback<List<ScheduleLineTimes>>() {
             @Override
             public void onResponse(Call<List<ScheduleLineTimes>> call, Response<List<ScheduleLineTimes>> response) {
-                scheduleLineTimesList = response.body();
-                try {
-                    populateScheduleStopLineTimes(scheduleStop, scheduleLineTimesList);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                if(response.code() == 200){
+                    scheduleLineTimesList = response.body();
 
-                for (Line l : scheduleStop.getLines()){
-                    onScheduleLinesReceived.scheduleReceived(l);
+                    try {
+                        populateScheduleStopLineTimes(scheduleStop, scheduleLineTimesList);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    for (Line l : scheduleStop.getLines()){
+                        onScheduleLinesReceived.scheduleReceived(l);
+                    }
+                    onScheduleLinesReceived.allLinesProcessed();
                 }
-                onScheduleLinesReceived.allLinesProcessed();
             }
 
             @Override

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -49,6 +50,7 @@ public class LinesFragment extends Fragment {
     private NotifyLineInfoLoaded cond;
     private LineInfoLoadedListener listener;
     private Integer currentStopCode;
+    private HashMap<String, Integer> transportationNameToTransportationId;
     private static final String TAG = LinesFragment.class.getName();
 
     public LinesFragment() {
@@ -61,14 +63,26 @@ public class LinesFragment extends Fragment {
         return fragment;
     }
 
+    private void populateTransportationNameToTransportationId(){
+        transportationNameToTransportationId = new HashMap<>();
+        transportationNameToTransportationId.put("Трамвай", 0);
+        transportationNameToTransportationId.put("Автобус", 1);
+        transportationNameToTransportationId.put("Тролей", 2);
+        transportationNameToTransportationId.put("Метро", 10);
+        transportationNameToTransportationId.put("----", -1);
+
+
+    }
+
     public List<String> getTypesOfTransportation(){
-        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей");
+        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей", "Метро");
         return types;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        populateTransportationNameToTransportationId();
         loadingFragment = LoadingFragment.newInstance();
         listener = new LineInfoLoadedListener();
         cond = new NotifyLineInfoLoaded();
@@ -95,17 +109,28 @@ public class LinesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selection = (String) adapterView.getSelectedItem();
-                int selectionIdx = transportationTypes.indexOf(selection);
+//                int selectionIdx = transportationTypes.indexOf(selection);
                 lineId.setSelection(0);
                 lineId.setEnabled(false);
-                if (selectionIdx >= 1 && selectionIdx <= 3) {
-                    currentlySelectedType = transportationTypes.indexOf(selection);
-                    currentlySelectedType -= 1;
-                    LineGetter lineGetter = new LineGetter();
-                    lineGetter.execute(currentlySelectedType);
-                }else{
-                    lineId.setEnabled(false);
+
+                currentlySelectedType = transportationNameToTransportationId.get(selection);
+
+                if(currentlySelectedType < 0){
+                    return;
                 }
+                LineGetter lineGetter = new LineGetter();
+                lineGetter.execute(currentlySelectedType);
+//                if (selectionIdx >= 1 && selectionIdx <= 3) {
+//                    currentlySelectedType = transportationTypes.indexOf(selection);
+//                    currentlySelectedType -= 1;
+//                    LineGetter lineGetter = new LineGetter();
+//                    lineGetter.execute(currentlySelectedType);
+//                }else if (selectionIdx == 4){
+//                    LineGetter lineGetter = new LineGetter();
+//                    lineGetter.execute(10);
+//                }else{
+//                    lineId.setEnabled(false);
+//                }
 
             }
 
@@ -120,8 +145,9 @@ public class LinesFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String lineType = (String)transportationType.getSelectedItem();
-                int idx = transportationTypes.indexOf(lineType);
-                idx -= 1;
+
+//                int idx = transportationTypes.indexOf(lineType);
+//                idx -= 1;
                 Line transportSchedule = null;
                 Line transport = null;
                 try{
@@ -143,7 +169,7 @@ public class LinesFragment extends Fragment {
                     return;
                 }
 
-                if (transportSchedule.getId() != null) {
+                if (!transportSchedule.isSchedule()) {
                     //means selected item is indeed scheduleStop
                     RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
                         @Override
@@ -161,7 +187,7 @@ public class LinesFragment extends Fragment {
                         }
                     });
                     String id = Integer.toString(transport.getId());
-                    routeGetter.execute(Integer.toString(idx), id);
+                    routeGetter.execute(Integer.toString(currentlySelectedType), id);
                 } else {
                     RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
                         @Override
@@ -178,7 +204,7 @@ public class LinesFragment extends Fragment {
                             return null;
                         }
                     });
-                    routeGetter.execute(Integer.toString(idx), transportSchedule.getName());
+                    routeGetter.execute(Integer.toString(currentlySelectedType), transportSchedule.getName());
                 }
             }
 
@@ -306,6 +332,7 @@ public class LinesFragment extends Fragment {
                             }
                             ArrayList<ArrayList<Stop>> nextStops = new ArrayList<>();
                             ArrayList<ArrayList<Stop>> nextNextStops = new ArrayList<>();
+
                             for(ScheduleRoute route : routeShowerArguments.routesSchedules){
                                 ArrayList<Stop> routeStations = new ArrayList<>();
                                 for (Stop stop : route.getStops()){
@@ -464,7 +491,11 @@ public class LinesFragment extends Fragment {
      * This class is used to get all the lines that are of some transportation lines. For e.g. get all bus or tram lines.
      */
     private class LineGetter extends AsyncTask<Integer, Integer, List<Line>>{
-
+        private void setIsScheduleForAllLines(List<Line> lines, boolean isSchedule){
+            for(Line l : lines){
+                l.setSchedule(isSchedule);
+            }
+        }
         private void addScheduledLines(List<Line> allLines, List<Line> scheduleLines){
             for(Line l : scheduleLines){
                 if(!allLines.contains(l)){
@@ -480,7 +511,9 @@ public class LinesFragment extends Fragment {
             Call<List<Line>> scheduleLines = sofiaTransportApi.getScheduleLines(Integer.toString(idxs[0]));
             try {
                 List<Line> allLines = RetrofitUtility.handleUnauthorizedQuery(lines, (MainActivity) getActivity());
-                addScheduledLines(allLines, RetrofitUtility.handleUnauthorizedQuery(scheduleLines, (MainActivity) getActivity()));
+                List<Line> allScheduleLines = RetrofitUtility.handleUnauthorizedQuery(scheduleLines, (MainActivity) getActivity());
+                setIsScheduleForAllLines(allScheduleLines, true);
+                addScheduledLines(allLines, allScheduleLines);
                 Collections.sort(allLines, new Comparator<Line>() {
                     @Override
                     public int compare(Line line, Line t1) {

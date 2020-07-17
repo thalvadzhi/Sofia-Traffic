@@ -17,6 +17,13 @@ public class Line implements Serializable {
     private Integer id;
     private String name;
     private String routeName;
+    /**
+     * If true it means the line is from the schedule
+     * If false it means the line is from the virtual tables
+     *
+     * For schedule lines the name is used as ID, for VT lines the id is used as id
+     */
+    private boolean isSchedule;
 
 
     public Line(){
@@ -30,6 +37,14 @@ public class Line implements Serializable {
         this.type = type;
         this.id = id;
         this.name = name;
+        isSchedule = false;
+    }
+
+    public Line(Integer type, Integer id, String name, boolean isSchedule) {
+        this.type = type;
+        this.id = id;
+        this.name = name;
+        this.isSchedule = isSchedule;
     }
 
     public String getRouteName() {
@@ -118,6 +133,14 @@ public class Line implements Serializable {
 //    public void setAdditionalProperty(String name, Object value) {
 //        this.additionalProperties.put(name, value);
 //    }
+
+    public boolean isSchedule() {
+        return isSchedule;
+    }
+
+    public void setSchedule(boolean schedule) {
+        isSchedule = schedule;
+    }
 
     @Override
     public boolean equals(Object o) {

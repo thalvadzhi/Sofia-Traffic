@@ -128,10 +128,10 @@ public class Line implements Serializable {
         Line line = (Line) o;
 
         //in the two apis there are lines of the type 20-TM and 20TM which are the same
-        //also in the e.g. above one TM is in cyrillic while the other is in latin script
+        //also in the e.g. above one TM is in cyrillic while the other is in latin script, same for E
 
-        String lineAName = line.getName().replaceAll("-", "").replaceAll("TM", "ТМ");
-        String lineBName = getName().replaceAll("-", "").replaceAll("TM", "ТМ");
+        String lineAName = line.getName().replaceAll("-", "").replaceAll("TM", "ТМ").replace("E", "Е");
+        String lineBName = getName().replaceAll("-", "").replaceAll("TM", "ТМ").replace("E", "Е");
 
 
         if (getType() != null ? !getType().equals(line.getType()) : line.getType() != null){

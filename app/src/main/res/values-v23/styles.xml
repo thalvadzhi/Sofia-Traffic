@@ -1,0 +1,116 @@
+<resources>>
+
+    <style name="LightTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+<!--        <item name="android:statusBarColor">@android:color/white</item>-->
+    </style>
+
+    <style name="LightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+<!--        <item name="android:statusBarColor">@color/white</item>-->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <item name="colorPrimaryDark">@color/white</item>
+
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorButtonNormal">@color/colorAccent</item>
+        <item name="viewPagerBackgroundColor">@color/viewPagerBackgroundLight</item>
+        <item name="tabSelectedColor">@color/black</item>
+        <item name="tabUnselectedColor">@color/black</item>
+<!--        <item name="actionBarColor">@color/colorPrimaryDark</item>-->
+        <item name="actionBarColor">@color/white</item>
+
+        <item name="locationSelector">@drawable/location_button</item>
+        <item name="starToggle">@drawable/star_toggle</item>
+        <item name="iconEdit">@drawable/ic_mode_edit_black_48dp</item>
+        <item name="stationCodeBackgroundFavourites">@drawable/rounded_edges</item>
+        <item name="stationCodeTextColorFavourites">@color/white</item>
+        <item name="transitionSlideUpPanel">@drawable/transition_purple_white</item>
+        <item name="backgroundColorSlideUpPanel">@color/white</item>
+        <item name="clock">@drawable/clock</item>
+        <item name="locationInSlideUp">@drawable/location</item>
+        <item name="busColor">@color/colorBus</item>
+        <item name="tramColor">@color/colorTram</item>
+        <item name="trolleyColor">@color/colorTrolley</item>
+        <item name="busRoundedEdges">@drawable/rounded_edges_bus</item>
+        <item name="tramRoundedEdges">@drawable/rounded_edges_tram</item>
+        <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley</item>
+        <item name="iconBus">@drawable/bus</item>
+        <item name="iconTram">@drawable/tram</item>
+        <item name="iconTrolley">@drawable/trolley</item>
+        <item name="moreButtonBorder">@color/darkGrey</item>
+        <item name="whiteBlack">@color/black</item>
+        <item name="downArrow">@drawable/down_arrow_black</item>
+        <item name="borderColorForMoreButton">@drawable/border_black</item>
+        <item name="iconReorderHandle">@drawable/swap_black</item>
+        <item name="iconCopyCoordinates">@drawable/copy_black</item>
+        <item name="mapTheme">@raw/light_map</item>
+        <item name="slideUpPanelCode">@drawable/transition_grey_white_shape</item>
+        <item name="slideUpPanelCodeTextColorUp">@color/white</item>
+        <item name="slideUpPanelCodeTextColorDown">@color/white</item>
+        <item name="slideUpPanelStopNameTextColorUp">@color/black</item>
+        <item name="slideUpPanelStopNameTextColorDown">@color/black</item>
+        <item name="icon_toolbar">@drawable/icon</item>
+        <item name="tabsBackgroundColor">@color/white</item>
+        <item name="toolbarTextColor">@color/black</item>
+        <item name="settingsIcon">@drawable/settings_black</item>
+        <item name="barUnderTabLayoutColor">@color/lightGrayDarkTheme</item>
+        <item name="slideUpPanelBorderColor">@color/lightGrayDarkTheme</item>
+
+
+    </style>
+
+    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
+<!--        <item name="android:statusBarColor">@color/white</item>-->
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="viewPagerBackgroundColor">@color/viewPagerBackgroundDark</item>
+        <item name="tabSelectedColor">@color/white</item>
+        <item name="tabUnselectedColor">@color/lightGray</item>
+        <item name="actionBarColor">@color/lightGrayDarkTheme</item>
+        <item name="locationSelector">@drawable/location_button_white</item>
+        <item name="starToggle">@drawable/star_toggle_white</item>
+        <item name="colorPrimaryDark">@color/lightGrayDarkTheme</item>
+
+        <item name="android:colorButtonNormal">@color/accent_material_dark</item>
+        <item name="iconEdit">@drawable/ic_edit_white_48dp</item>
+        <item name="stationCodeBackgroundFavourites">@drawable/rounded_edges_white</item>
+        <item name="stationCodeTextColorFavourites">@android:color/black</item>
+        <item name="transitionSlideUpPanel">@drawable/transition_black_white</item>
+        <item name="backgroundColorSlideUpPanel">@color/lightGrayDarkTheme</item>
+        <item name="whiteBlack">@color/white</item>
+        <item name="locationInSlideUp">@drawable/location_white</item>
+        <item name="clock">@drawable/clock_white1</item>
+        <item name="busColor">@color/colorBusDarker</item>
+        <item name="tramColor">@color/colorTramDarker</item>
+        <item name="trolleyColor">@color/colorTrolleyDarker</item>
+        <item name="busRoundedEdges">@drawable/rounded_edges_bus_darker</item>
+        <item name="tramRoundedEdges">@drawable/rounded_edges_tram_darker</item>
+        <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley_darker</item>
+        <item name="iconBus">@drawable/bus_white</item>
+        <item name="iconTram">@drawable/tram_white</item>
+        <item name="iconTrolley">@drawable/trolley_white</item>
+        <item name="moreButtonBorder">@color/grey</item>
+        <item name="downArrow">@drawable/down_arrow_white</item>
+        <item name="borderColorForMoreButton">@drawable/border_white</item>
+        <item name="iconReorderHandle">@drawable/swap_white</item>
+        <item name="iconCopyCoordinates">@drawable/copy_white</item>
+        <item name="colorAccent">@color/accent_material_dark</item>
+        <item name="mapTheme">@raw/dark_map</item>
+        <item name="slideUpPanelCode">@drawable/transition_white_white_shape</item>
+        <item name="slideUpPanelCodeTextColorUp">@color/black</item>
+        <item name="slideUpPanelCodeTextColorDown">@color/black</item>
+        <item name="slideUpPanelStopNameTextColorUp">@color/white</item>
+        <item name="slideUpPanelStopNameTextColorDown">@color/white</item>
+        <item name="icon_toolbar">@drawable/icon_white</item>
+        <item name="tabsBackgroundColor">@color/lightGrayDarkTheme</item>
+        <item name="toolbarTextColor">@color/white</item>
+        <item name="settingsIcon">@drawable/settings_white</item>
+        <item name="barUnderTabLayoutColor">@color/lightGray</item>
+        <item name="slideUpPanelBorderColor">@color/lightGray</item>
+    </style>
+
+</resources>

@@ -65,6 +65,14 @@ public class StopInformationGetter {
                         e.printStackTrace();
                     }
 
+                    if (scheduleStop == null){
+                        return;
+                    }
+
+                    if (scheduleStop.getLines() == null){
+                        return;
+                    }
+
                     for (Line l : scheduleStop.getLines()){
                         onScheduleLinesReceived.scheduleReceived(l);
                     }

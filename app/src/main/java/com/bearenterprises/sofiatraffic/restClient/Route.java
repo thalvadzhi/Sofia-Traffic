@@ -9,7 +9,10 @@ import java.util.Map;
 public class Route {
 
     private Integer id;
-    private List<Stop> stops = new ArrayList<Stop>();
+    private String name;
+    private Integer type;
+    private String stop;
+    private List<Segment> segments = new ArrayList<>();
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
@@ -35,17 +38,17 @@ public class Route {
      * @return
      *     The stops
      */
-    public List<Stop> getStops() {
-        return stops;
+    public List<Segment> getSegments() {
+        return segments;
     }
 
     /**
      * 
-     * @param stops
+     * @param segments
      *     The stops
      */
-    public void setStops(List<Stop> stops) {
-        this.stops = stops;
+    public void setSegments(List<Segment> segments) {
+        this.segments = segments;
     }
 
     public Map<String, Object> getAdditionalProperties() {

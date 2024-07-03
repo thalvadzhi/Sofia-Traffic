@@ -20,7 +20,12 @@ import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.Route;
+import com.bearenterprises.sofiatraffic.restClient.RouteInput;
 import com.bearenterprises.sofiatraffic.restClient.Routes;
+import com.bearenterprises.sofiatraffic.restClient.Segment;
+import com.bearenterprises.sofiatraffic.restClient.SegmentStop;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTrafficApi;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTrafficWithHeaders;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleRoute;
@@ -35,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 
@@ -143,12 +149,19 @@ public class LinesFragment extends Fragment {
                     return;
                 }
 
-                if (transportSchedule.getId() != null) {
+                if (transportSchedule.getLine_id() != null) {
                     //means selected item is indeed scheduleStop
                     RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
                         @Override
-                        public RouteShowerArguments getRoutes(SofiaTransportApi sofiaTransportApi, String lineType, String lineId) throws IOException {
-                            Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
+                        public RouteShowerArguments getRoutes(SofiaTrafficApi sofiaTrafficApi, String lineType, String lineId) throws IOException {
+                            SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
+                            try {
+                                stwh.saveCookieSessionXsrfToken();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            RouteInput ri = new RouteInput(Integer.parseInt(lineId));
+                            Call<Routes> routes = sofiaTrafficApi.getRoutes(ri);
                             try {
                                 Routes route = routes.execute().body();
                                 RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
@@ -160,12 +173,12 @@ public class LinesFragment extends Fragment {
                             return null;
                         }
                     });
-                    String id = Integer.toString(transport.getId());
+                    String id = Integer.toString(transport.getLine_id());
                     routeGetter.execute(Integer.toString(idx), id);
                 } else {
                     RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
                         @Override
-                        public RouteShowerArguments getRoutes(SofiaTransportApi sofiaTransportApi, String lineType, String lineId) throws IOException {
+                        public RouteShowerArguments getRoutes(SofiaTrafficApi sofiaTransportApi, String lineType, String lineId) throws IOException {
                             Call<List<ScheduleRoute>> routes = sofiaTransportApi.getScheduleRoutes(lineType, lineId);
                             try {
                                 List<ScheduleRoute> route = routes.execute().body();
@@ -208,7 +221,7 @@ public class LinesFragment extends Fragment {
     private int selectLineId(int trType, String lineName){
         int pos = 0;
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getType() == trType && lines.get(i).getName().equals(lineName)) {
+            if (Utility.newLineTypeToOldLineType(lines.get(i).getType()) == trType && lines.get(i).getName().equals(lineName)) {
                 lineId.setSelection(i + 1);
                 pos = i + 1;
                 break;
@@ -225,7 +238,7 @@ public class LinesFragment extends Fragment {
      */
     public void showRoute(Line line, Integer stopCode){
         currentStopCode = stopCode;
-        cond.setLineID(String.valueOf(line.getId()));
+        cond.setLineID(String.valueOf(line.getLine_id()));
         cond.setLineName(line.getName());
         cond.setTrType(line.getType());
         cond.setListener(listener);
@@ -267,10 +280,10 @@ public class LinesFragment extends Fragment {
             String lineType = strings[0];
             //could be either id or name
             String lineIdentification = strings[1];
-            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
+            SofiaTrafficApi sofiaTrafficApi = MainActivity.retrofit.create(SofiaTrafficApi.class);
             RouteShowerArguments routeShowerArguments;
             try {
-                routeShowerArguments = routeGettingFunction.getRoutes(sofiaTransportApi, lineType, lineIdentification);
+                routeShowerArguments = routeGettingFunction.getRoutes(sofiaTrafficApi, lineType, lineIdentification);
                 return routeShowerArguments;
             } catch (IOException e) {
                 Log.d(TAG, "Error getting route", e);
@@ -351,12 +364,13 @@ public class LinesFragment extends Fragment {
                             try{
                                 for(Route route : routeShowerArguments.routesVirtualTables.getRoutes()){
                                     ArrayList<Stop> routeStations = new ArrayList<>();
-                                    for (Stop stop : route.getStops()) {
-                                        Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
+                                    for (Segment segment : route.getSegments()) {
+                                        SegmentStop stop = segment.stop;
+                                        Stop st = DbUtility.getStationByCode(stop.code, (MainActivity) getActivity());
                                         if (st.getName() != null) {
                                             routeStations.add(st);
                                         }else{
-                                            routeStations.add(stop);
+                                            routeStations.add(st);
                                         }
                                     }
                                     if (routeStations.size() != 0) {
@@ -474,13 +488,21 @@ public class LinesFragment extends Fragment {
         }
         @Override
         protected List<Line> doInBackground(Integer... idxs) {
-            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
+            SofiaTrafficApi SofiaTrafficApi = MainActivity.retrofit.create(SofiaTrafficApi.class);
             //TODO maybe leave just one network call or make the call parallel
-            Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
-            Call<List<Line>> scheduleLines = sofiaTransportApi.getScheduleLines(Integer.toString(idxs[0]));
+            SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
             try {
+                stwh.saveCookieSessionXsrfToken();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            Call<List<Line>> lines = SofiaTrafficApi.getLines();
+//            Call<List<Line>> scheduleLines = SofiaTrafficApi.getScheduleLines(Integer.toString(idxs[0]));
+            try {
+
                 List<Line> allLines = RetrofitUtility.handleUnauthorizedQuery(lines, (MainActivity) getActivity());
-                addScheduledLines(allLines, RetrofitUtility.handleUnauthorizedQuery(scheduleLines, (MainActivity) getActivity()));
+                allLines = allLines.stream().filter(line -> Utility.newLineTypeToOldLineType(line.getType()) == idxs[0]).collect(Collectors.toList());
+//                addScheduledLines(allLines, RetrofitUtility.handleUnauthorizedQuery(scheduleLines, (MainActivity) getActivity()));
                 Collections.sort(allLines, new Comparator<Line>() {
                     @Override
                     public int compare(Line line, Line t1) {

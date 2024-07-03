@@ -38,7 +38,7 @@ public class RetrofitUtility {
                 Call<T> cll = call.clone();
                 response = cll.execute();
             }
-
+            Log.i("Error mf", error.getMessage());
         }
         return response.body();
     }

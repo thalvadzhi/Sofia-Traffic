@@ -4,6 +4,8 @@ import com.bearenterprises.sofiatraffic.fragments.LoadingFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -81,12 +83,16 @@ public class Constants {
     public static final String SCHEDULES_API = "schedules_api";
 
     public static final String IVKOS_API_BASE_URL = "https://api.sofiatransport.com/v3/";
+    public static final String SOFIA_TRAFFIC_BASE_URL = "https://www.sofiatraffic.bg/bg/";
     public static final String SHARED_PREFERENCES_REGISTRATION = "registration";
     public static final String REGISTRATION = "reg";
     public static final String SHARED_PREFERENCES_DEFAULT_REGISTRATION = "no_reg";
     public static final String UNAUTHOROZIED_USER_ID = "UnauthorizedUserIdError";
     public static final String QUERY_METHOD_SLOW = "slow";
     public static final String QUERY_METHOD_FAST = "fast";
+
+    public static final HashMap<Integer, Integer> NEW_TO_OLD_LINE_TYPES = new HashMap<>();
+
 
     //schedule types
     public static final String WORKDAY = "WORKDAY";

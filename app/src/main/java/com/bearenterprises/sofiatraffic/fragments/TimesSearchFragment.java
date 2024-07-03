@@ -357,9 +357,10 @@ public class TimesSearchFragment extends Fragment {
             Stop mergedStop = null;
             queryMethod = Constants.QUERY_METHOD_SLOW;
             try {
-                scheduleStop = stopInformationGetter.getScheduleStop(stopCode);
+//                scheduleStop = stopInformationGetter.getScheduleStop(stopCode);
                 stop = stopInformationGetter.getStopSlow(stopCode);
-                mergedStop = Utility.mergeStops(stop, scheduleStop);
+
+                mergedStop = stop;//Utility.mergeStops(stop, scheduleStop);
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -373,6 +374,7 @@ public class TimesSearchFragment extends Fragment {
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
             for (Line line : mergedStop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()), (ArrayList<Time>) line.getTimes());
+                lt.setRouteName(line.getRouteName());
                 lineTimes.add(lt);
             }
 
@@ -387,9 +389,9 @@ public class TimesSearchFragment extends Fragment {
                 e.printStackTrace();
             }
             Utility.changeFragment(R.id.result_container, timeResultsFragment, (MainActivity) getActivity());
-            stopInformationGetter.getScheduleTimesAsync();
+//            stopInformationGetter.getScheduleTimesAsync();
 
-            return scheduleStop;
+            return mergedStop;
         }
 
     }

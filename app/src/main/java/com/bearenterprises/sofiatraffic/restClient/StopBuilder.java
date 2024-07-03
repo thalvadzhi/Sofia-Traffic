@@ -58,6 +58,11 @@ public class StopBuilder {
         return this;
     }
 
+    public StopBuilder setLineTypes(ArrayList<Integer> lineTypes){
+        stop.setLineTypes(lineTypes);
+        return this;
+    }
+
     public Stop build(){
         return stop;
     }

@@ -1,21 +1,19 @@
 
 package com.bearenterprises.sofiatraffic.restClient;
 
-import com.bearenterprises.sofiatraffic.restClient.Time;
-
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class Line implements Serializable {
 
     private Integer type;
     private Integer routeId;
-    private Integer id;
+    private Integer line_id;
     private String name;
+    private String extId;
+
     private String routeName;
 
 
@@ -26,9 +24,9 @@ public class Line implements Serializable {
 
 //    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    public Line(Integer type, Integer id, String name) {
+    public Line(Integer type, Integer line_id, String name) {
         this.type = type;
-        this.id = id;
+        this.line_id = line_id;
         this.name = name;
     }
 
@@ -80,17 +78,17 @@ public class Line implements Serializable {
      * @return
      *     The id
      */
-    public Integer getId() {
-        return id;
+    public Integer getLine_id() {
+        return line_id;
     }
 
     /**
      * 
-     * @param id
+     * @param line_id
      *     The id
      */
-    public void setId(Integer id) {
-        this.id = id;
+    public void setLine_id(Integer line_id) {
+        this.line_id = line_id;
     }
 
     /**

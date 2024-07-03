@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.restClient.AddCookiesInterceptor;
 import com.bearenterprises.sofiatraffic.restClient.Registration;
 
 import java.io.IOException;
@@ -32,27 +33,7 @@ public class GenerateClient {
     public static OkHttpClient getClient(final Context context){
 
         OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
-                List<String> customAnnotations = original.headers().values("@");
-                Request.Builder requestBuilder = original.newBuilder();
-                if(customAnnotations.size() != 0 && registration != null){
-                    requestBuilder
-                            .removeHeader("@")
-                            .header("X-User-Id", registration.getId());
-
-                }
-                String ivkos_api_key = context.getResources().getString(R.string.ivkos_api_key);
-                Request request = requestBuilder
-                        .header("X-Api-Key", ivkos_api_key)
-                        .method(original.method(), original.body())
-                        .build();
-
-                return chain.proceed(request);
-            }
-        });
+        httpClient.addInterceptor(new AddCookiesInterceptor(context));
         OkHttpClient client = httpClient.build();
         return client;
     }

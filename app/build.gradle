@@ -6,14 +6,14 @@ android {
         javaMaxHeapSize "4g"
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    compileSdkVersion 29
+    compileSdkVersion 35
     defaultConfig {
         applicationId "com.bearenterprises.sofiatraffic"
-        minSdkVersion 19
-        targetSdkVersion 29
+        minSdkVersion 24
+        targetSdkVersion 35
         versionCode 38
         versionName "1.7.0"
         multiDexEnabled true
@@ -27,6 +27,7 @@ android {
             debuggable true
         }
     }
+    namespace 'com.bearenterprises.sofiatraffic'
 
 }
 allprojects {

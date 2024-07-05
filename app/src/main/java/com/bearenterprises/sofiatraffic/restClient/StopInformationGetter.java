@@ -126,7 +126,7 @@ public class StopInformationGetter {
 
         for (VirtualTableForStop s : vts){
             Line l = new Line(Utility.newLineTypeToOldLineType(s.type), s.id, s.name);
-            l.setRouteName(s.routeName);
+            l.setRouteName(s.routeName.toUpperCase().toUpperCase());
             ArrayList<Time> times = new ArrayList<>();
 
             for (VirtualTableTime vtt : s.times){

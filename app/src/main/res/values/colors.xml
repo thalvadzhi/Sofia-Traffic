@@ -19,8 +19,8 @@
     <color name="colorBusDarker">#A72925</color>
     <color name="colorTram">#f0ad4e</color>
     <color name="colorTramDarker">#BC7410</color>
-    <!--<color name="colorTrolley">#d9534f</color>-->
-    <!--<color name="colorTrolleyDarker">#A72925</color>-->
+    <color name="colorNightBus">#09134E</color>
+    <color name="colorNightBusDarker">#050D3D</color>
     <color name="colorTrolley">#5bc0de</color>
     <color name="colorTrolleyDarker">#238AA9</color>
     <color name="colorTrolleyGroup">#f2dede</color>

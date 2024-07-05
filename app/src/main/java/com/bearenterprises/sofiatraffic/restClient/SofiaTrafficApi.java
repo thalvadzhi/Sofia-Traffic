@@ -23,18 +23,6 @@ public interface SofiaTrafficApi {
     @POST("trip/getVirtualTable")
     Call<HashMap<String, VirtualTableForStop>> getVirtualTables(@Body VirtualTablesInput virtualTablesInput);
 
-
-    @POST("trip/getLines")
-    Call<Stop> getStop(String code);
-
-    @Headers("@: userID")
-    @GET("beta/stops/{code}")
-    Call<Stop> getStopWithTimes(@Path("code") String code);
-
-    @Headers("@: userID")
-    @GET("stops/{code}/lines/{lineId}")
-    Call<List<Time>> getTimes(@Path("code") String code, @Path("lineId") String lineId);
-
     @POST("trip/getLines")
     Call<List<Line>> getLines();
 
@@ -44,22 +32,13 @@ public interface SofiaTrafficApi {
     @POST("trip/getSchedule")
     Call<Routes> getRoutes(@Body RouteInput ri);
 
-    @Headers("@: userID")
-    @GET("schedules/lines/{lineType}")
-    Call<List<Line>> getScheduleLines(@Path("lineType") String lineType);
+    @POST("trip/getSchedule")
+    Call<Schedule> getSchedule(@Body RouteInput ri);
+
 
     @Headers("@: userID")
     @GET("schedules/lines/{lineType}/{lineName}")
     Call<List<ScheduleRoute>> getScheduleRoutes(@Path("lineType") String lineType, @Path("lineName") String lineName);
 
-    @Headers("@: userID")
-    @GET("schedules/stops/{stopCode}")
-    Call<Stop> getScheduleStop(@Path("stopCode") String stopCode);
 
-    @Headers("@: userID")
-    @GET("schedules/stops/{stopCode}/lines")
-    Call<List<ScheduleLineTimes>> getScheduleLineTimes(@Path("stopCode") String stopCode);
-
-    @POST("users")
-    Call<Registration> registerUser();
 }

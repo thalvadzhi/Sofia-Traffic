@@ -16,10 +16,12 @@
     <attr name="busColor" format="color"/>
     <attr name="trolleyColor" format="color"/>
     <attr name="tramColor" format="color"/>
+    <attr name="nightBusColor" format="color"/>
     <attr name="tramRoundedEdges" format="reference"/>
     <attr name="trolleyRoundedEdges" format="reference"/>
     <attr name="busRoundedEdges" format="reference"/>
     <attr name="iconBus" format="reference"/>
+    <attr name="iconNightBus" format="reference"/>
     <attr name="iconTram" format="reference"/>
     <attr name="iconTrolley" format="reference"/>
     <attr name="moreButtonBorder" format="color"/>

@@ -1,5 +1,7 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import static java.util.Map.entry;
+
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,7 +41,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import retrofit2.Call;
@@ -55,6 +60,8 @@ public class LinesFragment extends Fragment {
     private NotifyLineInfoLoaded cond;
     private LineInfoLoadedListener listener;
     private Integer currentStopCode;
+    private Map<Integer, Integer> selectionIndexToLineType;
+    private Map<Integer, Integer> lineTypeToSelectionIndex;
     private static final String TAG = LinesFragment.class.getName();
 
     public LinesFragment() {
@@ -68,7 +75,7 @@ public class LinesFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей");
+        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей", "Нощни линии");
         return types;
     }
 
@@ -78,7 +85,17 @@ public class LinesFragment extends Fragment {
         loadingFragment = LoadingFragment.newInstance();
         listener = new LineInfoLoadedListener();
         cond = new NotifyLineInfoLoaded();
-        
+        selectionIndexToLineType = Map.ofEntries(
+                entry(1, 0),
+                entry(2, 1),
+                entry(3, 2),
+                entry(4, 5)
+        );
+
+        lineTypeToSelectionIndex = selectionIndexToLineType.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+
         View v = inflater.inflate(R.layout.fragment_location, container, false);
         transportationType =  v.findViewById(R.id.transportationType);
         lineId = v.findViewById(R.id.lineNumber);
@@ -104,11 +121,12 @@ public class LinesFragment extends Fragment {
                 int selectionIdx = transportationTypes.indexOf(selection);
                 lineId.setSelection(0);
                 lineId.setEnabled(false);
-                if (selectionIdx >= 1 && selectionIdx <= 3) {
-                    currentlySelectedType = transportationTypes.indexOf(selection);
-                    currentlySelectedType -= 1;
+                if (selectionIdx >= 1 && selectionIdx <= 4) {
+//                    currentlySelectedType = selectionIdx;
+                    int lineType = selectionIndexToLineType.get(selectionIdx);
+//                    currentlySelectedType -= 1;
                     LineGetter lineGetter = new LineGetter();
-                    lineGetter.execute(currentlySelectedType);
+                    lineGetter.execute(lineType);
                 }else{
                     lineId.setEnabled(false);
                 }
@@ -244,7 +262,7 @@ public class LinesFragment extends Fragment {
         cond.setListener(listener);
         int currentPosition = transportationType.getSelectedItemPosition();
 
-        int targetPoisiton = line.getType() + 1;
+        int targetPoisiton = lineTypeToSelectionIndex.get(line.getType());
         int currentLineIdPosition = this.lineId.getSelectedItemPosition();
         if(currentPosition == targetPoisiton){
             int pos = selectLineId(line.getType(), line.getName());
@@ -365,7 +383,7 @@ public class LinesFragment extends Fragment {
                                 for(Route route : routeShowerArguments.routesVirtualTables.getRoutes()){
                                     ArrayList<Stop> routeStations = new ArrayList<>();
                                     for (Segment segment : route.getSegments()) {
-                                        SegmentStop stop = segment.stop;
+                                        SegmentStop stop = segment.startStop;
                                         Stop st = DbUtility.getStationByCode(stop.code, (MainActivity) getActivity());
                                         if (st.getName() != null) {
                                             routeStations.add(st);
@@ -433,6 +451,9 @@ public class LinesFragment extends Fragment {
                     break;
                 case 2:
                     typeString = Constants.TROLLEY;
+                    break;
+                case 3:
+                    typeString = Constants.NIGHT_TRANSPORT;
                     break;
             }
 

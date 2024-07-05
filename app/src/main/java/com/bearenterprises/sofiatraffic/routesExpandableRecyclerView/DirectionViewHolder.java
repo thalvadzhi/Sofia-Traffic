@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.bearenterprises.sofiatraffic.R;
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
+import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.utilities.communication.CommunicationUtility;
 import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
 import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
@@ -56,30 +57,40 @@ public class DirectionViewHolder extends ParentViewHolder {
         TypedValue typedValueBus = new TypedValue();
         TypedValue typedValueTrolley = new TypedValue();
         TypedValue typedValueTram = new TypedValue();
+        TypedValue typedValueNightBus = new TypedValue();
+
 
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(R.attr.busColor, typedValueBus, true);
         theme.resolveAttribute(R.attr.tramColor, typedValueTram, true);
         theme.resolveAttribute(R.attr.trolleyColor, typedValueTrolley, true);
+        theme.resolveAttribute(R.attr.nightBusColor, typedValueNightBus, true);
+
 
         int colorBus = typedValueBus.data;
         int colorTram = typedValueTram.data;
         int colorTrolley = typedValueTrolley.data;
-
+        int colorNightBus = typedValueNightBus.data;
 
         switch(direction.getTransportationType()){
-            case "bus":
+            case Constants.BUS:
                 background.setBackgroundColor(colorBus);
                 Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
                 trType.setImageBitmap(image);break;
-            case "tram":
+            case Constants.TRAM:
                 background.setBackgroundColor(colorTram);
                 Bitmap image2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram_white);
                 trType.setImageBitmap(image2);break;
-            case "trolley":
+            case Constants.TROLLEY:
                 background.setBackgroundColor(colorTrolley);
                 Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_white);
                 trType.setImageBitmap(image3);break;
+            case Constants.NIGHT_TRANSPORT:
+                background.setBackgroundColor(colorNightBus);
+                Bitmap image4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
+                trType.setImageBitmap(image4);
+                break;
+
         }
 
     }

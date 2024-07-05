@@ -171,25 +171,21 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
         TypedValue typedValueBus = new TypedValue();
         TypedValue typedValueTrolley = new TypedValue();
         TypedValue typedValueTram = new TypedValue();
+        TypedValue typedValueNightBus = new TypedValue();
 
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(R.attr.busColor, typedValueBus, true);
         theme.resolveAttribute(R.attr.tramColor, typedValueTram, true);
         theme.resolveAttribute(R.attr.trolleyColor, typedValueTrolley, true);
+        theme.resolveAttribute(R.attr.nightBusColor, typedValueNightBus, true);
 
         int colorBus = typedValueBus.data;
         int colorTram = typedValueTram.data;
         int colorTrolley = typedValueTrolley.data;
+        int colorNightBus = typedValueNightBus.data;
 
 
         switch (vt.getType()) {
-            case "1":
-                holder.imageView.setBackgroundColor(colorBus);
-                holder.bg.setBackgroundColor(colorBus);
-                holder.stopName.setBackgroundColor(colorBus);
-                Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
-                holder.imageView.setImageBitmap(image);
-                break;
             case "0":
                 holder.imageView.setBackgroundColor(colorTram);
                 holder.bg.setBackgroundColor(colorTram);
@@ -197,12 +193,26 @@ public class TimeResultsAdapter extends RecyclerView.Adapter<TimeResultsAdapter.
                 Bitmap image2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.tram_white);
                 holder.imageView.setImageBitmap(image2);
                 break;
+            case "1":
+                holder.imageView.setBackgroundColor(colorBus);
+                holder.bg.setBackgroundColor(colorBus);
+                holder.stopName.setBackgroundColor(colorBus);
+                Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
+                holder.imageView.setImageBitmap(image);
+                break;
             case "2":
                 holder.imageView.setBackgroundColor(colorTrolley);
                 holder.bg.setBackgroundColor(colorTrolley);
                 holder.stopName.setBackgroundColor(colorTrolley);
                 Bitmap image3 = BitmapFactory.decodeResource(context.getResources(), R.drawable.trolley_white);
                 holder.imageView.setImageBitmap(image3);
+                break;
+            case "5":
+                holder.imageView.setBackgroundColor(colorNightBus);
+                holder.bg.setBackgroundColor(colorNightBus);
+                holder.stopName.setBackgroundColor(colorNightBus);
+                Bitmap image4 = BitmapFactory.decodeResource(context.getResources(), R.drawable.bus_white);
+                holder.imageView.setImageBitmap(image4);
                 break;
         }
     }

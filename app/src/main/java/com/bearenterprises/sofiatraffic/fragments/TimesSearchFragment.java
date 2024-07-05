@@ -299,7 +299,7 @@ public class TimesSearchFragment extends Fragment {
         return "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
     }
 
-    private String getQueryStringPostLollipop(boolean distinct) {
+    public static String getQueryStringPostLollipop(boolean distinct) {
         String sqlStations = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS;
         sqlStations += " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_STATION_NAME + " LIKE ?";
         if (distinct) {
@@ -374,7 +374,7 @@ public class TimesSearchFragment extends Fragment {
             final ArrayList<LineTimes> lineTimes = new ArrayList<>();
             for (Line line : mergedStop.getLines()) {
                 LineTimes lt = new LineTimes(line, Integer.toString(line.getType()), (ArrayList<Time>) line.getTimes());
-                lt.setRouteName(line.getRouteName());
+                lt.setRouteName(line.getRouteName().toUpperCase());
                 lineTimes.add(lt);
             }
 

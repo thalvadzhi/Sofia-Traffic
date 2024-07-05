@@ -57,7 +57,7 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         Description desc = DbUtility.getDescription(Integer.toString(l.getType()), l.getName(), stopCode, context);
 
         if (desc != null){
-            holder.direction.setText(desc.getDirection());
+            holder.direction.setText(desc.getDirection().toUpperCase());
         }else{
             if(l.getRouteName() != null){
                 holder.direction.setText(l.getRouteName().toUpperCase());
@@ -68,29 +68,35 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
         TypedValue typedValueBus = new TypedValue();
         TypedValue typedValueTrolley = new TypedValue();
         TypedValue typedValueTram = new TypedValue();
+        TypedValue typedValueNightBus = new TypedValue();
 
         Resources.Theme theme = context.getTheme();
         theme.resolveAttribute(R.attr.iconBus, typedValueBus, true);
         theme.resolveAttribute(R.attr.iconTram, typedValueTram, true);
         theme.resolveAttribute(R.attr.iconTrolley, typedValueTrolley, true);
+        theme.resolveAttribute(R.attr.iconNightBus, typedValueNightBus, true);
 
         int bus = typedValueBus.resourceId;
         int tram = typedValueTram.resourceId;
         int trolley = typedValueTrolley.resourceId;
+        int nightBus = typedValueNightBus.resourceId;
 
 
         TypedValue typedValueBusColor = new TypedValue();
         TypedValue typedValueTrolleyColor = new TypedValue();
         TypedValue typedValueTramColor= new TypedValue();
+        TypedValue typedValueNightBusColor = new TypedValue();
 
 
         theme.resolveAttribute(R.attr.busColor, typedValueBusColor, true);
         theme.resolveAttribute(R.attr.tramColor, typedValueTramColor, true);
         theme.resolveAttribute(R.attr.trolleyColor, typedValueTrolleyColor, true);
+        theme.resolveAttribute(R.attr.nightBusColor, typedValueNightBusColor, true);
 
         int colorBus = typedValueBusColor.data;
         int colorTram = typedValueTramColor.data;
         int colorTrolley = typedValueTrolleyColor.data;
+        int colorNightBus = typedValueNightBusColor.data;
         switch (l.getType()){
             case 0:
                 holder.rl.setBackgroundColor(colorTram);
@@ -104,6 +110,10 @@ public class SlideUpLayoutLinesAdapter extends RecyclerView.Adapter<SlideUpLayou
                 holder.rl.setBackgroundColor(colorTrolley);
                 Bitmap imageTrolley = BitmapFactory.decodeResource(context.getResources(), trolley);
                 holder.trType.setImageBitmap(imageTrolley);break;
+            case 5:
+                holder.rl.setBackgroundColor(colorNightBus);
+                Bitmap imageNightBus = BitmapFactory.decodeResource(context.getResources(), nightBus);
+                holder.trType.setImageBitmap(imageNightBus);break;
         }
         holder.lineName.setText(l.getName());
 

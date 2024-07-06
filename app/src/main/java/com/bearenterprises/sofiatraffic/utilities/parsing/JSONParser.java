@@ -118,7 +118,8 @@ public class JSONParser {
                     String nameAndType = lineNames.getString(k);
 
                     String[] nameAndTypeParsed = nameAndType.replace("[", "").replace("]", "").split(",");
-                    Line line = new Line(Integer.parseInt(nameAndTypeParsed[1]), null, nameAndTypeParsed[0]);
+
+                    Line line = new Line(Integer.parseInt(nameAndTypeParsed[1]), Integer.parseInt(nameAndTypeParsed[2]), nameAndTypeParsed[0]);
                     lines.add(line);
                 }
 

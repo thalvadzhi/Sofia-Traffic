@@ -109,11 +109,9 @@ public class StopInformationGetter {
         }
 
         SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(this.context);
-        try {
-            stwh.saveCookieSessionXsrfToken();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        stwh.saveCookieSessionXsrfToken();
+
         Call<HashMap<String, VirtualTableForStop>> call = sofiaTrafficApi.getVirtualTables(new VirtualTablesInput(code));
         HashMap<String, VirtualTableForStop> vtsStop =  RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
 
@@ -149,20 +147,7 @@ public class StopInformationGetter {
 
         return stop;
 
-//        getVirtualTables
     }
-
-
-//    public Stop getScheduleStop(String code) throws IOException {
-//        Call<Stop> call = sofiaTransportApi.getScheduleStop(code);
-//        scheduleStop = RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
-//        return scheduleStop;
-//    }
-//
-//    private List<ScheduleLineTimes> getScheduleLineTimes(String code) throws IOException {
-//        Call<List<ScheduleLineTimes>> call = sofiaTransportApi.getScheduleLineTimes(code);
-//        return RetrofitUtility.handleUnauthorizedQuery(call, (MainActivity) context);
-//    }
 
 
 

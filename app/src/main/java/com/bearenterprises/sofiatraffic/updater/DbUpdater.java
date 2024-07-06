@@ -50,7 +50,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         SharedPreferences.Editor editor = preferences.edit();
 
         long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
-//if(true){
         if (shouldUpdate(lastUpdate)){
             //means it's time to update
 
@@ -116,7 +115,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         }
         File hashFile = new File(context.getFilesDir() + File.separator + hashFileName);
         File targetFile = new File(context.getFilesDir() + File.separator + fileName);
-        if(false && hashFile.exists()){
+        if(hashFile.exists()){
             File newHashFile = new File(context.getFilesDir() + File.separator + hashNewFileName);
             FileDownloader downloader = new FileDownloader(this.context, hashUrl, newHashFile);
             downloader.download();
@@ -146,7 +145,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         try{
             updatedCoordinates = handleFileDownloadingWithHash(Constants.STOPS_COORDINATE_FILE);
             updatedDescriptions = handleFileDownloadingWithHash(Constants.DESCRIPTIONS_FILE_NAME);
-//            updatedSubway = handleFileDownloadingWithHash(Constants.SUBWAY_STOPS_FILE);
             updatedPoly = handleFileDownloadingWithHash(Constants.POLYLINE_FILE);
         }catch (IOException e){
             Utility.makeSnackbar("Настъпи грешка при изтеглянето", (MainActivity) context);
@@ -221,7 +219,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         sb.append("[");
         for (int i = 0; i < lines.size(); i++){
             Line l = lines.get(i);
-            String l_repr = "[" + l.getName() + "," + l.getType()+"]";
+            String l_repr = "[" + l.getName() + "," + l.getType()+ "," + l.getLine_id() + "]";
             if(i == lines.size() - 1){
                 sb.append(l_repr);
             }else{

@@ -57,8 +57,8 @@ public class DbUtility {
             String[] nameAndTypeParsed = nameAndType.replace("[", "").replace("]", "").split(",");
             int type = Integer.parseInt(nameAndTypeParsed[1]);
             String name = nameAndTypeParsed[0].replace("\"", "").replace("\\", "");
-
-            Line line = new Line(type, null, name);
+            int lineId = Integer.parseInt(nameAndTypeParsed[2]);
+            Line line = new Line(type, lineId, name);
             lines.add(line);
         }
         s.setLines(lines);

@@ -167,50 +167,18 @@ public class LinesFragment extends Fragment {
                     return;
                 }
 
-                if (transportSchedule.getLine_id() != null) {
-                    //means selected item is indeed scheduleStop
-                    RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
-                        @Override
-                        public RouteShowerArguments getRoutes(SofiaTrafficApi sofiaTrafficApi, String lineType, String lineId) throws IOException {
-                            SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
-                            try {
-                                stwh.saveCookieSessionXsrfToken();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            RouteInput ri = new RouteInput(Integer.parseInt(lineId));
-                            Call<Routes> routes = sofiaTrafficApi.getRoutes(ri);
-                            try {
-                                Routes route = routes.execute().body();
-                                RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
-                                return rsa;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
+                    @Override
+                    public RouteShowerArguments getRoutes(SofiaTrafficApi sofiaTrafficApi, String lineType, String lineId) throws IOException {
+                        SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
 
-                            return null;
-                        }
-                    });
-                    String id = Integer.toString(transport.getLine_id());
-                    routeGetter.execute(Integer.toString(idx), id);
-                } else {
-                    RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
-                        @Override
-                        public RouteShowerArguments getRoutes(SofiaTrafficApi sofiaTransportApi, String lineType, String lineId) throws IOException {
-                            Call<List<ScheduleRoute>> routes = sofiaTransportApi.getScheduleRoutes(lineType, lineId);
-                            try {
-                                List<ScheduleRoute> route = routes.execute().body();
-                                RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
-                                return rsa;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        Routes routes = stwh.getRoutes(lineId);
+                        return new RouteShowerArguments(routes, lineType);
+                    }
+                });
+                String id = Integer.toString(transport.getLine_id());
+                routeGetter.execute(Integer.toString(idx), id);
 
-                            return null;
-                        }
-                    });
-                    routeGetter.execute(Integer.toString(idx), transportSchedule.getName());
-                }
             }
 
             @Override
@@ -509,21 +477,12 @@ public class LinesFragment extends Fragment {
         }
         @Override
         protected List<Line> doInBackground(Integer... idxs) {
-            SofiaTrafficApi SofiaTrafficApi = MainActivity.retrofit.create(SofiaTrafficApi.class);
             //TODO maybe leave just one network call or make the call parallel
             SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
-            try {
-                stwh.saveCookieSessionXsrfToken();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            Call<List<Line>> lines = SofiaTrafficApi.getLines();
-//            Call<List<Line>> scheduleLines = SofiaTrafficApi.getScheduleLines(Integer.toString(idxs[0]));
+            List<Line> allLines = stwh.getLines();
             try {
 
-                List<Line> allLines = RetrofitUtility.handleUnauthorizedQuery(lines, (MainActivity) getActivity());
                 allLines = allLines.stream().filter(line -> Utility.newLineTypeToOldLineType(line.getType()) == idxs[0]).collect(Collectors.toList());
-//                addScheduledLines(allLines, RetrofitUtility.handleUnauthorizedQuery(scheduleLines, (MainActivity) getActivity()));
                 Collections.sort(allLines, new Comparator<Line>() {
                     @Override
                     public int compare(Line line, Line t1) {

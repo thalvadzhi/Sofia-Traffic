@@ -34,11 +34,4 @@ public interface SofiaTrafficApi {
 
     @POST("trip/getSchedule")
     Call<Schedule> getSchedule(@Body RouteInput ri);
-
-
-    @Headers("@: userID")
-    @GET("schedules/lines/{lineType}/{lineName}")
-    Call<List<ScheduleRoute>> getScheduleRoutes(@Path("lineType") String lineType, @Path("lineName") String lineName);
-
-
 }

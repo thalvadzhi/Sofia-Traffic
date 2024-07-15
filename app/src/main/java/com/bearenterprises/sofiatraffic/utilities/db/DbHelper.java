@@ -22,6 +22,8 @@ public class DbHelper extends SQLiteOpenHelper {
         public static final String COLUMN_NAME_LON = "longtitude";
         public static final String COLUMN_NAME_DESCRIPTION = "description";
         public static final String COLUMN_NAME_LINE_TYPES = "line_types";
+        public static final String COLUMN_NAME_LINE_NAMES= "line_names";
+
 
         //column names for SUBWAY db
         public static final String COLUMN_NAME_STOP_NAME_SUB = "stopName";
@@ -60,7 +62,8 @@ public class DbHelper extends SQLiteOpenHelper {
                     FeedEntry.COLUMN_NAME_LAT + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_NAME_LON + TEXT_TYPE + COMMA_SEP +
                     FeedEntry.COLUMN_NAME_DESCRIPTION + TEXT_TYPE +  COMMA_SEP +
-                    FeedEntry.COLUMN_NAME_LINE_TYPES + TEXT_TYPE +
+                    FeedEntry.COLUMN_NAME_LINE_TYPES + TEXT_TYPE + COMMA_SEP +
+                    FeedEntry.COLUMN_NAME_LINE_NAMES + TEXT_TYPE +
                     " )";
 
     private static final String CREATE_TABLE_DESCRIPTIONS =
@@ -91,7 +94,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private  static final String DROP_TABLE_SUBWAY =
             "DROP TABLE IF EXISTS " + FeedEntry.TABLE_NAME_SUBWAY;
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 7;
+    public static final int DATABASE_VERSION = 8;
     public static final String DATABASE_NAME = "stationsInfo.db";
 
     public DbHelper(Context context) {

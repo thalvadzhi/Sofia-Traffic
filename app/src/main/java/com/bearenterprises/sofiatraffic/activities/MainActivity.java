@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
     private void initializeRetrofitInstance(){
         retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.IVKOS_API_BASE_URL)
+                .baseUrl(Constants.SOFIA_TRAFFIC_BASE_URL)
                 .client(GenerateClient.getClient(this))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

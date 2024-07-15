@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
 import com.bearenterprises.sofiatraffic.constants.Constants;
+import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
 import com.bearenterprises.sofiatraffic.stations.GeoLine;
@@ -22,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +50,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         SharedPreferences.Editor editor = preferences.edit();
 
         long lastUpdate = preferences.getLong(Constants.KEY_LAST_UPDATE, Constants.SHARED_PREFERENCES_DEFAULT_LAST_UPDATE_TIME);
-
-//if(true){
         if (shouldUpdate(lastUpdate)){
             //means it's time to update
 
@@ -145,7 +145,6 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
         try{
             updatedCoordinates = handleFileDownloadingWithHash(Constants.STOPS_COORDINATE_FILE);
             updatedDescriptions = handleFileDownloadingWithHash(Constants.DESCRIPTIONS_FILE_NAME);
-//            updatedSubway = handleFileDownloadingWithHash(Constants.SUBWAY_STOPS_FILE);
             updatedPoly = handleFileDownloadingWithHash(Constants.POLYLINE_FILE);
         }catch (IOException e){
             Utility.makeSnackbar("Настъпи грешка при изтеглянето", (MainActivity) context);
@@ -176,6 +175,7 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT, station.getLatitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LON, station.getLongitude());
             v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_TYPES, lineTypesToString(station));
+            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_NAMES, linesToString(station.getLines()));
             stationInformation.add(v);
         }
 
@@ -188,25 +188,12 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
             v.put(DbHelper.FeedEntry.COLUMN_NAME_DIRECTION, desc.getDirection());
             descriptionContentValues.add(v);
         }
-//        ArrayList<ContentValues> subwayContentValues = new ArrayList<>();
-//        for (SubwayStop subwayStop : subwayStops){
-//            ContentValues v = new ContentValues();
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE1_SUB, subwayStop.getCodes().get(0));
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_CODE2_SUB, subwayStop.getCodes().get(1));
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_STOP_NAME_SUB, subwayStop.getName());
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_ID_SUB, subwayStop.getSubwayId());
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_LINE_SUB, subwayStop.getSubwayLine());
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_LAT_SUB, subwayStop.getCoordinates().get(0));
-//            v.put(DbHelper.FeedEntry.COLUMN_NAME_LON_SUB, subwayStop.getCoordinates().get(1));
-//            subwayContentValues.add(v);
-//        }
 
 
         DbManipulator manipulator = new DbManipulator(this.context);
         manipulator.deleteAll();
         manipulator.insert(stationInformation, DbHelper.FeedEntry.TABLE_NAME_STATIONS);
         manipulator.insert(descriptionContentValues, DbHelper.FeedEntry.TABLE_NAME_DESCRIPTIONS);
-//        manipulator.insert(subwayContentValues, DbHelper.FeedEntry.TABLE_NAME_SUBWAY);
         manipulator.closeDb();
 
         return true;
@@ -223,6 +210,24 @@ public class DbUpdater extends AsyncTask<Void, String, Void>{
                 sb.append(lineTypes.get(i) + ",");
             }
         }
+        return sb.toString();
+
+    }
+
+    private String linesToString(ArrayList<Line> lines){
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < lines.size(); i++){
+            Line l = lines.get(i);
+            String l_repr = "[" + l.getName() + "," + l.getType()+ "," + l.getLine_id() + "]";
+            if(i == lines.size() - 1){
+                sb.append(l_repr);
+            }else{
+                sb.append(l_repr + ",");
+            }
+        }
+        sb.append("]");
+
         return sb.toString();
 
     }

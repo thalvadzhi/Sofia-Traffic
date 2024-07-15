@@ -1,5 +1,9 @@
 package com.bearenterprises.sofiatraffic.utilities.network;
 
+import static com.bearenterprises.sofiatraffic.fragments.TimesSearchFragment.getQueryStringPostLollipop;
+import static com.bearenterprises.sofiatraffic.utilities.db.DbUtility.getDescription;
+import static com.bearenterprises.sofiatraffic.utilities.db.DbUtility.getStationsFromDatabase;
+
 import android.util.Log;
 
 import com.bearenterprises.sofiatraffic.activities.MainActivity;
@@ -7,9 +11,13 @@ import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.ApiError;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
+import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleLineTimes;
 import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleTimes;
 import com.bearenterprises.sofiatraffic.utilities.Utility;
+import com.bearenterprises.sofiatraffic.utilities.db.DbHelper;
+import com.bearenterprises.sofiatraffic.utilities.db.DbUtility;
+import com.bearenterprises.sofiatraffic.utilities.parsing.Description;
 import com.bearenterprises.sofiatraffic.utilities.parsing.ParseApiError;
 import com.bearenterprises.sofiatraffic.utilities.registration.RegistrationUtility;
 
@@ -38,45 +46,32 @@ public class RetrofitUtility {
                 Call<T> cll = call.clone();
                 response = cll.execute();
             }
-
+            Log.i("Error mf", error.getMessage());
         }
         return response.body();
     }
 
-    public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity) {
-        SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
-        Call<List<ScheduleLineTimes>> lineTimes = sofiaTransportApi.getScheduleLineTimes(code);
-        ArrayList<Line> lines = new ArrayList<>();
-        try {
-            String scheduleDayType = Utility.getScheduleDayType();
-            long start = System.currentTimeMillis();
-            List<ScheduleLineTimes> stopLines = RetrofitUtility.handleUnauthorizedQuery(lineTimes, activity);
-            Log.i("Lines info: ", ""+(System.currentTimeMillis() - start));
-            if (stopLines != null) {
-                for (ScheduleLineTimes slt : stopLines) {
-                    Line l = new Line(slt.getType(), null, slt.getName());
-                    List<ScheduleTimes> schedule = slt.getSchedule();
-                    for (ScheduleTimes st : schedule) {
-                        if (st.getScheduleDayTypes().contains(scheduleDayType)) {
-                            l.setRouteName(st.getRouteName());
-                            lines.add(l);
-                        }
-                    }
-                }
 
-                Collections.sort(lines, new Comparator<Line>() {
-                    @Override
-                    public int compare(Line line, Line t1) {
-                        return Utility.compareLineNames(line, t1);
-                    }
-                });
-                return lines;
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            Log.d(TAG, "Error getting lines for layout adapter", e);
+    public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity) {
+        String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
+
+        ArrayList<Stop> stationsFromDatabase = DbUtility.getStationsFromDatabase(query, new String[]{code}, activity);
+        if (stationsFromDatabase == null || stationsFromDatabase.isEmpty()){
+            return null;
         }
-        return null;
+        ArrayList<Line> lines = stationsFromDatabase.get(0).getLines();
+        for (Line l : lines){
+            Description description = getDescription(Integer.toString(l.getType()), l.getName(), code, activity);
+            l.setRouteName(description.getDirection().toUpperCase());
+        }
+
+        Collections.sort(lines, new Comparator<Line>() {
+            @Override
+            public int compare(Line line, Line t1) {
+                return Utility.compareLineNames(line, t1);
+            }
+        });
+
+        return lines;
     }
 }

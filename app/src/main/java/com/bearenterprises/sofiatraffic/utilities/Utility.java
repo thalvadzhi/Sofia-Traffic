@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+
+import com.bearenterprises.sofiatraffic.restClient.SegmentStop;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTrafficApi;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +33,7 @@ import java.util.HashSet;
 public class Utility {
 
     public interface RouteGettingFunction<T, K, R> {
-        public R getRoutes(SofiaTransportApi sofiaTransportApi, T t, K k) throws IOException;
+        public R getRoutes(SofiaTrafficApi sofiaTrafficApi, T t, K k) throws IOException;
     }
 
     public interface RouteStopsFunction<T> {
@@ -229,6 +232,19 @@ public class Utility {
             return s2;
         }
     }
+
+    public static int newLineTypeToOldLineType(int newLineType){
+        return switch (newLineType) {
+            case 1 -> 1;
+            case 2 -> 0;
+            case 4 -> 2;
+            default -> newLineType;
+        };
+    }
+
+//    public static Stop SegmentStopToStop(SegmentStop segmentStop){
+//        Stop()
+//    }
 
 }
 

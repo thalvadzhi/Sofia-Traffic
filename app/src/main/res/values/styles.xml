@@ -28,6 +28,7 @@
         <item name="busColor">@color/colorBus</item>
         <item name="tramColor">@color/colorTram</item>
         <item name="trolleyColor">@color/colorTrolley</item>
+        <item name="nightBusColor">@color/colorNightBus</item>
         <item name="busRoundedEdges">@drawable/rounded_edges_bus</item>
         <item name="tramRoundedEdges">@drawable/rounded_edges_tram</item>
         <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley</item>
@@ -77,6 +78,7 @@
         <item name="busColor">@color/colorBusDarker</item>
         <item name="tramColor">@color/colorTramDarker</item>
         <item name="trolleyColor">@color/colorTrolleyDarker</item>
+        <item name="nightBusColor">@color/colorNightBusDarker</item>
         <item name="busRoundedEdges">@drawable/rounded_edges_bus_darker</item>
         <item name="tramRoundedEdges">@drawable/rounded_edges_tram_darker</item>
         <item name="trolleyRoundedEdges">@drawable/rounded_edges_trolley_darker</item>

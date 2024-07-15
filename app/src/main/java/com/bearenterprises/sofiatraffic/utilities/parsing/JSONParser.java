@@ -3,6 +3,7 @@ package com.bearenterprises.sofiatraffic.utilities.parsing;
 import android.content.Context;
 import android.util.Log;
 
+import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.SubwayStop;
 import com.bearenterprises.sofiatraffic.stations.GeoLine;
@@ -111,7 +112,19 @@ public class JSONParser {
                 JSONObject stop = jsonArray.getJSONObject(i);
                 JSONArray coord = stop.getJSONArray("coordinates");
                 JSONArray lineTypes = stop.getJSONArray("lineTypes");
+                JSONArray lineNames = stop.getJSONArray("lineNames");
+                ArrayList<Line> lines = new ArrayList<>();
+                for (int k = 0; k < lineNames.length(); k++){
+                    String nameAndType = lineNames.getString(k);
+
+                    String[] nameAndTypeParsed = nameAndType.replace("[", "").replace("]", "").split(",");
+
+                    Line line = new Line(Integer.parseInt(nameAndTypeParsed[1]), Integer.parseInt(nameAndTypeParsed[2]), nameAndTypeParsed[0]);
+                    lines.add(line);
+                }
+
                 Stop s = new Stop(Integer.parseInt(stop.getString("stopCode")),stop.getString("stopName"), coord.getString(0), coord.getString(1));
+                s.setLines(lines);
                 for (int j = 0; j < lineTypes.length(); j++){
                     s.addLineType(lineTypes.getInt(j));
                 }

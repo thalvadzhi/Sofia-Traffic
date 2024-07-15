@@ -101,7 +101,6 @@ public class RoutesFragment extends Fragment {
         }
 
         if (savedInstanceState != null){
-            Log.i("Maina", "On create non null instance state");
             Gson gson = new Gson();
             Type routesType = new TypeToken<ArrayList<ArrayList<Stop>>>(){}.getType();
 
@@ -115,7 +114,6 @@ public class RoutesFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
 //        Bundle args = new Bundle();
-        Log.i("Maina", "Saving instance state");
         Gson gson = new Gson();
         String routesJson = gson.toJson(routes);
         savedInstanceState.putString(ROUTES, routesJson);

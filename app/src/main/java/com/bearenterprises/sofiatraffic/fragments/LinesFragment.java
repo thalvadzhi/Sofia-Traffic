@@ -1,5 +1,7 @@
 package com.bearenterprises.sofiatraffic.fragments;
 
+import static java.util.Map.entry;
+
 import android.database.sqlite.SQLiteDatabaseLockedException;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +22,12 @@ import com.bearenterprises.sofiatraffic.adapters.TransportationTypeAdapter;
 import com.bearenterprises.sofiatraffic.constants.Constants;
 import com.bearenterprises.sofiatraffic.restClient.Line;
 import com.bearenterprises.sofiatraffic.restClient.Route;
+import com.bearenterprises.sofiatraffic.restClient.RouteInput;
 import com.bearenterprises.sofiatraffic.restClient.Routes;
+import com.bearenterprises.sofiatraffic.restClient.Segment;
+import com.bearenterprises.sofiatraffic.restClient.SegmentStop;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTrafficApi;
+import com.bearenterprises.sofiatraffic.restClient.SofiaTrafficWithHeaders;
 import com.bearenterprises.sofiatraffic.restClient.SofiaTransportApi;
 import com.bearenterprises.sofiatraffic.restClient.Stop;
 import com.bearenterprises.sofiatraffic.restClient.schedules.ScheduleRoute;
@@ -34,7 +41,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import retrofit2.Call;
 
@@ -49,6 +60,8 @@ public class LinesFragment extends Fragment {
     private NotifyLineInfoLoaded cond;
     private LineInfoLoadedListener listener;
     private Integer currentStopCode;
+    private Map<Integer, Integer> selectionIndexToLineType;
+    private Map<Integer, Integer> lineTypeToSelectionIndex;
     private static final String TAG = LinesFragment.class.getName();
 
     public LinesFragment() {
@@ -62,7 +75,7 @@ public class LinesFragment extends Fragment {
     }
 
     public List<String> getTypesOfTransportation(){
-        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей");
+        List<String> types = Arrays.asList("----", "Трамвай", "Автобус", "Тролей", "Нощни линии");
         return types;
     }
 
@@ -72,7 +85,17 @@ public class LinesFragment extends Fragment {
         loadingFragment = LoadingFragment.newInstance();
         listener = new LineInfoLoadedListener();
         cond = new NotifyLineInfoLoaded();
-        
+        selectionIndexToLineType = Map.ofEntries(
+                entry(1, 0),
+                entry(2, 1),
+                entry(3, 2),
+                entry(4, 5)
+        );
+
+        lineTypeToSelectionIndex = selectionIndexToLineType.entrySet()
+                .stream()
+                .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+
         View v = inflater.inflate(R.layout.fragment_location, container, false);
         transportationType =  v.findViewById(R.id.transportationType);
         lineId = v.findViewById(R.id.lineNumber);
@@ -98,11 +121,12 @@ public class LinesFragment extends Fragment {
                 int selectionIdx = transportationTypes.indexOf(selection);
                 lineId.setSelection(0);
                 lineId.setEnabled(false);
-                if (selectionIdx >= 1 && selectionIdx <= 3) {
-                    currentlySelectedType = transportationTypes.indexOf(selection);
-                    currentlySelectedType -= 1;
+                if (selectionIdx >= 1 && selectionIdx <= 4) {
+//                    currentlySelectedType = selectionIdx;
+                    int lineType = selectionIndexToLineType.get(selectionIdx);
+//                    currentlySelectedType -= 1;
                     LineGetter lineGetter = new LineGetter();
-                    lineGetter.execute(currentlySelectedType);
+                    lineGetter.execute(lineType);
                 }else{
                     lineId.setEnabled(false);
                 }
@@ -143,43 +167,18 @@ public class LinesFragment extends Fragment {
                     return;
                 }
 
-                if (transportSchedule.getId() != null) {
-                    //means selected item is indeed scheduleStop
-                    RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
-                        @Override
-                        public RouteShowerArguments getRoutes(SofiaTransportApi sofiaTransportApi, String lineType, String lineId) throws IOException {
-                            Call<Routes> routes = sofiaTransportApi.getRoutes(lineType, lineId);
-                            try {
-                                Routes route = routes.execute().body();
-                                RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
-                                return rsa;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
+                    @Override
+                    public RouteShowerArguments getRoutes(SofiaTrafficApi sofiaTrafficApi, String lineType, String lineId) throws IOException {
+                        SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
 
-                            return null;
-                        }
-                    });
-                    String id = Integer.toString(transport.getId());
-                    routeGetter.execute(Integer.toString(idx), id);
-                } else {
-                    RouteGetter routeGetter = new RouteGetter(new Utility.RouteGettingFunction<String, String, RouteShowerArguments>() {
-                        @Override
-                        public RouteShowerArguments getRoutes(SofiaTransportApi sofiaTransportApi, String lineType, String lineId) throws IOException {
-                            Call<List<ScheduleRoute>> routes = sofiaTransportApi.getScheduleRoutes(lineType, lineId);
-                            try {
-                                List<ScheduleRoute> route = routes.execute().body();
-                                RouteShowerArguments rsa = new RouteShowerArguments(route, lineType);
-                                return rsa;
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                        Routes routes = stwh.getRoutes(lineId);
+                        return new RouteShowerArguments(routes, lineType);
+                    }
+                });
+                String id = Integer.toString(transport.getLine_id());
+                routeGetter.execute(Integer.toString(idx), id);
 
-                            return null;
-                        }
-                    });
-                    routeGetter.execute(Integer.toString(idx), transportSchedule.getName());
-                }
             }
 
             @Override
@@ -208,7 +207,7 @@ public class LinesFragment extends Fragment {
     private int selectLineId(int trType, String lineName){
         int pos = 0;
         for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).getType() == trType && lines.get(i).getName().equals(lineName)) {
+            if (Utility.newLineTypeToOldLineType(lines.get(i).getType()) == trType && lines.get(i).getName().equals(lineName)) {
                 lineId.setSelection(i + 1);
                 pos = i + 1;
                 break;
@@ -225,13 +224,13 @@ public class LinesFragment extends Fragment {
      */
     public void showRoute(Line line, Integer stopCode){
         currentStopCode = stopCode;
-        cond.setLineID(String.valueOf(line.getId()));
+        cond.setLineID(String.valueOf(line.getLine_id()));
         cond.setLineName(line.getName());
         cond.setTrType(line.getType());
         cond.setListener(listener);
         int currentPosition = transportationType.getSelectedItemPosition();
 
-        int targetPoisiton = line.getType() + 1;
+        int targetPoisiton = lineTypeToSelectionIndex.get(line.getType());
         int currentLineIdPosition = this.lineId.getSelectedItemPosition();
         if(currentPosition == targetPoisiton){
             int pos = selectLineId(line.getType(), line.getName());
@@ -267,10 +266,10 @@ public class LinesFragment extends Fragment {
             String lineType = strings[0];
             //could be either id or name
             String lineIdentification = strings[1];
-            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
+            SofiaTrafficApi sofiaTrafficApi = MainActivity.retrofit.create(SofiaTrafficApi.class);
             RouteShowerArguments routeShowerArguments;
             try {
-                routeShowerArguments = routeGettingFunction.getRoutes(sofiaTransportApi, lineType, lineIdentification);
+                routeShowerArguments = routeGettingFunction.getRoutes(sofiaTrafficApi, lineType, lineIdentification);
                 return routeShowerArguments;
             } catch (IOException e) {
                 Log.d(TAG, "Error getting route", e);
@@ -351,12 +350,13 @@ public class LinesFragment extends Fragment {
                             try{
                                 for(Route route : routeShowerArguments.routesVirtualTables.getRoutes()){
                                     ArrayList<Stop> routeStations = new ArrayList<>();
-                                    for (Stop stop : route.getStops()) {
-                                        Stop st = DbUtility.getStationByCode(Integer.toString(stop.getCode()), (MainActivity) getActivity());
+                                    for (Segment segment : route.getSegments()) {
+                                        SegmentStop stop = segment.startStop;
+                                        Stop st = DbUtility.getStationByCode(stop.code, (MainActivity) getActivity());
                                         if (st.getName() != null) {
                                             routeStations.add(st);
                                         }else{
-                                            routeStations.add(stop);
+                                            routeStations.add(st);
                                         }
                                     }
                                     if (routeStations.size() != 0) {
@@ -420,6 +420,9 @@ public class LinesFragment extends Fragment {
                 case 2:
                     typeString = Constants.TROLLEY;
                     break;
+                case 3:
+                    typeString = Constants.NIGHT_TRANSPORT;
+                    break;
             }
 
             if (stations.size() != 0){
@@ -474,13 +477,12 @@ public class LinesFragment extends Fragment {
         }
         @Override
         protected List<Line> doInBackground(Integer... idxs) {
-            SofiaTransportApi sofiaTransportApi = MainActivity.retrofit.create(SofiaTransportApi.class);
             //TODO maybe leave just one network call or make the call parallel
-            Call<List<Line>> lines = sofiaTransportApi.getLines(Integer.toString(idxs[0]));
-            Call<List<Line>> scheduleLines = sofiaTransportApi.getScheduleLines(Integer.toString(idxs[0]));
+            SofiaTrafficWithHeaders stwh = new SofiaTrafficWithHeaders(getContext());
+            List<Line> allLines = stwh.getLines();
             try {
-                List<Line> allLines = RetrofitUtility.handleUnauthorizedQuery(lines, (MainActivity) getActivity());
-                addScheduledLines(allLines, RetrofitUtility.handleUnauthorizedQuery(scheduleLines, (MainActivity) getActivity()));
+
+                allLines = allLines.stream().filter(line -> Utility.newLineTypeToOldLineType(line.getType()) == idxs[0]).collect(Collectors.toList());
                 Collections.sort(allLines, new Comparator<Line>() {
                     @Override
                     public int compare(Line line, Line t1) {

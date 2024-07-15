@@ -17,6 +17,7 @@ public class Stop extends IStop implements Serializable{
     private String description;
     private ArrayList<Line> lines;
     private ArrayList<Integer> lineTypes;
+    private ArrayList<String> lineNames;
 
     public Stop(){
     }
@@ -25,6 +26,9 @@ public class Stop extends IStop implements Serializable{
         this.id = id;
         this.code = code;
         this.name = name;
+        this.lineTypes = new ArrayList<>();
+        this.lineNames = new ArrayList<>();
+
     }
 
     public Stop(Integer id, Integer code, String name, String latitude, String longitude, String description) {
@@ -35,6 +39,7 @@ public class Stop extends IStop implements Serializable{
         this.latitude = latitude;
         this.description = description;
         this.lineTypes = new ArrayList<>();
+        this.lineNames = new ArrayList<>();
     }
 
     public Stop(Integer code, String name, String latitude, String longitude, String description) {
@@ -44,6 +49,7 @@ public class Stop extends IStop implements Serializable{
         this.latitude = latitude;
         this.description = description;
         this.lineTypes = new ArrayList<>();
+        this.lineNames = new ArrayList<>();
 
     }
 
@@ -53,6 +59,7 @@ public class Stop extends IStop implements Serializable{
         this.name = name;
         this.description = description;
         this.lineTypes = new ArrayList<>();
+        this.lineNames = new ArrayList<>();
     }
 
     public Stop(Integer code, String name,  String latitude, String longitude) {
@@ -61,6 +68,7 @@ public class Stop extends IStop implements Serializable{
         this.longitude = longitude;
         this.latitude = latitude;
         this.lineTypes = new ArrayList<>();
+        this.lineNames = new ArrayList<>();
 
     }
 
@@ -70,6 +78,10 @@ public class Stop extends IStop implements Serializable{
 
     public void addLineType(Integer lineType){
         this.lineTypes.add(lineType);
+    }
+
+    public void addLineName(String lineName){
+        this.lineNames.add(lineName);
     }
 
     public String getAlias() {

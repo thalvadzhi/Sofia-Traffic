@@ -4,6 +4,8 @@ import com.bearenterprises.sofiatraffic.fragments.LoadingFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -25,8 +27,8 @@ public class Constants {
     public static final String POLYLINE_FILE = "polyline.json";
     public static final String POLYLINE_HASH = "hash_polyline.txt";
     public static final String POLYLINE_HASH_NEW = "new_hash_polyline.txt";
-    public static final String POLYLINE_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/polyline_getter/polyline.txt";
-    public static final String POLYLINE_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/polyline_getter/hash.txt";
+    public static final String POLYLINE_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/polyline_getter/polyline_v2.txt";
+    public static final String POLYLINE_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/polyline_getter/hash_v2.txt";
 
     //subway
     public static final String SUBWAY_STOPS_FILE = "subway.json";
@@ -57,6 +59,8 @@ public class Constants {
     public static final String BUS = "bus";
     public static final String TRAM = "tram";
     public static final String TROLLEY = "trolley";
+    public static final String NIGHT_TRANSPORT = "night";
+
     public static final int SECTION_SEARCH_IDX = 0;
     public static final int SECTION_FAVOURITES_IDX = 1;
     public static final int SECTION_LINES_IDX = 2;
@@ -76,17 +80,22 @@ public class Constants {
     public static final int TROLLEY_ID = 2;
     public static final int TROLLEY_ID_INTERACTIVE_CARD = 2;
 
+    public static final int NIGHT_BUS_ID = 5;
 
     public static final String VIRTUAL_TABLES_API = "virtual_table_api";
     public static final String SCHEDULES_API = "schedules_api";
 
     public static final String IVKOS_API_BASE_URL = "https://api.sofiatransport.com/v3/";
+    public static final String SOFIA_TRAFFIC_BASE_URL = "https://www.sofiatraffic.bg/bg/";
     public static final String SHARED_PREFERENCES_REGISTRATION = "registration";
     public static final String REGISTRATION = "reg";
     public static final String SHARED_PREFERENCES_DEFAULT_REGISTRATION = "no_reg";
     public static final String UNAUTHOROZIED_USER_ID = "UnauthorizedUserIdError";
     public static final String QUERY_METHOD_SLOW = "slow";
     public static final String QUERY_METHOD_FAST = "fast";
+
+    public static final HashMap<Integer, Integer> NEW_TO_OLD_LINE_TYPES = new HashMap<>();
+
 
     //schedule types
     public static final String WORKDAY = "WORKDAY";
@@ -99,9 +108,9 @@ public class Constants {
 
 
 
-    public static final String COORDINATES_DOWNLOAD_URL_JSON = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/coordinates.json";
-    public static final String DESCRIPTIONS_DOWNLOAD_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/descriptions.txt";
-    public static final String COORDINATES_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/hash.txt";
-    public static final String DESCRIPTIONS_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/hash.txt";
+    public static final String COORDINATES_DOWNLOAD_URL_JSON = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/coordinates_v2.json";
+    public static final String DESCRIPTIONS_DOWNLOAD_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/descriptions_v2.txt";
+    public static final String COORDINATES_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/stops_getter/hash_v2.txt";
+    public static final String DESCRIPTIONS_HASH_URL = "https://raw.githubusercontent.com/thalvadzhi/Sofia-Traffic-Stops-Getter/master/descriptions_getter/hash_v2.txt";
 
 }

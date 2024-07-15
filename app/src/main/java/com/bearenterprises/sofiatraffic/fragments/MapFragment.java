@@ -365,27 +365,38 @@ public class MapFragment extends Fragment {
     }
 
     private Bitmap getCorrectImageForStop(ArrayList<Integer> lineTypes){
+
         if(lineTypes == null){
             return null;
         }
         if(lineTypes.size() == 1){
-            if(lineTypes.contains(Constants.TRAM_ID_INTERACTIVE_CARD)){
+            if(lineTypes.contains(Constants.TRAM_ID)){
                 return pinTram;
-            }else if (lineTypes.contains(Constants.BUS_ID_INTERACTIVE_CARD)){
+            }else if (lineTypes.contains(Constants.BUS_ID)){
                 return pinBus;
-            }else if (lineTypes.contains(Constants.TROLLEY_ID_INTERACTIVE_CARD)){
+            }else if (lineTypes.contains(Constants.TROLLEY_ID)){
                 return pinTrolley;
+            }else if (lineTypes.contains(Constants.NIGHT_BUS_ID)){
+                return pinBus;
             }
         }else if(lineTypes.size() == 2){
-            if(lineTypes.contains(Constants.TRAM_ID_INTERACTIVE_CARD) && lineTypes.contains(Constants.BUS_ID_INTERACTIVE_CARD)){
+            if(lineTypes.contains(Constants.TRAM_ID) && lineTypes.contains(Constants.BUS_ID)){
                 return pinBusTram;
-            }else if(lineTypes.contains(Constants.TRAM_ID_INTERACTIVE_CARD) && lineTypes.contains(Constants.TROLLEY_ID_INTERACTIVE_CARD)){
+            }else if(lineTypes.contains(Constants.TRAM_ID) && lineTypes.contains(Constants.TROLLEY_ID)){
                 return pinTrolleyTram;
-            }else if(lineTypes.contains(Constants.BUS_ID_INTERACTIVE_CARD) && lineTypes.contains(Constants.TROLLEY_ID_INTERACTIVE_CARD)){
+            }else if(lineTypes.contains(Constants.BUS_ID) && lineTypes.contains(Constants.TROLLEY_ID)){
                 return pinTrolleyBus;
+            }else if(lineTypes.contains(Constants.NIGHT_BUS_ID) && lineTypes.contains(Constants.BUS_ID)){
+                return pinBus;
+            }else if(lineTypes.contains(Constants.NIGHT_BUS_ID) && lineTypes.contains(Constants.TROLLEY_ID)) {
+                return pinTrolley;
+            }else if(lineTypes.contains(Constants.NIGHT_BUS_ID) && lineTypes.contains(Constants.TRAM_ID)) {
+                return pinTram;
             }
         }else if(lineTypes.size() == 3){
             //if size is 3 than all types of transportation are present
+            return pinBusTramTrolley;
+        }else{
             return pinBusTramTrolley;
         }
         return null;
@@ -396,23 +407,33 @@ public class MapFragment extends Fragment {
             return null;
         }
         if(lineTypes.size() == 1){
-            if(lineTypes.contains(Constants.TRAM_ID_INTERACTIVE_CARD)){
+            if(lineTypes.contains(Constants.TRAM_ID)){
                 return pinTramDescriptor;
-            }else if (lineTypes.contains(Constants.BUS_ID_INTERACTIVE_CARD)){
+            }else if (lineTypes.contains(Constants.BUS_ID)){
                 return pinBusDescriptor;
-            }else if (lineTypes.contains(Constants.TROLLEY_ID_INTERACTIVE_CARD)){
+            }else if (lineTypes.contains(Constants.TROLLEY_ID)){
                 return pinTrolleyDescriptor;
+            }else if (lineTypes.contains(Constants.NIGHT_BUS_ID)){
+                return pinBusDescriptor;
             }
         }else if(lineTypes.size() == 2){
-            if(lineTypes.contains(Constants.TRAM_ID_INTERACTIVE_CARD) && lineTypes.contains(Constants.BUS_ID_INTERACTIVE_CARD)){
+            if(lineTypes.contains(Constants.TRAM_ID) && lineTypes.contains(Constants.BUS_ID)){
                 return pinBusTramDescriptor;
-            }else if(lineTypes.contains(Constants.TRAM_ID_INTERACTIVE_CARD) && lineTypes.contains(Constants.TROLLEY_ID_INTERACTIVE_CARD)){
+            }else if(lineTypes.contains(Constants.TRAM_ID) && lineTypes.contains(Constants.TROLLEY_ID)){
                 return pinTrolleyTramDescriptor;
-            }else if(lineTypes.contains(Constants.BUS_ID_INTERACTIVE_CARD) && lineTypes.contains(Constants.TROLLEY_ID_INTERACTIVE_CARD)){
+            }else if(lineTypes.contains(Constants.BUS_ID) && lineTypes.contains(Constants.TROLLEY_ID)){
                 return pinTrolleyBusDescriptor;
+            }else if(lineTypes.contains(Constants.NIGHT_BUS_ID) && lineTypes.contains(Constants.BUS_ID)){
+                return pinBusDescriptor;
+            }else if(lineTypes.contains(Constants.NIGHT_BUS_ID) && lineTypes.contains(Constants.TROLLEY_ID)) {
+                return pinTrolleyDescriptor;
+            }else if(lineTypes.contains(Constants.NIGHT_BUS_ID) && lineTypes.contains(Constants.TRAM_ID)) {
+                return pinTramDescriptor;
             }
         }else if(lineTypes.size() == 3){
             //if size is 3 than all types of transportation are present
+            return pinBusTramTrolleyDescriptor;
+        }else{
             return pinBusTramTrolleyDescriptor;
         }
         return null;

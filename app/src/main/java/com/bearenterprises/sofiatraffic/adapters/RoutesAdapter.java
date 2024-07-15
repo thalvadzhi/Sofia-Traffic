@@ -23,8 +23,8 @@ import java.util.List;
 public class RoutesAdapter extends ExpandableRecyclerAdapter<Direction, Stop, DirectionViewHolder, StopViewHolder> {
     private Context context;
     private LayoutInflater mInflater;
-    private int highlightedPositionParent = -1, highlightedPositionChild =-1;
     private int highlightedStopCode = -1;
+
     public RoutesAdapter(@NonNull List<Direction> parentList, Context context) {
         super(parentList);
         this.context = context;

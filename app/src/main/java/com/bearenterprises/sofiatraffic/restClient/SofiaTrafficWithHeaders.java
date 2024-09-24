@@ -114,7 +114,7 @@ public class SofiaTrafficWithHeaders {
         String keyRoutes = KEY_ROUTES + "_" + lineId;
 
         if ((currentTime - lastUpdate) > EIGHT_HOURS_IN_MS){
-            RouteInput ri = new RouteInput(Integer.parseInt(lineId));
+            RouteInput ri = new RouteInput(lineId);
             Call<Routes> routesCall = sofiaTrafficApi.getRoutes(ri);
 
             lastlyUpdatedRoutes.put(lineId, currentTime);

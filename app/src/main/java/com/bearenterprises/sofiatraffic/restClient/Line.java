@@ -2,6 +2,8 @@
 package com.bearenterprises.sofiatraffic.restClient;
 
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,6 +14,7 @@ public class Line implements Serializable {
     private Integer routeId;
     private Integer line_id;
     private String name;
+    @SerializedName("ext_id")
     private String extId;
 
     private String routeName;
@@ -28,6 +31,13 @@ public class Line implements Serializable {
         this.type = type;
         this.line_id = line_id;
         this.name = name;
+    }
+
+    public Line(Integer type, Integer line_id, String name, String extId) {
+        this.type = type;
+        this.line_id = line_id;
+        this.name = name;
+        this.extId = extId;
     }
 
     public String getRouteName() {
@@ -80,6 +90,14 @@ public class Line implements Serializable {
      */
     public Integer getLine_id() {
         return line_id;
+    }
+
+    public String getExtId() {
+        return this.extId;
+    }
+
+    public void setExtId(String exdId) {
+        this.extId = exdId;
     }
 
     /**

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.Route;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -26,11 +27,17 @@ public interface SofiaTrafficApi {
     @POST("trip/getLines")
     Call<List<Line>> getLines();
 
+    @POST("trip/getLines")
+    Call<ResponseBody> getLinesRaw();
+
     @GET("/")
     Call<Void> getCookies();
 
     @POST("trip/getSchedule")
     Call<Routes> getRoutes(@Body RouteInput ri);
+
+    @POST("trip/getSchedule")
+    Call<ResponseBody> getRoutesRaw(@Body RouteInput ri);
 
     @POST("trip/getSchedule")
     Call<Schedule> getSchedule(@Body RouteInput ri);

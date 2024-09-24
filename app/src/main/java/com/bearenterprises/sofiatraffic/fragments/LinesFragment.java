@@ -176,7 +176,7 @@ public class LinesFragment extends Fragment {
                         return new RouteShowerArguments(routes, lineType);
                     }
                 });
-                String id = Integer.toString(transport.getLine_id());
+                String id = transport.getExtId();
                 routeGetter.execute(Integer.toString(idx), id);
 
             }

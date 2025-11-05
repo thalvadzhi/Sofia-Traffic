@@ -55,7 +55,7 @@ public class RetrofitUtility {
     public static ArrayList<Line> getLinesByStationCode(String code, MainActivity activity) {
         String query = "SELECT * FROM " + DbHelper.FeedEntry.TABLE_NAME_STATIONS + " WHERE " + DbHelper.FeedEntry.COLUMN_NAME_CODE + " =?";
 
-        ArrayList<Stop> stationsFromDatabase = DbUtility.getStationsFromDatabase(query, new String[]{code}, activity);
+        ArrayList<Stop> stationsFromDatabase = getStationsFromDatabase(query, new String[]{code}, activity);
         if (stationsFromDatabase == null || stationsFromDatabase.isEmpty()){
             return null;
         }

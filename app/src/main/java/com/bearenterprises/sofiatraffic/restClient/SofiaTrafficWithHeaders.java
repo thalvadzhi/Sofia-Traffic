@@ -79,7 +79,7 @@ public class SofiaTrafficWithHeaders {
         long currentTime = System.currentTimeMillis();
         Gson gson = new Gson();
 
-        if ((currentTime - lastUpdated) > EIGHT_HOURS_IN_MS){
+        if (true || (currentTime - lastUpdated) > EIGHT_HOURS_IN_MS){
             Call<List<Line>> linesCall = sofiaTrafficApi.getLines();
 
             SharedPreferences.Editor lastUpdatedEditor = PreferenceManager.getDefaultSharedPreferences(context).edit();
